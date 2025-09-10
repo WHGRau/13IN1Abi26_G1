@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 10. Sep 2025 um 19:17
+-- Erstellungszeit: 10. Sep 2025 um 19:24
 -- Server-Version: 10.4.32-MariaDB
 -- PHP-Version: 8.2.12
 
@@ -95,6 +95,24 @@ CREATE TABLE `preisklassen` (
   `Preis` int(11) NOT NULL,
   `ZusatzversicherungsPreis` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `wunschliste`
+--
+
+CREATE TABLE `wunschliste` (
+  `Auto.ID` int(11) NOT NULL,
+  `Benutzer.ID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Daten für Tabelle `wunschliste`
+--
+
+INSERT INTO `wunschliste` (`Auto.ID`, `Benutzer.ID`) VALUES
+(1, 1);
 
 --
 -- Indizes der exportierten Tabellen
