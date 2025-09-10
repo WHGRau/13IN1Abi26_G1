@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 10. Sep 2025 um 19:08
+-- Erstellungszeit: 10. Sep 2025 um 19:17
 -- Server-Version: 10.4.32-MariaDB
 -- PHP-Version: 8.2.12
 
@@ -33,15 +33,18 @@ CREATE TABLE `auto` (
   `Modell` text NOT NULL,
   `Kategorie` text NOT NULL,
   `Leistung` int(11) NOT NULL,
-  `Kennzeichen` text NOT NULL
+  `Kennzeichen` text NOT NULL,
+  `WirdGemietetVon` int(11) NOT NULL,
+  `IstPreisklasse` int(11) NOT NULL,
+  `HatBewertung` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `auto`
 --
 
-INSERT INTO `auto` (`ID`, `Marke`, `Modell`, `Kategorie`, `Leistung`, `Kennzeichen`) VALUES
-(1, 'Mercedes', '190E', 'Limousine', 195, 'NR L 2020');
+INSERT INTO `auto` (`ID`, `Marke`, `Modell`, `Kategorie`, `Leistung`, `Kennzeichen`, `WirdGemietetVon`, `IstPreisklasse`, `HatBewertung`) VALUES
+(1, 'Mercedes', '190E', 'Limousine', 195, 'NR L 2020', 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -58,15 +61,16 @@ CREATE TABLE `benutzer` (
   `Geburtsdatum` date NOT NULL,
   `Adresse` text NOT NULL,
   `IstMitarbeiter` tinyint(1) NOT NULL,
-  `IstVerifiziert` tinyint(1) NOT NULL
+  `IstVerifiziert` tinyint(1) NOT NULL,
+  `HatBewertungGeschrieben` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `benutzer`
 --
 
-INSERT INTO `benutzer` (`ID`, `Benutzername`, `Passwort`, `Vorname`, `Name`, `Geburtsdatum`, `Adresse`, `IstMitarbeiter`, `IstVerifiziert`) VALUES
-(1, 'Flyke', 'Flyke', 'Leo', 'Kaußen', '2007-05-31', 'Sayner-Landstraße 22', 1, 1);
+INSERT INTO `benutzer` (`ID`, `Benutzername`, `Passwort`, `Vorname`, `Name`, `Geburtsdatum`, `Adresse`, `IstMitarbeiter`, `IstVerifiziert`, `HatBewertungGeschrieben`) VALUES
+(1, 'Flyke', 'Flyke', 'Leo', 'Kaußen', '2007-05-31', 'Sayner-Landstraße 22', 1, 1, 0);
 
 -- --------------------------------------------------------
 
