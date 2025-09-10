@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 10. Sep 2025 um 18:38
+-- Erstellungszeit: 10. Sep 2025 um 19:08
 -- Server-Version: 10.4.32-MariaDB
 -- PHP-Version: 8.2.12
 
@@ -36,6 +36,13 @@ CREATE TABLE `auto` (
   `Kennzeichen` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Daten für Tabelle `auto`
+--
+
+INSERT INTO `auto` (`ID`, `Marke`, `Modell`, `Kategorie`, `Leistung`, `Kennzeichen`) VALUES
+(1, 'Mercedes', '190E', 'Limousine', 195, 'NR L 2020');
+
 -- --------------------------------------------------------
 
 --
@@ -53,6 +60,13 @@ CREATE TABLE `benutzer` (
   `IstMitarbeiter` tinyint(1) NOT NULL,
   `IstVerifiziert` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Daten für Tabelle `benutzer`
+--
+
+INSERT INTO `benutzer` (`ID`, `Benutzername`, `Passwort`, `Vorname`, `Name`, `Geburtsdatum`, `Adresse`, `IstMitarbeiter`, `IstVerifiziert`) VALUES
+(1, 'Flyke', 'Flyke', 'Leo', 'Kaußen', '2007-05-31', 'Sayner-Landstraße 22', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -77,6 +91,62 @@ CREATE TABLE `preisklassen` (
   `Preis` int(11) NOT NULL,
   `ZusatzversicherungsPreis` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indizes der exportierten Tabellen
+--
+
+--
+-- Indizes für die Tabelle `auto`
+--
+ALTER TABLE `auto`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indizes für die Tabelle `benutzer`
+--
+ALTER TABLE `benutzer`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indizes für die Tabelle `bewertungen`
+--
+ALTER TABLE `bewertungen`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indizes für die Tabelle `preisklassen`
+--
+ALTER TABLE `preisklassen`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- AUTO_INCREMENT für exportierte Tabellen
+--
+
+--
+-- AUTO_INCREMENT für Tabelle `auto`
+--
+ALTER TABLE `auto`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT für Tabelle `benutzer`
+--
+ALTER TABLE `benutzer`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT für Tabelle `bewertungen`
+--
+ALTER TABLE `bewertungen`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle `preisklassen`
+--
+ALTER TABLE `preisklassen`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
