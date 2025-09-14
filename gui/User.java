@@ -7,7 +7,7 @@ package gui;
  * @author (Ihr Name) 
  * @version (eine Versionsnummer oder ein Datum)
  */
-public class Benutzer
+public class User
 {
     int id;
     String benutzername;
@@ -21,7 +21,7 @@ public class Benutzer
     /**
      * Konstruktor für Objekte der Klasse Benutzer
      */
-    public Benutzer(int pID, String pBenutzername, String pName, String pVorname, String pGeburtsdatum, String pAdresse, boolean pMitarbeiter, boolean pVerifiziert)
+    public User(int pID, String pBenutzername, String pName, String pVorname, String pGeburtsdatum, String pAdresse, boolean pMitarbeiter, boolean pVerifiziert)
     {
         benutzername = pBenutzername;
         name = pName;
