@@ -61,6 +61,19 @@ public class Verwalter {
         }
     }
     
+    
+    public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, String pAdresse, int pMitarbeiter, int pVerifiziert){
+        dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, Adresse, istMitarbeiter, istVerifiziert) VALUES('"+pBenutzername+"', '"+pPasswort+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+pAdresse+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
+            anmelden(pBenutzername, pPasswort);
+        } else {
+            return ("Benutzername bereits vergeben!");
+        }
+        return ("Konto angelegt!");
+    }
+    
     public void datenbankVerbinden () {
         dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
         String fehler = dbConnector.getErrorMessage();
