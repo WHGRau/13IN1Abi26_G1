@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=Verwalter
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Verwalter.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment1.params=pAutos\ pKunden
+comment1.target=Verwalter(java.util.ArrayList,\ java.util.ArrayList)
+comment1.text=\r\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Verwalter\r\n
+comment2.params=pBenutzername\ pPasswort
+comment2.target=java.lang.String\ anmelden(java.lang.String,\ java.lang.String)
+comment3.params=
+comment3.target=void\ datenbankVerbinden()
+comment4.params=
+comment4.target=User\ getUser()
+comment5.params=
+comment5.target=java.util.ArrayList\ getAutos()
+comment6.params=
+comment6.target=java.util.ArrayList\ getKunden()
+comment7.params=pIch
+comment7.target=void\ setUser(User)
+comment8.params=pAutos
+comment8.target=void\ setAutos(java.util.ArrayList)
+comment9.params=pKunden
+comment9.target=void\ setKunden(java.util.ArrayList)
+numComments=10

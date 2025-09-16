@@ -14,20 +14,18 @@ public class User
     String name;
     String vorname;
     String geburtsdatum;
-    String adresse;
     boolean istMitarbeiter;
     boolean istVerifiziert;
     
     /**
      * Konstruktor für Objekte der Klasse Benutzer
      */
-    public User(int pID, String pBenutzername, String pName, String pVorname, String pGeburtsdatum, String pAdresse, boolean pMitarbeiter, boolean pVerifiziert)
+    public User(int pID, String pBenutzername, String pName, String pVorname, String pGeburtsdatum, boolean pMitarbeiter, boolean pVerifiziert)
     {
         benutzername = pBenutzername;
         name = pName;
         vorname = pVorname;
         geburtsdatum = pGeburtsdatum;
-        adresse = pAdresse;
         istMitarbeiter = pMitarbeiter;
         istVerifiziert = pVerifiziert;
     }
@@ -62,10 +60,6 @@ public class User
     
     public String getGeburtsdatum(){
         return geburtsdatum;
-    }
-    
-    public String getAdresse(){
-        return adresse;
     }
     
     public boolean getIstMitarbeiter(){
