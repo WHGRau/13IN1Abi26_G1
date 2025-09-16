@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 14. Sep 2025 um 16:49
--- Server-Version: 10.4.32-MariaDB
--- PHP-Version: 8.2.12
+-- Erstellungszeit: 16. Sep 2025 um 08:58
+-- Server-Version: 10.4.28-MariaDB
+-- PHP-Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `mietwagenverleih ronkel`
+-- Datenbank: `mietwagen_test`
 --
 
 -- --------------------------------------------------------
@@ -48,7 +48,8 @@ INSERT INTO `auto` (`ID`, `Marke`, `Modell`, `Kategorie`, `Leistung`, `Kennzeich
 (2, 'Audi', '80', 'Limousine', 89, 'NR R 80', 0, 1, 0),
 (3, 'Dodge', 'Challenger Hellcat', 'Sportwagen', 717, 'NR IE 717', 0, 4, 0),
 (4, 'Honda', 'Accord', 'Kombi', 140, 'NR G 420', 0, 3, 0),
-(5, 'Lada', 'Niva', 'Geländewagen', 81, 'SE XY 123', 0, 2, 0);
+(5, 'Lada', 'Niva', 'Geländewagen', 81, 'SE XY 123', 0, 2, 0),
+(6, 'Markö', 'D1000', 'Schwer', 12345, 'NR-NR-232323', 23, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -75,7 +76,8 @@ CREATE TABLE `benutzer` (
 INSERT INTO `benutzer` (`ID`, `Benutzername`, `Passwort`, `Vorname`, `Name`, `Geburtsdatum`, `Adresse`, `IstMitarbeiter`, `IstVerifiziert`) VALUES
 (1, 'Flyke', 'Flyke', 'Leo', 'Kaußen', '2007-05-31', 'Sayner-Landstraße 22', 1, 1),
 (2, 'sirtobius', 'sir1395q', 'Tobias', 'Ahrens', '2007-07-04', 'Rheinblick-Siedlung Weißenthurm', 0, 1),
-(3, 'Xxx_shadowgodslayer69_xxX', 'supertornado420', 'Gerhard', 'Müller', '1959-03-12', 'Deutschlandweg 45 Ostland', 0, 0);
+(3, 'Xxx_shadowgodslayer69_xxX', 'supertornado420', 'Gerhard', 'Müller', '1959-03-12', 'Deutschlandweg 45 Ostland', 0, 0),
+(4, 'Klogang420', 'stuhlgang69', 'Franz', 'Kloger', '2001-09-11', 'Reichstagsschtrasse 4.5 45454 Hausen', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -96,7 +98,8 @@ CREATE TABLE `bewertungen` (
 --
 
 INSERT INTO `bewertungen` (`ID`, `Bewertung`, `Kommentar`, `BenutzerID`, `AutoID`) VALUES
-(1, 3, 'Dieser Wagen war ein Erlebnis für mich und meine Frau Gertrude, wir haben es auf der Autobahn mächtig getrieben. Durch die starke Beschleunigung verlor Gertrude beinahe ihr Gebiss!\r\n\r\nJedoch ist der Komfort nicht sehr hoch, wir kamen nur noch mit Hilfe aus diesem Gefährt. ', 3, 3);
+(1, 3, 'Dieser Wagen war ein Erlebnis für mich und meine Frau Gertrude, wir haben es auf der Autobahn mächtig getrieben. Durch die starke Beschleunigung verlor Gertrude beinahe ihr Gebiss!\r\n\r\nJedoch ist der Komfort nicht sehr hoch, wir kamen nur noch mit Hilfe aus diesem Gefährt. ', 3, 3),
+(2, 5, 'Kuhl!!', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -127,16 +130,17 @@ INSERT INTO `preisklassen` (`ID`, `Preis`, `ZusatzversicherungsPreis`) VALUES
 --
 
 CREATE TABLE `wunschliste` (
-  `Auto.ID` int(11) NOT NULL,
-  `Benutzer.ID` int(11) NOT NULL
+  `AutoID` int(11) NOT NULL,
+  `BenutzerID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `wunschliste`
 --
 
-INSERT INTO `wunschliste` (`Auto.ID`, `Benutzer.ID`) VALUES
-(1, 1);
+INSERT INTO `wunschliste` (`AutoID`, `BenutzerID`) VALUES
+(1, 1),
+(1, 2);
 
 --
 -- Indizes der exportierten Tabellen
@@ -167,6 +171,12 @@ ALTER TABLE `preisklassen`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indizes für die Tabelle `wunschliste`
+--
+ALTER TABLE `wunschliste`
+  ADD PRIMARY KEY (`AutoID`,`BenutzerID`);
+
+--
 -- AUTO_INCREMENT für exportierte Tabellen
 --
 
@@ -174,19 +184,19 @@ ALTER TABLE `preisklassen`
 -- AUTO_INCREMENT für Tabelle `auto`
 --
 ALTER TABLE `auto`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT für Tabelle `benutzer`
 --
 ALTER TABLE `benutzer`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT für Tabelle `bewertungen`
 --
 ALTER TABLE `bewertungen`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT für Tabelle `preisklassen`
