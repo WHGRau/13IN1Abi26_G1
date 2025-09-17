@@ -11,14 +11,23 @@ import java.sql.*;
  */
 public class Verwalter {
     private User ich;
-    private ArrayList autos;
-    private ArrayList kunden;
+    private ArrayList<Auto> autos;
+    private ArrayList<Kunde> kunden;
     private DatabaseConnector dbConnector;
     
     /**
      * Konstruktor für Objekte der Klasse Verwalter
      */
-    public Verwalter(ArrayList pAutos, ArrayList pKunden) {
+    public Verwalter() {
+        autos = new ArrayList<Auto>();
+        kunden = new ArrayList<Kunde>();
+        datenbankVerbinden();
+    }
+    
+    /**
+     * Konstruktor für Objekte der Klasse Verwalter
+     */
+    public Verwalter(ArrayList<Auto> pAutos, ArrayList<Kunde> pKunden) {
         autos = pAutos;
         kunden = pKunden;
         datenbankVerbinden();
@@ -105,11 +114,11 @@ public class Verwalter {
         ich = pIch;   
     }
     
-    public void setAutos (ArrayList pAutos) {
+    public void setAutos (ArrayList<Auto> pAutos) {
         autos = pAutos;   
     }
     
-    public void setKunden (ArrayList pKunden) {
+    public void setKunden (ArrayList<Kunde> pKunden) {
         kunden = pKunden;   
     }
 }
