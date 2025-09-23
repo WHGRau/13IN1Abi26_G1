@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 16. Sep 2025 um 08:58
+-- Erstellungszeit: 23. Sep 2025 um 09:28
 -- Server-Version: 10.4.28-MariaDB
 -- PHP-Version: 8.2.4
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `mietwagenverleih ronkel`
+-- Datenbank: `mietwagenverleih_ronkel`
 --
 
 -- --------------------------------------------------------
@@ -34,22 +34,20 @@ CREATE TABLE `auto` (
   `Kategorie` text NOT NULL,
   `Leistung` int(11) NOT NULL,
   `Kennzeichen` text NOT NULL,
-  `WirdGemietetVon` int(11) NOT NULL,
-  `IstPreisklasse` int(11) NOT NULL,
-  `HatBewertung` int(11) NOT NULL
+  `PreisklasseID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `auto`
 --
 
-INSERT INTO `auto` (`ID`, `Marke`, `Modell`, `Kategorie`, `Leistung`, `Kennzeichen`, `WirdGemietetVon`, `IstPreisklasse`, `HatBewertung`) VALUES
-(1, 'Mercedes', '190E', 'Limousine', 195, 'NR L 2020', 0, 2, 0),
-(2, 'Audi', '80', 'Limousine', 89, 'NR R 80', 0, 1, 0),
-(3, 'Dodge', 'Challenger Hellcat', 'Sportwagen', 717, 'NR IE 717', 0, 4, 0),
-(4, 'Honda', 'Accord', 'Kombi', 140, 'NR G 420', 0, 3, 0),
-(5, 'Lada', 'Niva', 'Geländewagen', 81, 'SE XY 123', 0, 2, 0),
-(6, 'Markö', 'D1000', 'Schwer', 12345, 'NR-NR-232323', 23, 0, 0);
+INSERT INTO `auto` (`ID`, `Marke`, `Modell`, `Kategorie`, `Leistung`, `Kennzeichen`, `PreisklasseID`) VALUES
+(1, 'Mercedes', '190E', 'Limousine', 195, 'NR L 2020', 2),
+(2, 'Audi', '80', 'Limousine', 89, 'NR R 80', 1),
+(3, 'Dodge', 'Challenger Hellcat', 'Sportwagen', 717, 'NR IE 717', 4),
+(4, 'Honda', 'Accord', 'Kombi', 140, 'NR G 420', 3),
+(5, 'Lada', 'Niva', 'Geländewagen', 81, 'SE XY 123', 2),
+(6, 'Markö', 'D1000', 'Schwer', 12345, 'NR-NR-232323', 1);
 
 -- --------------------------------------------------------
 
@@ -64,20 +62,20 @@ CREATE TABLE `benutzer` (
   `Vorname` text NOT NULL,
   `Name` text NOT NULL,
   `Geburtsdatum` date NOT NULL,
-  `Adresse` text NOT NULL,
   `IstMitarbeiter` tinyint(1) NOT NULL,
-  `IstVerifiziert` tinyint(1) NOT NULL
+  `IstVerifiziert` tinyint(1) NOT NULL,
+  `AdresseID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Daten für Tabelle `benutzer`
 --
 
-INSERT INTO `benutzer` (`ID`, `Benutzername`, `Passwort`, `Vorname`, `Name`, `Geburtsdatum`, `Adresse`, `IstMitarbeiter`, `IstVerifiziert`) VALUES
-(1, 'Flyke', 'Flyke', 'Leo', 'Kaußen', '2007-05-31', 'Sayner-Landstraße 22', 1, 1),
-(2, 'sirtobius', 'sir1395q', 'Tobias', 'Ahrens', '2007-07-04', 'Rheinblick-Siedlung Weißenthurm', 0, 1),
-(3, 'Xxx_shadowgodslayer69_xxX', 'supertornado420', 'Gerhard', 'Müller', '1959-03-12', 'Deutschlandweg 45 Ostland', 0, 0),
-(4, 'Klogang420', 'stuhlgang69', 'Franz', 'Kloger', '2001-09-11', 'Reichstagsschtrasse 4.5 45454 Hausen', 0, 0);
+INSERT INTO `benutzer` (`ID`, `Benutzername`, `Passwort`, `Vorname`, `Name`, `Geburtsdatum`, `IstMitarbeiter`, `IstVerifiziert`, `AdresseID`) VALUES
+(1, 'Flyke', 'Flyke', 'Leo', 'Kaußen', '2007-05-31', 1, 1, 1),
+(2, 'sirtobius', 'sir1395q', 'Tobias', 'Ahrens', '2007-07-04', 0, 1, 2),
+(3, 'Xxx_shadowgodslayer69_xxX', 'supertornado420', 'Gerhard', 'Müller', '1959-03-12', 0, 0, 3),
+(4, 'Klogang420', 'stuhlgang69', 'Franz', 'Kloger', '2001-09-11', 0, 0, 4);
 
 -- --------------------------------------------------------
 
@@ -122,6 +120,30 @@ INSERT INTO `preisklassen` (`ID`, `Preis`, `ZusatzversicherungsPreis`) VALUES
 (2, 65, 110),
 (3, 175, 300),
 (4, 350, 500);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `standort`
+--
+
+CREATE TABLE `standort` (
+  `Ort` text NOT NULL,
+  `Postleitzahl` int(11) NOT NULL,
+  `Straße` text NOT NULL,
+  `Hausnummer` int(11) NOT NULL,
+  `ID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Daten für Tabelle `standort`
+--
+
+INSERT INTO `standort` (`Ort`, `Postleitzahl`, `Straße`, `Hausnummer`, `ID`) VALUES
+('Ängärs', 27624, 'Sayner-Landstraße', 22, 1),
+('Weißenthurm', 27624, 'Rheinblick-Siedlung', 781, 2),
+('Ostland', 27624, 'Deutschlandweg', 45, 3),
+('Hausen', 45454, 'Reichstagsschtrasse', 54, 4);
 
 -- --------------------------------------------------------
 
@@ -171,6 +193,12 @@ ALTER TABLE `preisklassen`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indizes für die Tabelle `standort`
+--
+ALTER TABLE `standort`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indizes für die Tabelle `wunschliste`
 --
 ALTER TABLE `wunschliste`
@@ -202,6 +230,12 @@ ALTER TABLE `bewertungen`
 -- AUTO_INCREMENT für Tabelle `preisklassen`
 --
 ALTER TABLE `preisklassen`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT für Tabelle `standort`
+--
+ALTER TABLE `standort`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
