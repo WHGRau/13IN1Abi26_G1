@@ -173,8 +173,7 @@ public class Controller {
         stage.setScene(scene);
         stage.show(); 
     }
-    
-        
+     
     @FXML
     void autoHinzufügen(ActionEvent event)throws IOException {
         if(marke1.getText() == "") {
