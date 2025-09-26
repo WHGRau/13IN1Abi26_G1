@@ -97,8 +97,9 @@
             <TextField fx:id="passwort2" layoutX="338.0" layoutY="87.0" promptText="Passwort" />
             <TextField fx:id="vorname1" layoutX="176.0" layoutY="127.0" promptText="Vorname" />
             <TextField fx:id="name1" layoutX="338.0" layoutY="127.0" promptText="Name" />
+            <TextField fx:id="plz1" layoutX="176.0" layoutY="163.0" prefHeight="25.0" prefWidth="45.0" promptText="PLZ" />
+            <TextField fx:id="ort1" layoutX="233.0" layoutY="163.0" prefHeight="25.0" prefWidth="80.0" promptText="Ort" />
             <TextField fx:id="straße1" layoutX="320.0" layoutY="163.0" prefHeight="25.0" prefWidth="110.0" promptText="Straße " />
-            <TextField fx:id="ort1" layoutX="177.0" layoutY="163.0" prefHeight="25.0" prefWidth="126.0" promptText="PLZ + Ort" />
             <TextField fx:id="hausnummer1" layoutX="442.0" layoutY="163.0" prefHeight="25.0" prefWidth="45.0" promptText="Hausnr. " />
             <DatePicker fx:id="geburtsdatum1" layoutX="251.0" layoutY="197.0" promptText="Geburtsdatum" />
             <Button fx:id="registrieren2" layoutX="294.0" layoutY="246.0" mnemonicParsing="false" onAction="#registrieren" text="Registrieren">

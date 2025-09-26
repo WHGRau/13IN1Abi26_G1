@@ -65,6 +65,9 @@ public class Controller {
     
     @FXML
     private Label text1;
+    
+    @FXML
+    private TextField plz1;
 
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -94,38 +97,64 @@ public class Controller {
     
     @FXML
     void registrieren(ActionEvent event) {
-        text1.setText("hasllo");
         if(benutzername2.getText() == "") {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
             return;
         }
         String benutzername = benutzername2.getText();
+        
         if(passwort2.getText() == "") {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
             return;
         }
         String passwort = passwort2.getText();
+        
         if(name1.getText() == "") {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
             return;
         }
         String name = name1.getText();
+        
         if(vorname1.getText() == "") {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
             return;
         }
         String vorname = vorname1.getText();
-        if(ort1.getText() + straße1.getText()+hausnummer1.getText()== "") {
+        
+        if(plz1.getText() == "") {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
             return;
         }
-        String adresse = ort1.getText() + " "+ straße1.getText()+" " +hausnummer1.getText();
+        String plz = plz1.getText();
+        
+        if(ort1.getText() == "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String ort = ort1.getText();
+        
+        if(straße1.getText() == "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String straße = straße1.getText();
+        
+        if(hausnummer1.getText() == "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String hausnummer = hausnummer1.getText();
+        
         if(geburtsdatum1.getValue() == null) {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
             return;
         }
         String geburtsdatum = geburtsdatum1.getValue().toString();
-        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, adresse, 0, 0));  
+        
+        // Wichtig!! Hier wurde für die eigentliche Adresse nur der Ort als 
+        // Platzhalter verwendet. Muss nach fertiger Implementation der 
+        // Adresse noch ausgetauscht werden!!!!
+        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, ort, 0, 0));  
     }
     
     @FXML
