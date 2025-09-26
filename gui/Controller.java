@@ -157,6 +157,25 @@ public class Controller {
     }
     
     @FXML
+    void switchToRegistrierung(ActionEvent event)throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("scenes/registrierung.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+    } 
+    
+    @FXML
+    void switchToAnmeldung(ActionEvent event)throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("scenes/anmeldung.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+    }
+    
+        
+    @FXML
     void autoHinzufügen(ActionEvent event)throws IOException {
         if(marke1.getText() == "") {
             text3.setText("Alle Felder müssen ausgefüllt sein!");
@@ -196,22 +215,5 @@ public class Controller {
         
         text3.setText(model.autoHinzufügen(marke, modell, kategorie, leistung, kennzeichen, preisklasse));
     }
-    
-    @FXML
-    void switchToRegistrierung(ActionEvent event)throws IOException{
-        Parent root = FXMLLoader.load(getClass().getResource("scenes/registrierung.fxml"));
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show(); 
-    } 
-    
-    @FXML
-    void switchToAnmeldung(ActionEvent event)throws IOException{
-        Parent root = FXMLLoader.load(getClass().getResource("scenes/anmeldung.fxml"));
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show(); 
-    } 
+
 }
