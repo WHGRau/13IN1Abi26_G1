@@ -66,7 +66,7 @@ public class Verwalter {
         if (ich != null) {
             return ("Anmeldung erfolgreich!");
         } else {
-            return ("Anmeldung fehlgeschlagen!");    
+            return ("Anmeldung fehlgeschlagen!");  
         }
     }
     

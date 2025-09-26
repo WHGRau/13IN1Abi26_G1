@@ -10,7 +10,7 @@ package gui;
 public  class ModelLoader
 {
     // instance variables - replace the example below with your own
-    private static Model model = new Model();
+    private static Verwalter model = new Verwalter();
 
     /**
      * Constructor for objects of class ModelLoader
@@ -18,10 +18,10 @@ public  class ModelLoader
     public ModelLoader()
     {
         // initialise instance variables
-        model = new Model();
+        model = new Verwalter();
     }
     
-    public static Model getModel(){
+    public static Verwalter getModel(){
         return model;
     }
 

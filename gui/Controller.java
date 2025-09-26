@@ -1,140 +1,148 @@
 package gui;
 
-import java.util.ArrayList;
-import javafx.event.ActionEvent;
-import javafx.event.ActionEvent;
-import javafx.scene.input.MouseEvent;
-import java.io.IOException;
-
-// Imports für GUI Komponenten
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
-// Imports für Tableview
-import javafx.scene.control.TableColumn;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-
-// Imports für Scenenwechsel
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
+import java.io.IOException;
+import javafx.scene.Node;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.DatePicker;
+import java.util.Set;
+import javafx.scene.control.Label;
 
-//Die Klasse Controller
 public class Controller {
-    
-    /* ------------------------------
-     * Elemente der Scene1  
-     * ------------------------------
-     */
+    // Für Anmeldung:
     @FXML
-    private TableView<ToDo> toDoTableView;    
-    
-    @FXML
-    private TableColumn<ToDo, String> beschreibungColumn;
+    private Button anmelden1;
 
     @FXML
-    private TableColumn<ToDo, Integer> prioColumn;
-    
-    @FXML
-    private Button button1;
+    private TextField benutzername1;
 
     @FXML
-    private TextField textField1;
+    private TextField passwort1;
+    
+    @FXML
+    private Button registrieren1;
+    
+    @FXML
+    private Label text2;
+    
+    // Für Regisrierung:
+    @FXML
+    private TextField benutzername2;
 
     @FXML
-    private TextField textField2;
-    
-    @FXML
-    private Button buttonScene1;
-   
-    /* ------------------------------
-     * Elemente der Scene2  
-     * ------------------------------
-     */
-    @FXML
-    private Button buttonScene2;
-     
+    private DatePicker geburtsdatum1;
 
+    @FXML
+    private TextField hausnummer1;
+
+    @FXML
+    private TextField name1;
+
+    @FXML
+    private TextField ort1;
+
+    @FXML
+    private TextField passwort2;
+
+    @FXML
+    private Button registrieren2;
+
+    @FXML
+    private TextField straße1;
+
+    @FXML
+    private TextField vorname1;
+
+    @FXML
+    private Button zuAnmeldung1;
     
-    // Verbindung vom Controller zum Model   
-    private Model model; 
+    @FXML
+    private Label text1;
+
+    // Die Verwalter Klasse ist in diesem Fall unser Model
+    private Verwalter model ;
     
-    public Controller(){
+    public Controller() {
         model = ModelLoader.getModel();
-        
     }
     
-    public void initialize(){
-        // Prüfen, ob scene1 geladen wird
-        if(beschreibungColumn != null){
-            // Vorbereitungen für scene1 - TableView Spalten vorbereiten
-            beschreibungColumn.setCellValueFactory(new PropertyValueFactory<ToDo, String> ("beschreibung"));
-            prioColumn.setCellValueFactory(new PropertyValueFactory<ToDo, Integer>("prioritaet"));
-            tabelViewRefresh();
+    public void initialize() {
+    
+    }    
+    
+    @FXML 
+    void anmelden(ActionEvent event) {
+        String benutzername = benutzername1.getText();
+        if (benutzername == "") {
+            text2.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
         }
-    }
-
-    @FXML
-    void addToDo(ActionEvent event) {
-        
-        String beschreibung = textField1.getText();
-        int    prio         = Integer.parseInt(textField2.getText()); 
-        model.addToDo(beschreibung, prio);
-      
-        tabelViewRefresh();       
-    }
-    
-    // Hilfsmethode für die Tableview
-    private void tabelViewRefresh(){
-        ArrayList<ToDo> toDoList = convertToArrayList(model.getToDoList());      
-        ObservableList<ToDo> data = FXCollections.observableArrayList(toDoList);
-        toDoTableView.setItems(data);
-    }
-    
-    // Hilfsmethode für die Tableview, wird nicht benötigt, wenn mit ArrayLists gearbeitet wird.
-    private ArrayList<ToDo> convertToArrayList(List<ToDo> pList){
-        ArrayList<ToDo> ausgabe = new ArrayList<ToDo>();
-        pList.toFirst();
-        while(pList.hasAccess()){            
-            ausgabe.add(pList.getContent());
-            pList.next();
+        String passwort = passwort1.getText();
+        if (benutzername == "") {
+            text2.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
         }
-        return ausgabe;
+        text2.setText(model.anmelden(benutzername, passwort));
     }
     
     @FXML
-    void tableViewClicked(MouseEvent event) {
-        int selectedID = toDoTableView.getSelectionModel().getSelectedIndex();
-        model.removeToDo(selectedID);
-        tabelViewRefresh();
+    void registrieren(ActionEvent event) {
+        text1.setText("hasllo");
+        if(benutzername2.getText() == "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String benutzername = benutzername2.getText();
+        if(passwort2.getText() == "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String passwort = passwort2.getText();
+        if(name1.getText() == "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String name = name1.getText();
+        if(vorname1.getText() == "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String vorname = vorname1.getText();
+        if(ort1.getText() + straße1.getText()+hausnummer1.getText()== "") {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String adresse = ort1.getText() + " "+ straße1.getText()+" " +hausnummer1.getText();
+        if(geburtsdatum1.getValue() == null) {
+            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            return;
+        }
+        String geburtsdatum = geburtsdatum1.getValue().toString();
+        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, adresse, 0, 0));  
     }
-
+    
     @FXML
-    public void switchtoScene1(ActionEvent event) throws IOException{      
-        Parent root = FXMLLoader.load(getClass().getResource("scenes/scene1.fxml"));
+    void switchToRegistrierung(ActionEvent event)throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("scenes/registrierung.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.show();
-        initialize();
-    }
+        stage.show(); 
+    } 
     
     @FXML
-    public void switchtoScene2(ActionEvent event) throws IOException{
-        Parent root = FXMLLoader.load(getClass().getResource("scenes/scene2.fxml"));
+    void switchToAnmeldung(ActionEvent event)throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("scenes/anmeldung.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.show();
-    }     
-    
-    
-    // MAX IST DOOF
+        stage.show(); 
+    } 
 }
-
