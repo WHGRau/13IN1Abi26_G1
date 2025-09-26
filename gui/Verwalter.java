@@ -83,6 +83,31 @@ public class Verwalter {
         return ("Konto angelegt!");
     }
     
+    /**
+     * Um ein Auto hinzufügen zu können muss man als Mitarbeiter 
+     * angemeldet sein.
+     */
+    public String autoHinzufügen(String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, int pPreisklasse) {
+        if(ich.getIstMitarbeiter()){
+            String marke = pMarke;
+            String modell = pModell;
+            String kategorie = pKategorie;
+            int leistung = pLeistung;
+            String kennzeichen = pKennzeichen; 
+            int preisklasse = pPreisklasse;
+            dbConnector.executeStatement("SELECT kennzeichen FROM auto WHERE Kennzeichen = '"+kennzeichen+"'");
+            QueryResult r = dbConnector.getCurrentQueryResult();
+            if (r.getRowCount() == 0) {
+                dbConnector.executeStatement("INSERT INTO auto(Marke, Modell, Kategorie, Leistung, Kennzeichen, Preisklasse) VALUES('"+marke+"', '"+modell+"', '"+kategorie+"', '"+leistung+"', '"+kennzeichen+"', '"+preisklasse+"')");
+                return("Auto hinzugefügt!");
+            } else {
+                return ("Kennzeichen bereits vergeben!");
+            }
+        } else {
+            return ("Keine Berechtigung!");
+        }
+    }
+    
     public void datenbankVerbinden () {
         dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
         String fehler = dbConnector.getErrorMessage();
