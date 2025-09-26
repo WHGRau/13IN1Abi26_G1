@@ -93,10 +93,6 @@ public class Controller {
 
     @FXML
     private Label text3;
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -158,47 +154,6 @@ public class Controller {
         }
         String geburtsdatum = geburtsdatum1.getValue().toString();
         text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, adresse, 0, 0));  
-    }
-    
-    @FXML
-    void autoHinzufügen(ActionEvent event)throws IOException {
-        if(marke1.getText() == "") {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
-            return;
-        }
-        String marke = marke1.getText();
-        
-        if(modell1.getText() == "") {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
-            return;
-        }
-        String modell = modell1.getText();
-        
-        if(kennzeichen1.getText() == "") {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
-            return;
-        }
-        String kennzeichen = kennzeichen1.getText();
-        
-        if(leistung1.getText() == "") {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
-            return;
-        }
-        int leistung = Integer.parseInt(leistung1.getText()); 
-        
-        if(kategorie1.getText() == "") {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
-            return;
-        }
-        String kategorie = kategorie1.getText();
-        
-        if(preisklasse1.getText() == "") {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
-            return;
-        }
-        int preisklasse = Integer.parseInt(preisklasse1.getText());
-        
-        text3.setText(model.autoHinzufügen(marke, modell, kategorie, leistung, kennzeichen, preisklasse));
     }
     
     @FXML
