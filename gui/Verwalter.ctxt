@@ -1,16 +1,16 @@
 #BlueJ class context
 comment0.target=Verwalter
-comment0.text=\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Verwalter.\n\ \n\ @author\ (Ihr\ Name)\ \n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\n
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Verwalter.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
 comment1.params=
 comment1.target=Verwalter()
-comment1.text=\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Verwalter\n
+comment1.text=\r\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Verwalter\r\n
 comment10.params=pAutos
 comment10.target=void\ setAutos(java.util.ArrayList)
 comment11.params=pKunden
 comment11.target=void\ setKunden(java.util.ArrayList)
 comment2.params=pAutos\ pKunden
 comment2.target=Verwalter(java.util.ArrayList,\ java.util.ArrayList)
-comment2.text=\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Verwalter\n
+comment2.text=\r\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Verwalter\r\n
 comment3.params=pBenutzername\ pPasswort
 comment3.target=java.lang.String\ anmelden(java.lang.String,\ java.lang.String)
 comment4.params=pBenutzername\ pPasswort\ pName\ pVorname\ pGeburtsdatum\ pAdresse\ pMitarbeiter\ pVerifiziert
