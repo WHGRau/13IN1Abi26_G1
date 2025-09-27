@@ -153,6 +153,11 @@ public class Controller {
             return;
         }
         String plz = plz1.getText();
+        int plzNum = Helper.tryParse(plz);
+        if (plzNum < 1) {
+            text1.setText("Die angegebene Postleitzahl ist ungültig!");
+            return;
+        }
         
         if(ort1.getText() == "") {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
@@ -171,6 +176,11 @@ public class Controller {
             return;
         }
         String hausnummer = hausnummer1.getText();
+        int hausnummerNum = Helper.tryParse(hausnummer);
+        if (hausnummerNum < 1) {
+            text1.setText("Die angegebene Hausnummer ist ungültig!");
+            return;
+        }
         
         if(geburtsdatum1.getValue() == null) {
             text1.setText("Alle Felder müssen ausgefüllt sein!");
@@ -181,7 +191,7 @@ public class Controller {
         // Wichtig!! Hier wurde für die eigentliche Adresse nur der Ort als 
         // Platzhalter verwendet. Muss nach fertiger Implementation der 
         // Adresse noch ausgetauscht werden!!!!
-        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, ort, 0, 0));  
+        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, ort, plzNum, straße, hausnummerNum, 0, 0));  
     }
     
     @FXML

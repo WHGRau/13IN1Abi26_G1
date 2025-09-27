@@ -71,16 +71,40 @@ public class Verwalter {
     }
     
     
-    public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, String pAdresse, int pMitarbeiter, int pVerifiziert){
+    public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, String pOrt, int pPostleitzahl, String pStraße, int pHausnummer, int pMitarbeiter, int pVerifiziert){
+        String passwortHash = Helper.toSha256(pPasswort);
+        String standortID = this.getStandortID(dbConnector, pOrt, pPostleitzahl, pStraße, pHausnummer);
+        
+        if (standortID.isEmpty()) {
+            dbConnector.executeStatement("INSERT INTO standort(Ort, Postleitzahl, Straße, Hausnummer) VALUES('"+pOrt+"', '"+pPostleitzahl+"', '"+pStraße+"', '"+pHausnummer+"')");
+            standortID = this.getStandortID(dbConnector, pOrt, pPostleitzahl, pStraße, pHausnummer);
+        }
+        if (standortID.isEmpty() || Helper.tryParse(standortID) < 1) {
+            return "Konnte den Standort nicht verarbeiten!";
+        }
+        
         dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
-            dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, Adresse, istMitarbeiter, istVerifiziert) VALUES('"+pBenutzername+"', '"+pPasswort+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+pAdresse+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
-            anmelden(pBenutzername, pPasswort);
+            String comm = "INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, AdresseID, istMitarbeiter, istVerifiziert) VALUES('"+pBenutzername+"', '"+passwortHash+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+standortID+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')";
+            dbConnector.executeStatement(comm);
+            anmelden(pBenutzername, passwortHash);
         } else {
             return ("Benutzername bereits vergeben!");
         }
         return ("Konto angelegt!");
+    }
+
+    private String getStandortID(DatabaseConnector dbConnector, String pOrt, int pPostleitzahl, String pStraße, int pHausnummer)
+    {
+        dbConnector.executeStatement("SELECT ID FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPostleitzahl+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausnummer+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "";
+        }
+        else {
+            return r.getData()[0][0];
+        }
     }
     
     /**
