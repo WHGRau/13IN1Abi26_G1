@@ -70,6 +70,29 @@ public class Verwalter {
         }
     }
     
+    public String abmelden(){
+        ich = null;
+        return("Abmeldung erfolgreich");
+    }
+    
+    public String kontoLoeschen(){
+        /**
+         * AUSSCHLIESSLICH AUSFÜHREN WENN DER BENUTZER NICHTS MEHR MIETET!!!!!!!!!
+         */
+        String benutzername = ich.benutzername;
+        if(ich == null) return("Nicht angemeldet");
+        
+        dbConnector.executeStatement("SELECT id FROM benutzer WHERE benutzername ='" + benutzername + "'");
+        QueryResult x = dbConnector.getCurrentQueryResult();
+        int id = Integer.parseInt(x.getData() [0][0]);
+        
+        dbConnector.executeStatement("DELETE FROM benutzer WHERE benutzername ='" + benutzername + "'");
+        dbConnector.executeStatement("DELETE FROM standort WHERE id = '" + id + "'");
+        dbConnector.executeStatement("DELETE FROM bewertungen WHERE benutzerID = '" + id + "'");
+        dbConnector.executeStatement("DELETE FROM wunschliste WHERE benutzerID = '" + id + "'");
+        return("Konto erfolgreich gelöscht.");
+    }
+    
     
     public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, String pAdresse, int pMitarbeiter, int pVerifiziert){
         dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
