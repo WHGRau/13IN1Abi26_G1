@@ -115,6 +115,40 @@ public class Verwalter {
         }
     }
     
+    public String abmelden(){
+        ich = null;
+        return("Abmeldung erfolgreich");
+    }
+    
+    public String kontoLoeschen(){
+        /*
+         * AUSSCHLIESSLICH AUSFÜHREN WENN DER BENUTZER NICHTS MEHR MIETET!!!!!!!!!
+         */
+        
+        if(ich == null) return("Nicht angemeldet");
+        String benutzername = ich.getBenutzername();
+        
+        dbConnector.executeStatement("SELECT id FROM benutzer WHERE benutzername ='" + benutzername + "'");
+        QueryResult x = dbConnector.getCurrentQueryResult();
+        int id = Integer.parseInt(x.getData() [0][0]);
+        if (x.getRowCount() == 0) {
+            return("Konnte zu löschenden Nutzer nicht finden!");
+        }
+        
+        dbConnector.executeStatement("SELECT AdresseID FROM benutzer WHERE benutzername ='" + benutzername + "'");
+        x = dbConnector.getCurrentQueryResult();
+        int adresseId = Integer.parseInt(x.getData() [0][0]);
+        if (x.getRowCount() == 0) {
+            return("Konnte zu löschenden Standort nicht finden!");
+        }
+        
+        dbConnector.executeStatement("DELETE FROM benutzer WHERE benutzername ='" + benutzername + "'");
+        dbConnector.executeStatement("DELETE FROM standort WHERE id = '" + adresseId + "'");
+        dbConnector.executeStatement("DELETE FROM bewertungen WHERE benutzerID = '" + id + "'");
+        dbConnector.executeStatement("DELETE FROM wunschliste WHERE benutzerID = '" + id + "'");
+        return("Konto erfolgreich gelöscht.");
+    }
+    
     // Erstellt neuen Standort Datensatz falls nicht vorhanden
     Standort getStandortFromDb(String pOrt, int pPlz, String pStraße, int pHausNr) {
         if (pPlz < 1 || pHausNr < 1) {
@@ -170,7 +204,7 @@ public class Verwalter {
     }
     
     public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
         String fehler = dbConnector.getErrorMessage();
         if (fehler == null) {
           System.out.println("Datenbank wurde erfolgreich verbunden!");
