@@ -15,9 +15,11 @@ import javafx.scene.control.DatePicker;
 import java.util.Set;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class Controller {
     // Für Anmeldung:
@@ -151,22 +153,28 @@ public class Controller {
     private Slider ps1;
     
     @FXML
-    private TableView<String> autoListe1;
+    private TableView<Auto> autoListe1;
     
     @FXML
-    private TableColumn<String, String> markeListe1; 
+    private TableColumn<Auto, String> markeListe1; 
     
     @FXML
-    private TableColumn<String, String> modellListe1;
+    private TableColumn<Auto, String> modellListe1;
     
     @FXML
-    private TableColumn<String, String> kategorieListe1; 
+    private TableColumn<Auto, String> kategorieListe1; 
     
     @FXML
-    private TableColumn<String, Integer> psListe1; 
+    private TableColumn<Auto, Integer> psListe1; 
     
     @FXML
-    private TableColumn<String, Integer> preisListe1; 
+    private TableColumn<Auto, Integer> preisListe1; 
+    
+    @FXML
+    private Button suchen1;
+    
+    @FXML
+    private Button autoAuswählen1;
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -263,12 +271,15 @@ public class Controller {
     
     @FXML
     void autoSuchen(ActionEvent event){
-        QueryResult autos = model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), ps1.getValue());    
-        markeListe1 = new TableColumn<String ,String>("Marke");
-        modellListe1 = new TableColumn<String ,String>("Modell");
-        kategorieListe1 = new TableColumn<String ,String>("Kategorie");
-        psListe1 = new TableColumn<String ,Integer>("Leistung");
-        preisListe1 = new TableColumn<String ,Integer>("Preis");
+        markeListe1.setCellValueFactory(new PropertyValueFactory<>("marke"));
+        modellListe1.setCellValueFactory(new PropertyValueFactory<>("modell"));
+        kategorieListe1.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
+        psListe1.setCellValueFactory(new PropertyValueFactory<>("leistung"));
+        preisListe1.setCellValueFactory(new PropertyValueFactory<>("preisKlasseId"));
+
+        ObservableList<Auto> daten = FXCollections.observableArrayList(model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), ps1.getValue()));
+
+        autoListe1.setItems(daten);
     }
     
     @FXML
@@ -308,9 +319,6 @@ public class Controller {
         stage.show(); 
     }
     
-    /**
-     * Noch nicht funktionsfähig, da keine Anbindung an andere Szene
-     */
     @FXML
     void autoHinzufügen(ActionEvent event)throws IOException {
         
@@ -353,4 +361,21 @@ public class Controller {
         text3.setText(model.autoHinzufügen(marke, modell, kategorie, leistung, kennzeichen, preisklasse));
     }
 
+    @FXML
+    void autoÜbertragen(ActionEvent event)throws IOException {
+        Auto ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
+        if (ausgewähltesAuto != null) {
+            String marke = ausgewähltesAuto.getMarke();
+            String modell = ausgewähltesAuto.getModell();
+            String kategorie = ausgewähltesAuto.getKategorie();
+            int leistung = ausgewähltesAuto.getLeistung();
+            int preisklasse = ausgewähltesAuto.getPreisKlasseId();
+            
+            markeAnzeige.setText(marke);
+            modellAnzeige.setText(modell);
+            kategorieAnzeige.setText(kategorie);
+            LeistungAnzeige.setText(""+leistung+" PS");
+            preisAnzeige1.setText(""+preisklasse+" €");
+        }
+    }
 }

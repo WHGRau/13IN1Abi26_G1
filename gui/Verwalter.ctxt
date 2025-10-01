@@ -33,5 +33,5 @@ comment7.text=\r\n\ Um\ ein\ Auto\ hinzuf\u00FCgen\ zu\ k\u00F6nnen\ muss\ man\ 
 comment8.params=
 comment8.target=void\ datenbankVerbinden()
 comment9.params=pMarke\ pModell\ pKategorie\ pLeistung
-comment9.target=QueryResult\ autoSuchen(java.lang.String,\ java.lang.String,\ java.lang.String,\ double)
+comment9.target=java.util.ArrayList\ autoSuchen(java.lang.String,\ java.lang.String,\ java.lang.String,\ double)
 numComments=16

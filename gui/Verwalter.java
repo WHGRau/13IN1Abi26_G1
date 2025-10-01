@@ -141,34 +141,40 @@ public class Verwalter {
         }
     }
     
-    public QueryResult autoSuchen(String pMarke, String pModell, String pKategorie, double pLeistung){
-        QueryResult autos = null;
+    public ArrayList autoSuchen(String pMarke, String pModell, String pKategorie, double pLeistung){
+        QueryResult auto = null;
+        autos.clear();
         int leistung = (int)pLeistung;
-        if (pMarke != "" && pModell != "" && pKategorie != ""){
+        if (!pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
             dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();
-        } else if (pMarke == "" && pModell != "" && pKategorie != ""){
+            auto = dbConnector.getCurrentQueryResult();
+        } else if (pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
             dbConnector.executeStatement("SELECT * FROM auto WHERE Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();    
-        } else if (pModell == "" && pMarke != "" && pKategorie != ""){
+            auto = dbConnector.getCurrentQueryResult();    
+        } else if (pModell.isEmpty() && !pMarke.isEmpty() && !pKategorie.isEmpty()){
             dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();    
-        } else if (pKategorie == "" && pModell != "" && pMarke != ""){
+            auto = dbConnector.getCurrentQueryResult();    
+        } else if (pKategorie.isEmpty() && !pModell.isEmpty() && !pMarke.isEmpty()){
             dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();
-        } else if (pMarke == "" && pModell =="" && pKategorie != "") {
+            auto = dbConnector.getCurrentQueryResult();
+        } else if (pMarke.isEmpty() && pModell.isEmpty() && !pKategorie.isEmpty()) {
             dbConnector.executeStatement("SELECT * FROM auto WHERE Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();
-        } else if (pMarke == "" && pKategorie =="" && pModell != ""){
+            auto = dbConnector.getCurrentQueryResult();
+        } else if (pMarke.isEmpty() && pKategorie.isEmpty() && !pModell.isEmpty()){
             dbConnector.executeStatement("SELECT * FROM auto WHERE Modell = '"+pModell+"' AND Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();
-        } else if ( pModell == "" && pKategorie =="" && pMarke !=""){
+            auto = dbConnector.getCurrentQueryResult();
+        } else if ( pModell.isEmpty() && pKategorie.isEmpty() && !pMarke.isEmpty()){
             dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();
+            auto = dbConnector.getCurrentQueryResult();
         } else {
             dbConnector.executeStatement("SELECT * FROM auto WHERE Leistung > '"+leistung+"'");  
-            autos = dbConnector.getCurrentQueryResult();    
+            auto = dbConnector.getCurrentQueryResult();    
         }
+        String[][] autoArray = auto.getData();
+        for(int i = 0; i<autoArray.length; i++){
+            autos.add(new Auto(Integer.parseInt(autoArray[i][0]),autoArray[i][1],autoArray[i][2],autoArray[i][3],Integer.parseInt(autoArray[i][4]), autoArray[i][5],Integer.parseInt(autoArray[i][6]), null));    
+        }
+        
         return autos;
     }
     
