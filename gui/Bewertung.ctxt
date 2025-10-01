@@ -1,9 +1,9 @@
 #BlueJ class context
 comment0.target=Bewertung
-comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Bewertung.\r\n\ \r\n\ @author\ (Tobias\ Ahrens)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
+comment0.text=\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Bewertung.\n\ \n\ @author\ (Tobias\ Ahrens)\ \n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\n
 comment1.params=pId\ pBewertung\ pText
 comment1.target=Bewertung(int,\ int,\ java.lang.String)
-comment1.text=\r\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Preisklasse\r\n
+comment1.text=\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Preisklasse\n
 comment2.params=
 comment2.target=int\ getId()
 comment3.params=

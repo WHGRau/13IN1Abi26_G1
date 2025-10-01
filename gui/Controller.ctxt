@@ -14,5 +14,5 @@ comment6.params=event
 comment6.target=void\ switchToAnmeldung(javafx.event.ActionEvent)
 comment7.params=event
 comment7.target=void\ autoHinzuf\u00FCgen(javafx.event.ActionEvent)
-comment7.text=\r\n\ Noch\ nicht\ funktionsf\u00E4hig,\ da\ keine\ Anbindung\ an\ andere\ Szene\r\n
+comment7.text=\n\ Noch\ nicht\ funktionsf\u00E4hig,\ da\ keine\ Anbindung\ an\ andere\ Szene\n
 numComments=8
