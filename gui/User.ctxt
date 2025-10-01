@@ -1,9 +1,9 @@
 #BlueJ class context
 comment0.target=User
-comment0.text=\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Benutzer.\n\ \n\ @author\ (Ihr\ Name)\ \n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\n
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Benutzer.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
 comment1.params=pID\ pBenutzername\ pName\ pVorname\ pGeburtsdatum\ pMitarbeiter\ pVerifiziert\ pAdresse
 comment1.target=User(int,\ java.lang.String,\ java.lang.String,\ java.lang.String,\ java.lang.String,\ boolean,\ boolean,\ Standort)
-comment1.text=\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Benutzer\n
+comment1.text=\r\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Benutzer\r\n
 comment10.params=
 comment10.target=boolean\ getIstMitarbeiter()
 comment11.params=pMitarbeiter

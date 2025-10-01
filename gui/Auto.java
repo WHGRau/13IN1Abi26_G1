@@ -14,15 +14,17 @@ public class Auto {
     private String modell;
     private String kategorie;
     private int leistung;
-    private String kennzeichen; 
+    private String kennzeichen;
+    private int preisKlasseID;
     private ArrayList bewertungen;
-    public Auto(int pId, String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, ArrayList pBewertungen){
+    public Auto(int pId, String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, int pPreisklassenID, ArrayList pBewertungen){
         id = pId;
         marke = pMarke;
         modell = pModell;
         kategorie = pKategorie;
         leistung = pLeistung;
         kennzeichen = pKennzeichen; 
+        preisKlasseID = pPreisklassenID;
         bewertungen = pBewertungen;
     }
     
@@ -52,6 +54,10 @@ public class Auto {
     
     public ArrayList getBewertungen() {
         return bewertungen;    
+    }
+    
+    public int getPreisKlasseId(){
+        return preisKlasseID;
     }
     
     /**
