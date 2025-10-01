@@ -23,6 +23,7 @@ public class User
      */
     public User(int pID, String pBenutzername, String pName, String pVorname, String pGeburtsdatum, boolean pMitarbeiter, boolean pVerifiziert, Standort pAdresse)
     {
+        id = pID;
         benutzername = pBenutzername;
         name = pName;
         vorname = pVorname;

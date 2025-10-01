@@ -34,6 +34,8 @@ public class Verwalter {
     }
     
     public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, Standort pAdresse, int pMitarbeiter, int pVerifiziert){
+        String passwortHash = Helper.toSha256(pPasswort);
+        
         // Standort erstellen
         Standort adresse = getStandortFromDb(pAdresse.getOrt(), pAdresse.getPlz(), pAdresse.getStraße(), pAdresse.getHausNr());
         if (adresse == null) return "Konnte Adresse des Nutzers nicht speichern";
@@ -43,7 +45,7 @@ public class Verwalter {
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
             dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, AdresseID, istMitarbeiter, istVerifiziert) "
-                +"VALUES('"+pBenutzername+"', '"+pPasswort+"', '"+pVorname+"', '"+pName+"', '"+pGeburtsdatum+"', '"+adresse.getId()+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
+                +"VALUES('"+pBenutzername+"', '"+passwortHash+"', '"+pVorname+"', '"+pName+"', '"+pGeburtsdatum+"', '"+adresse.getId()+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
             
             // Prüfen ob Nutzer auch wirklich erstellt wurde
             dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
@@ -64,20 +66,31 @@ public class Verwalter {
     public String anmelden(String pBenutzername, String pPasswort) {
         String benutzername = pBenutzername;
         String passwort = pPasswort;
+        String passwortHash = Helper.toSha256(passwort);
         
-        dbConnector.executeStatement("SELECT * FROM benutzer WHERE Benutzername = '"+benutzername+"' AND Passwort = '"+passwort+"'");
+        dbConnector.executeStatement("SELECT benutzer.ID, benutzer.Benutzername, benutzer.Passwort, benutzer.Vorname, benutzer.Name, benutzer.Geburtsdatum, benutzer.istMitarbeiter, benutzer.istVerifiziert, "
+            +"standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer "
+            +"FROM benutzer "
+            +"JOIN standort ON standort.ID = benutzer.AdresseID "
+            +"WHERE Benutzername = '"+benutzername+"' AND Passwort = '"+passwortHash+"' ");
+            // Das WHERE muss nach dem FROM und dem JOIN, sonst ist MySQL böse
         QueryResult nutzer = dbConnector.getCurrentQueryResult();
         
         if (nutzer.getRowCount() == 0) {
             return("Passwort oder Benutzername falsch!");
         }
-        int id = Integer.parseInt(nutzer.getData() [0][0]);
-        String name = nutzer.getData() [0][4];
-        String vorname = nutzer.getData() [0][3];
-        String geburtsdatum = nutzer.getData() [0][5];
-        Standort adresse = new Standort("ort", 2, "stras", 4); //nutzer.getData() [0][6];
-        int mitarbeiter = Integer.parseInt(nutzer.getData() [0][7]);
-        int verifiziert = Integer.parseInt(nutzer.getData() [0][8]);
+        
+        String[] row = nutzer.getData()[0];
+        int id = Integer.parseInt(row[0]);
+        String name = row[4];
+        String vorname = row[3];
+        String geburtsdatum = row[5];
+        int mitarbeiter = Integer.parseInt(row[6]);
+        int verifiziert = Integer.parseInt(row[7]);
+        
+        int plzParsed = Helper.tryParseInt(row[9]);
+        int hausNrParsed = Helper.tryParseInt(row[11]);
+        Standort adresse = new Standort(row[8], plzParsed, row[10], hausNrParsed);
         
         boolean verifiziertBool;
         boolean mitarbeiterBool;
@@ -104,6 +117,11 @@ public class Verwalter {
     
     // Erstellt neuen Standort Datensatz falls nicht vorhanden
     Standort getStandortFromDb(String pOrt, int pPlz, String pStraße, int pHausNr) {
+        if (pPlz < 1 || pHausNr < 1) {
+            // Ungültige ID/Zahleneingaben
+            return null;
+        }
+        
         dbConnector.executeStatement("SELECT ID, Ort, Postleitzahl, Straße, Hausnummer FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPlz+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausNr+"'");
         QueryResult r = dbConnector.getCurrentQueryResult();
         
@@ -122,11 +140,6 @@ public class Verwalter {
         String[] row = r.getData()[0];
         int plzParsed = Helper.tryParseInt(row[2]);
         int hausNrParsed = Helper.tryParseInt(row[4]);
-        
-        if (plzParsed < 1 || hausNrParsed < 1) {
-            // Ungültige ID/Zahleneingaben
-            return null;
-        }
         
         return new Standort(row[0], row[1], plzParsed, row[3], hausNrParsed);
     }
@@ -157,12 +170,14 @@ public class Verwalter {
     }
     
     public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
         String fehler = dbConnector.getErrorMessage();
         if (fehler == null) {
           System.out.println("Datenbank wurde erfolgreich verbunden!");
         } else {
           System.out.println("Fehlermeldung: " + fehler);
+          // TODO: Irgendwann passenderen Exceptiontyp suchen
+          throw new NullPointerException("Datenbankverbindung Fehlermeldung: " + fehler);
         }
     }
     
