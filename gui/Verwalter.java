@@ -10,7 +10,7 @@ import java.sql.*;
  * @version (eine Versionsnummer oder ein Datum)
  */
 public class Verwalter {
-    private User ich;
+    private User ich = null;
     private ArrayList<Auto> autos;
     private ArrayList<Kunde> kunden;
     private DatabaseConnector dbConnector;
@@ -79,8 +79,8 @@ public class Verwalter {
         /**
          * AUSSCHLIESSLICH AUSFÜHREN WENN DER BENUTZER NICHTS MEHR MIETET!!!!!!!!!
          */
+        if(ich == null) return("Nicht angemeldet!");
         String benutzername = ich.benutzername;
-        if(ich == null) return("Nicht angemeldet");
         
         dbConnector.executeStatement("SELECT id FROM benutzer WHERE benutzername ='" + benutzername + "'");
         QueryResult x = dbConnector.getCurrentQueryResult();
@@ -141,6 +141,36 @@ public class Verwalter {
         }
     }
     
+    public QueryResult autoSuchen(String pMarke, String pModell, String pKategorie, double pLeistung){
+        QueryResult autos = null;
+        int leistung = (int)pLeistung;
+        if (pMarke != "" && pModell != "" && pKategorie != ""){
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();
+        } else if (pMarke == "" && pModell != "" && pKategorie != ""){
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();    
+        } else if (pModell == "" && pMarke != "" && pKategorie != ""){
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();    
+        } else if (pKategorie == "" && pModell != "" && pMarke != ""){
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();
+        } else if (pMarke == "" && pModell =="" && pKategorie != "") {
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();
+        } else if (pMarke == "" && pKategorie =="" && pModell != ""){
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Modell = '"+pModell+"' AND Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();
+        } else if ( pModell == "" && pKategorie =="" && pMarke !=""){
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();
+        } else {
+            dbConnector.executeStatement("SELECT * FROM auto WHERE Leistung > '"+leistung+"'");  
+            autos = dbConnector.getCurrentQueryResult();    
+        }
+        return autos;
+    }
     
     
     
@@ -169,4 +199,5 @@ public class Verwalter {
     public void setKunden (ArrayList<Kunde> pKunden) {
         kunden = pKunden;   
     }
+    
 }

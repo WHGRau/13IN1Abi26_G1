@@ -14,9 +14,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.DatePicker;
 import java.util.Set;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 
 public class Controller {
     // Für Anmeldung:
+    
+    @FXML
+    private Button zuHauptseiteAnmeldung;
+    
     @FXML
     private Button anmelden1;
 
@@ -33,6 +41,9 @@ public class Controller {
     private Label text2;
     
     // Für Regisrierung:
+    @FXML
+    private Button zuHauptseiteRegistrierung;
+    
     @FXML
     private TextField benutzername2;
 
@@ -69,8 +80,11 @@ public class Controller {
     @FXML
     private TextField plz1;
     
-    /**
     // Um Autos hinzuzufügen:
+    
+    @FXML
+    private Button zuHauptseiteAutoHinzufügen;
+    
     @FXML
     private Button autoHinzufügen1;
 
@@ -94,8 +108,66 @@ public class Controller {
 
     @FXML
     private Label text3;
-    */
 
+   
+    // Für die Hauptseite:
+    @FXML
+    private Label kontoLöschen2;
+    
+    @FXML
+    private Label preisAnzeige1;
+    
+    @FXML
+    private Label LeistungAnzeige;
+
+    @FXML
+    private Button anmelden3;
+
+    @FXML
+    private Button ausleihen1;
+
+    @FXML
+    private TextField kategorie2;
+
+    @FXML
+    private Label kategorieAnzeige;
+
+    @FXML
+    private Button kontoLöschen1;
+
+    @FXML
+    private TextField marke2;
+
+    @FXML
+    private Label markeAnzeige;
+
+    @FXML
+    private TextField modell2;
+
+    @FXML
+    private Label modellAnzeige;
+
+    @FXML
+    private Slider ps1;
+    
+    @FXML
+    private TableView<String> autoListe1;
+    
+    @FXML
+    private TableColumn<String, String> markeListe1; 
+    
+    @FXML
+    private TableColumn<String, String> modellListe1;
+    
+    @FXML
+    private TableColumn<String, String> kategorieListe1; 
+    
+    @FXML
+    private TableColumn<String, Integer> psListe1; 
+    
+    @FXML
+    private TableColumn<String, Integer> preisListe1; 
+    
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
     
@@ -104,7 +176,7 @@ public class Controller {
     }
     
     public void initialize() {
-    
+        
     }    
     
     @FXML 
@@ -185,8 +257,32 @@ public class Controller {
     }
     
     @FXML
+    void kontoLöschen(ActionEvent event){
+        kontoLöschen2.setText(model.kontoLoeschen());
+    }
+    
+    @FXML
+    void autoSuchen(ActionEvent event){
+        QueryResult autos = model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), ps1.getValue());    
+        markeListe1 = new TableColumn<String ,String>("Marke");
+        modellListe1 = new TableColumn<String ,String>("Modell");
+        kategorieListe1 = new TableColumn<String ,String>("Kategorie");
+        psListe1 = new TableColumn<String ,Integer>("Leistung");
+        preisListe1 = new TableColumn<String ,Integer>("Preis");
+    }
+    
+    @FXML
     void switchToRegistrierung(ActionEvent event)throws IOException{
         Parent root = FXMLLoader.load(getClass().getResource("scenes/registrierung.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+    } 
+    
+    @FXML
+    void switchToHauptseite(ActionEvent event)throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("scenes/hauptseite.fxml"));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -201,13 +297,23 @@ public class Controller {
         stage.setScene(scene);
         stage.show(); 
     }
-     
+    
+    
+    @FXML
+    void switchToHinzufügen(ActionEvent event)throws IOException{
+        Parent root = FXMLLoader.load(getClass().getResource("scenes/autoHinzufügen.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+    }
+    
     /**
      * Noch nicht funktionsfähig, da keine Anbindung an andere Szene
      */
     @FXML
     void autoHinzufügen(ActionEvent event)throws IOException {
-        /*
+        
         if(marke1.getText() == "") {
             text3.setText("Alle Felder müssen ausgefüllt sein!");
             return;
@@ -245,7 +351,6 @@ public class Controller {
         int preisklasse = Integer.parseInt(preisklasse1.getText());
         
         text3.setText(model.autoHinzufügen(marke, modell, kategorie, leistung, kennzeichen, preisklasse));
-        */
     }
 
 }
