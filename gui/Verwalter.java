@@ -36,7 +36,6 @@ public class Verwalter {
     public String anmelden(String pBenutzername, String pPasswort) {
         String benutzername = pBenutzername;
         String passwort = pPasswort;
-        boolean verifiziertBoolean;
         
         dbConnector.executeStatement("SELECT * FROM benutzer WHERE Benutzername = '"+benutzername+"' AND Passwort = '"+passwort+"'");
         QueryResult nutzer = dbConnector.getCurrentQueryResult();
@@ -48,20 +47,33 @@ public class Verwalter {
         String name = nutzer.getData() [0][4];
         String vorname = nutzer.getData() [0][3];
         String geburtsdatum = nutzer.getData() [0][5];
-        String adresse = nutzer.getData() [0][6];
+        Standort adresse = new Standort("ort", 2, "stras", 4); //nutzer.getData() [0][6];
         int mitarbeiter = Integer.parseInt(nutzer.getData() [0][7]);
         int verifiziert = Integer.parseInt(nutzer.getData() [0][8]);
-        if (verifiziert == 1) {
-            verifiziertBoolean = true;
-        } else verifiziertBoolean = false;    
         
+        boolean verifiziertBool;
+        boolean mitarbeiterBool;
+        if (verifiziert == 1) {
+            verifiziertBool = true;
+        } else {
+            verifiziertBool = false;
+        }
         
         if (mitarbeiter == 1) {
-            ich = new Mitarbeiter(id, benutzername, name, vorname, geburtsdatum, true, verifiziertBoolean);    
+            mitarbeiterBool = true;
+        } else {
+            mitarbeiterBool = false;
+        }
+        
+        ich = new User(id, benutzername, name, vorname, geburtsdatum, mitarbeiterBool, verifiziertBool, adresse); 
+        
+        /*
+        if (mitarbeiter == 1) {
+            ich = new User(id, benutzername, name, vorname, geburtsdatum, true, verifiziertBoolean);    
         } else {
             ich = new Kunde(id, benutzername, name, vorname, geburtsdatum, adresse, false, verifiziertBoolean);        
         }
-        
+        */
         
         if (ich != null) {
             return ("Anmeldung erfolgreich!");
@@ -70,12 +82,52 @@ public class Verwalter {
         }
     }
     
+    Standort getStandortFromDb(String pOrt, int pPlz, String pStraße, int pHausNr) {
+        dbConnector.executeStatement("SELECT ID, Ort, Postleitzahl, Straße, Hausnummer FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPlz+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausNr+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        
+        if (r.getRowCount() == 0) {
+            dbConnector.executeStatement("INSERT INTO standort(Ort, Postleitzahl, Straße, Hausnummer) VALUES('"+pOrt+"', '"+pPlz+"', '"+pStraße+"', '"+pHausNr+"')");
+            dbConnector.executeStatement("SELECT ID, Ort, Postleitzahl, Straße, Hausnummer FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPlz+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausNr+"'");
+            r = dbConnector.getCurrentQueryResult();
+            
+            if (r.getRowCount() == 0) {
+                // Konnte Standort nicht erstellen
+                return null;
+            }
+        }
+        
+        // Standort wurde zurückgegeben
+        String[] row = r.getData()[0];
+        int idParsed = Helper.tryParseInt(row[0]);
+        int plzParsed = Helper.tryParseInt(row[2]);
+        int hausNrParsed = Helper.tryParseInt(row[4]);
+        
+        if (idParsed < 1 || plzParsed < 1 || hausNrParsed < 1)
+        
+        return new Standort();
+    }
     
-    public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, String pAdresse, int pMitarbeiter, int pVerifiziert){
+    Standort getStandortFromQuery() {
+        
+    }
+    
+    
+    public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, Standort pAdresse, int pMitarbeiter, int pVerifiziert){
+        // Standort erstellen
+        dbConnector.executeStatement("SELECT ID FROM standort WHERE Ort = '"+pAdresse.getOrt()+"' AND Postleitzahl = '"+pAdresse.getPlz()+"' AND Straße = '"+pAdresse.getStraße()+"' AND Hausnummer = '"+pAdresse.getHausNr()+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            dbConnector.executeStatement("INSERT INTO standort(Ort, Postleitzahl, Straße, Hausnummer) VALUES('"+pAdresse.getOrt()+"', '"+pPasswort+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+pAdresse+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
+            anmelden(pBenutzername, pPasswort);
+        } else {
+            return ("Benutzername bereits vergeben!");
+        }
+        
         dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
-            dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, Adresse, istMitarbeiter, istVerifiziert) VALUES('"+pBenutzername+"', '"+pPasswort+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+pAdresse+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
+            dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, AdresseID, istMitarbeiter, istVerifiziert) VALUES('"+pBenutzername+"', '"+pPasswort+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+pAdresse+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
             anmelden(pBenutzername, pPasswort);
         } else {
             return ("Benutzername bereits vergeben!");
@@ -109,7 +161,7 @@ public class Verwalter {
     }
     
     public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
         String fehler = dbConnector.getErrorMessage();
         if (fehler == null) {
           System.out.println("Datenbank wurde erfolgreich verbunden!");
@@ -118,9 +170,46 @@ public class Verwalter {
         }
     }
     
+    private String getStandortID(String pOrt, int pPostleitzahl, String pStraße, int pHausnummer)
+    {
+        dbConnector.executeStatement("SELECT ID FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPostleitzahl+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausnummer+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "";
+        }
+        else {
+            return r.getData()[0][0];
+        }
+    }
     
-    
-    
+    private User getExtendedUserFromDb(String pBenutzername) {
+        dbConnector.executeStatement("""
+                SELECT benutzer.ID, benutzer.Benutzername, benutzer.Vorname, benutzer.Name, benutzer.IstMitarbeiter, benutzer.IstVerifiziert, 
+                       standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer
+                FROM benutzer 
+                JOIN standort ON benutzer.AdresseID = adresse.ID
+                WHERE Benutzername = '
+            """+pBenutzername+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            System.out.println("Eigener Nutzer nicht gefunden!!!");
+            return null;
+        }
+        
+        String[] row = r.getData()[0];
+        int id = Helper.tryParseInt(row[0]);
+        if (id <= 0) {
+            System.out.println("Nutzer ID ist ungültig (" + row[0] + ")!");
+            return null;
+        }
+        
+        boolean istMitarbeiter = Helper.tryParseBool(row[5]);
+        boolean istVerifiziert = Helper.tryParseBool(row[6]);
+        Standort adresse = new Standort(row[7], Helper.tryParseInt(row[8]), row[9], Helper.tryParseInt(row[8]));
+                
+        User user = new User(id, row[1], row[2], row[3], row[4], istMitarbeiter, istVerifiziert, adresse);
+        return user;
+    }
     
     
     public User getUser () {

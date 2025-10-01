@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Standort
+comment0.text=\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ Standort.\n\ \n\ @author\ (Ihr\ Name)\ \n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\n
+comment1.params=pOrt\ pPlz\ pStra\u00DFe\ pHausNr
+comment1.target=Standort(java.lang.String,\ int,\ java.lang.String,\ int)
+comment1.text=\n\ Konstruktor\ f\u00FCr\ Objekte\ der\ Klasse\ Standort\n
+comment2.params=
+comment2.target=java.lang.String\ getOrt()
+comment3.params=
+comment3.target=int\ getPlz()
+comment4.params=
+comment4.target=java.lang.String\ getStra\u00DFe()
+comment5.params=
+comment5.target=int\ getHausNr()
+numComments=6

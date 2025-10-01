@@ -9,18 +9,19 @@ package gui;
  */
 public class User
 {
-    int id;
-    String benutzername;
-    String name;
-    String vorname;
-    String geburtsdatum;
-    boolean istMitarbeiter;
-    boolean istVerifiziert;
+    private int id;
+    private String benutzername;
+    private String name;
+    private String vorname;
+    private String geburtsdatum;
+    private boolean istMitarbeiter;
+    private boolean istVerifiziert;
+    private Standort adresse;
     
     /**
      * Konstruktor für Objekte der Klasse Benutzer
      */
-    public User(int pID, String pBenutzername, String pName, String pVorname, String pGeburtsdatum, boolean pMitarbeiter, boolean pVerifiziert)
+    public User(int pID, String pBenutzername, String pName, String pVorname, String pGeburtsdatum, boolean pMitarbeiter, boolean pVerifiziert, Standort pAdresse)
     {
         benutzername = pBenutzername;
         name = pName;
@@ -28,6 +29,7 @@ public class User
         geburtsdatum = pGeburtsdatum;
         istMitarbeiter = pMitarbeiter;
         istVerifiziert = pVerifiziert;
+        adresse = pAdresse;
     }
 
     public int getID(){
@@ -76,5 +78,13 @@ public class User
     
     public void setistVerifiziert(boolean pIstVerifiziert){
         istVerifiziert = pIstVerifiziert;
+    }
+    
+    public Standort getAdresse() {
+        return adresse;
+    }
+    
+    public void setAdresse(Standort pAdresse) {
+        adresse = pAdresse;
     }
 }
