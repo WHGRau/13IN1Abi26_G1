@@ -8,17 +8,27 @@ package gui;
  */
 public class Standort
 {
-    private int ID;
     private String ort;
     private int plz;
     private String straße;
     private int hausNr;
+    private String id;
     
     /**
      * Konstruktor für Objekte der Klasse Standort
      */
     public Standort(String pOrt, int pPlz, String pStraße, int pHausNr)
     {
+        id = "";
+        ort = pOrt;
+        plz = pPlz;
+        straße = pStraße;
+        hausNr = pHausNr;
+    }
+    
+    public Standort(String pId, String pOrt, int pPlz, String pStraße, int pHausNr)
+    {
+        id = pId;
         ort = pOrt;
         plz = pPlz;
         straße = pStraße;
@@ -39,5 +49,9 @@ public class Standort
     
     public int getHausNr() {
         return hausNr;
+    }
+    
+    public String getId() {
+        return id;
     }
 }

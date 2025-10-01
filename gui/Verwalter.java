@@ -12,7 +12,7 @@ import java.sql.*;
 public class Verwalter {
     private User ich;
     private ArrayList<Auto> autos;
-    private ArrayList<Kunde> kunden;
+    private ArrayList<User> kunden;
     private DatabaseConnector dbConnector;
     
     /**
@@ -20,17 +20,45 @@ public class Verwalter {
      */
     public Verwalter() {
         autos = new ArrayList<Auto>();
-        kunden = new ArrayList<Kunde>();
+        kunden = new ArrayList<User>();
         datenbankVerbinden();
     }
     
     /**
      * Konstruktor für Objekte der Klasse Verwalter
      */
-    public Verwalter(ArrayList<Auto> pAutos, ArrayList<Kunde> pKunden) {
+    public Verwalter(ArrayList<Auto> pAutos, ArrayList<User> pKunden) {
         autos = pAutos;
         kunden = pKunden;
         datenbankVerbinden();
+    }
+    
+    public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, Standort pAdresse, int pMitarbeiter, int pVerifiziert){
+        // Standort erstellen
+        Standort adresse = getStandortFromDb(pAdresse.getOrt(), pAdresse.getPlz(), pAdresse.getStraße(), pAdresse.getHausNr());
+        if (adresse == null) return "Konnte Adresse des Nutzers nicht speichern";
+        
+        // Nutzer erstellen
+        dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, AdresseID, istMitarbeiter, istVerifiziert) "
+                +"VALUES('"+pBenutzername+"', '"+pPasswort+"', '"+pVorname+"', '"+pName+"', '"+pGeburtsdatum+"', '"+adresse.getId()+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
+            
+            // Prüfen ob Nutzer auch wirklich erstellt wurde
+            dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
+            r = dbConnector.getCurrentQueryResult();
+            if (r.getRowCount() == 0) {
+                return "Nutzer konnte nach Erstellen nicht gefunden werden!";
+            } else {
+                anmelden(pBenutzername, pPasswort);
+            }
+        }
+        else {
+            return "Konto existiert bereits!";
+        }
+        
+        return ("Konto angelegt!");
     }
     
     public String anmelden(String pBenutzername, String pPasswort) {
@@ -67,14 +95,6 @@ public class Verwalter {
         
         ich = new User(id, benutzername, name, vorname, geburtsdatum, mitarbeiterBool, verifiziertBool, adresse); 
         
-        /*
-        if (mitarbeiter == 1) {
-            ich = new User(id, benutzername, name, vorname, geburtsdatum, true, verifiziertBoolean);    
-        } else {
-            ich = new Kunde(id, benutzername, name, vorname, geburtsdatum, adresse, false, verifiziertBoolean);        
-        }
-        */
-        
         if (ich != null) {
             return ("Anmeldung erfolgreich!");
         } else {
@@ -82,6 +102,7 @@ public class Verwalter {
         }
     }
     
+    // Erstellt neuen Standort Datensatz falls nicht vorhanden
     Standort getStandortFromDb(String pOrt, int pPlz, String pStraße, int pHausNr) {
         dbConnector.executeStatement("SELECT ID, Ort, Postleitzahl, Straße, Hausnummer FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPlz+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausNr+"'");
         QueryResult r = dbConnector.getCurrentQueryResult();
@@ -99,40 +120,15 @@ public class Verwalter {
         
         // Standort wurde zurückgegeben
         String[] row = r.getData()[0];
-        int idParsed = Helper.tryParseInt(row[0]);
         int plzParsed = Helper.tryParseInt(row[2]);
         int hausNrParsed = Helper.tryParseInt(row[4]);
         
-        if (idParsed < 1 || plzParsed < 1 || hausNrParsed < 1)
-        
-        return new Standort();
-    }
-    
-    Standort getStandortFromQuery() {
-        
-    }
-    
-    
-    public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, Standort pAdresse, int pMitarbeiter, int pVerifiziert){
-        // Standort erstellen
-        dbConnector.executeStatement("SELECT ID FROM standort WHERE Ort = '"+pAdresse.getOrt()+"' AND Postleitzahl = '"+pAdresse.getPlz()+"' AND Straße = '"+pAdresse.getStraße()+"' AND Hausnummer = '"+pAdresse.getHausNr()+"'");
-        QueryResult r = dbConnector.getCurrentQueryResult();
-        if (r.getRowCount() == 0) {
-            dbConnector.executeStatement("INSERT INTO standort(Ort, Postleitzahl, Straße, Hausnummer) VALUES('"+pAdresse.getOrt()+"', '"+pPasswort+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+pAdresse+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
-            anmelden(pBenutzername, pPasswort);
-        } else {
-            return ("Benutzername bereits vergeben!");
+        if (plzParsed < 1 || hausNrParsed < 1) {
+            // Ungültige ID/Zahleneingaben
+            return null;
         }
         
-        dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
-        QueryResult r = dbConnector.getCurrentQueryResult();
-        if (r.getRowCount() == 0) {
-            dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, AdresseID, istMitarbeiter, istVerifiziert) VALUES('"+pBenutzername+"', '"+pPasswort+"', '"+pName+"', '"+pVorname+"', '"+pGeburtsdatum+"', '"+pAdresse+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
-            anmelden(pBenutzername, pPasswort);
-        } else {
-            return ("Benutzername bereits vergeben!");
-        }
-        return ("Konto angelegt!");
+        return new Standort(row[0], row[1], plzParsed, row[3], hausNrParsed);
     }
     
     /**
@@ -182,36 +178,6 @@ public class Verwalter {
         }
     }
     
-    private User getExtendedUserFromDb(String pBenutzername) {
-        dbConnector.executeStatement("""
-                SELECT benutzer.ID, benutzer.Benutzername, benutzer.Vorname, benutzer.Name, benutzer.IstMitarbeiter, benutzer.IstVerifiziert, 
-                       standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer
-                FROM benutzer 
-                JOIN standort ON benutzer.AdresseID = adresse.ID
-                WHERE Benutzername = '
-            """+pBenutzername+"'");
-        QueryResult r = dbConnector.getCurrentQueryResult();
-        if (r.getRowCount() == 0) {
-            System.out.println("Eigener Nutzer nicht gefunden!!!");
-            return null;
-        }
-        
-        String[] row = r.getData()[0];
-        int id = Helper.tryParseInt(row[0]);
-        if (id <= 0) {
-            System.out.println("Nutzer ID ist ungültig (" + row[0] + ")!");
-            return null;
-        }
-        
-        boolean istMitarbeiter = Helper.tryParseBool(row[5]);
-        boolean istVerifiziert = Helper.tryParseBool(row[6]);
-        Standort adresse = new Standort(row[7], Helper.tryParseInt(row[8]), row[9], Helper.tryParseInt(row[8]));
-                
-        User user = new User(id, row[1], row[2], row[3], row[4], istMitarbeiter, istVerifiziert, adresse);
-        return user;
-    }
-    
-    
     public User getUser () {
         return ich;        
     }
@@ -232,7 +198,7 @@ public class Verwalter {
         autos = pAutos;   
     }
     
-    public void setKunden (ArrayList<Kunde> pKunden) {
+    public void setKunden (ArrayList<User> pKunden) {
         kunden = pKunden;   
     }
 }
