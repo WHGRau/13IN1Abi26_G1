@@ -191,12 +191,12 @@ public class Controller {
     void anmelden(ActionEvent event) {
         String benutzername = benutzername1.getText();
         if (benutzername == "") {
-            text2.setText("Alle Felder müssen ausgefüllt sein!");
+            text2.setText("Benutzername muss angegeben sein!");
             return;
         }
         String passwort = passwort1.getText();
-        if (benutzername == "") {
-            text2.setText("Alle Felder müssen ausgefüllt sein!");
+        if (passwort == "") {
+            text2.setText("Passwort muss angegeben sein!");
             return;
         }
         text2.setText(model.anmelden(benutzername, passwort));
@@ -205,63 +205,71 @@ public class Controller {
     @FXML
     void registrieren(ActionEvent event) {
         if(benutzername2.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Benutzername muss angegeben sein!");
             return;
         }
         String benutzername = benutzername2.getText();
         
         if(passwort2.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Passwort muss angegeben sein!");
             return;
         }
         String passwort = passwort2.getText();
         
         if(name1.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Name muss angegeben sein");
             return;
         }
         String name = name1.getText();
         
         if(vorname1.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Vorname muss angegeben sein");
             return;
         }
         String vorname = vorname1.getText();
         
         if(plz1.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Postleitzahl muss angegeben sein!");
             return;
         }
         String plz = plz1.getText();
+        int plzParsed = Helper.tryParseInt(plz);
+        if(plzParsed <= 0) {
+            text1.setText("Ungültige Postleitzahl angegeben!");
+            return;
+        }
         
         if(ort1.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Ort muss angegeben sein!");
             return;
         }
         String ort = ort1.getText();
         
         if(straße1.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Straße muss angegeben sein!");
             return;
         }
         String straße = straße1.getText();
         
         if(hausnummer1.getText() == "") {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Hausnummer muss angegeben sein!");
             return;
         }
         String hausnummer = hausnummer1.getText();
+        int hausNrParsed = Helper.tryParseInt(hausnummer);
+        if(hausNrParsed <= 0) {
+            text1.setText("Ungültige Hausnummer angegeben!");
+            return;
+        }
         
         if(geburtsdatum1.getValue() == null) {
-            text1.setText("Alle Felder müssen ausgefüllt sein!");
+            text1.setText("Geburtsdatum muss natürlich ausgefüllt sein!");
             return;
         }
         String geburtsdatum = geburtsdatum1.getValue().toString();
-        
-        // Wichtig!! Hier wurde für die eigentliche Adresse nur der Ort als 
-        // Platzhalter verwendet. Muss nach fertiger Implementation der 
-        // Adresse noch ausgetauscht werden!!!!
-        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, ort, 0, 0));  
+
+        // Ab hier ist die Anmeldung erfolgreich ausgelesen und validiert!
+        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, new Standort(ort, plzParsed, straße, hausNrParsed), 0, 0));  
     }
     
     @FXML
