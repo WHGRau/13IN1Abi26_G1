@@ -103,7 +103,7 @@
             <Label fx:id="modellAnzeige" layoutX="507.0" layoutY="179.0" prefHeight="17.0" prefWidth="59.0" />
             <Label fx:id="LeistungAnzeige" layoutX="510.0" layoutY="205.0" />
             <Label fx:id="kategorieAnzeige" layoutX="511.0" layoutY="230.0" />
-            <Button fx:id="ausleihen1" layoutX="506.0" layoutY="309.0" mnemonicParsing="false" text="Ausleihen" />
+            <Button fx:id="ausleihen1" layoutX="506.0" layoutY="309.0" mnemonicParsing="false" text="Ausleihen" visible="false" />
             <Button fx:id="anmelden3" layoutX="555.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToAnmeldung" text="Anmelden" />
             <Button fx:id="kontoLöschen1" layoutX="455.0" layoutY="15.0" mnemonicParsing="false" onAction="#kontoLöschen" text="Konto löschen" />
             <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToHinzufügen" text="Auto hinzufügen" />
