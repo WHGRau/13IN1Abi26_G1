@@ -214,49 +214,86 @@ public class Verwalter {
         }
     }
     
-    
     /**
      * Sucht nach Autos mit den angebeben Parametern, es können auch alle leer gelassen werden.
      */
-    public ArrayList autoSuchen(String pMarke, String pModell, String pKategorie, double pLeistung){
+    public ArrayList autoSuchen(String pMarke, String pModell, String pKategorie, int pLeistung){
         QueryResult auto = null;
         autos.clear();
         int leistung = (int)pLeistung;
+        String query = getAutoSelectSql;
+        
         if (!pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();
+            query += "AND Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'";  
         } else if (pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();    
+            query += "AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'";
         } else if (pModell.isEmpty() && !pMarke.isEmpty() && !pKategorie.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();    
+            query += "AND Marke = '"+pMarke+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'";
         } else if (pKategorie.isEmpty() && !pModell.isEmpty() && !pMarke.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();
+            query += "AND Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'";
         } else if (pMarke.isEmpty() && pModell.isEmpty() && !pKategorie.isEmpty()) {
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();
+            query += "AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'"; 
         } else if (pMarke.isEmpty() && pKategorie.isEmpty() && !pModell.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Modell = '"+pModell+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();
+            query += "AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'"; 
         } else if ( pModell.isEmpty() && pKategorie.isEmpty() && !pMarke.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();
+            query += "AND Marke = '"+pMarke+"' AND Leistung > '"+leistung+"'";  
         } else {
-            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
-            auto = dbConnector.getCurrentQueryResult();    
-        }
-        String[][] autoArray = auto.getData();
-        for(int i = 0; i<autoArray.length; i++){
-            autos.add(new Auto(Integer.parseInt(autoArray[i][0]),autoArray[i][1],autoArray[i][2],autoArray[i][3],Integer.parseInt(autoArray[i][4]), autoArray[i][5],Integer.parseInt(autoArray[i][8]), null));    
+            query += "AND Leistung > '"+leistung+"'";    
         }
         
-        return autos;
+        dbConnector.executeStatement(query);
+        auto = dbConnector.getCurrentQueryResult();
+        System.out.println("auto query: " + query);
+        
+        ArrayList list = parseAutos(auto);
+        autos = list;
+        return list;
     }
     
+    public ArrayList getGemieteteAutos(QueryResult result){
+        if (ich == null) throw new IllegalCallerException("Kann keine Autos gemietet haben wenn ich nicht angemeldet bin!");
+        if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine Autos mieten!");
+        
+        dbConnector.executeStatement(getAutoSelectSql);
+        
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return new ArrayList();
+        }
+        
+        ArrayList list = parseAutos(r);
+        autos = list;
+        return list;
+    }
     
+    private String getAutoSelectSql = "SELECT "+
+        "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
+        "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis "+
+        "FROM auto, preisklassen WHERE auto.PreisklasseID = preisklassen.ID ";
     
+    private ArrayList parseAutos(QueryResult result) {
+        ArrayList list = new ArrayList();
+        String[][] autoArray = result.getData();
+        
+        for(int i = 0; i < autoArray.length; i++){
+            String[] row = autoArray[i];
+            
+            // Preisklasse
+            int pkId = Helper.tryParseInt(row[6]);
+            int pkPreis = Helper.tryParseInt(row[7]);
+            int pkZVPreis = Helper.tryParseInt(row[8]);
+            Preisklasse pk = new Preisklasse(pkId, pkPreis, pkZVPreis);
+            
+            // Auto
+            int aId = Helper.tryParseInt(row[0]);
+            int aLeistung = Helper.tryParseInt(row[4]);
+            Auto auto = new Auto(aId, row[1], row[2], row[3], aLeistung, row[5], pk);
+            
+            list.add(auto);    
+        }
+        
+        return list;
+    }
     
     private String getStandortID(String pOrt, int pPostleitzahl, String pStraße, int pHausnummer)
     {
