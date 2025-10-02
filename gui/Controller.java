@@ -283,7 +283,7 @@ public class Controller {
         modellListe1.setCellValueFactory(new PropertyValueFactory<>("modell"));
         kategorieListe1.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
         psListe1.setCellValueFactory(new PropertyValueFactory<>("leistung"));
-        preisListe1.setCellValueFactory(new PropertyValueFactory<>("preisKlasseId"));
+        preisListe1.setCellValueFactory(new PropertyValueFactory<>("preis"));
 
         ObservableList<Auto> daten = FXCollections.observableArrayList(model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), ps1.getValue()));
 
@@ -377,7 +377,7 @@ public class Controller {
             String modell = ausgewähltesAuto.getModell();
             String kategorie = ausgewähltesAuto.getKategorie();
             int leistung = ausgewähltesAuto.getLeistung();
-            int preisklasse = ausgewähltesAuto.getPreisKlasseId();
+            int preisklasse = ausgewähltesAuto.getPreis();
             
             markeAnzeige.setText(marke);
             modellAnzeige.setText(modell);

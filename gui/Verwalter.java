@@ -125,7 +125,7 @@ public class Verwalter {
          * AUSSCHLIESSLICH AUSFÜHREN WENN DER BENUTZER NICHTS MEHR MIETET!!!!!!!!!
          */
         if(ich == null) return("Nicht angemeldet!");
-        String benutzername = ich.benutzername;
+        String benutzername = ich.getBenutzername();
         
         dbConnector.executeStatement("SELECT id FROM benutzer WHERE benutzername ='" + benutzername + "'");
         QueryResult x = dbConnector.getCurrentQueryResult();
@@ -203,7 +203,7 @@ public class Verwalter {
     }
     
     public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
         String fehler = dbConnector.getErrorMessage();
         if (fehler == null) {
           System.out.println("Datenbank wurde erfolgreich verbunden!");
@@ -214,38 +214,42 @@ public class Verwalter {
         }
     }
     
+    
+    /**
+     * Sucht nach Autos mit den angebeben Parametern, es können auch alle leer gelassen werden.
+     */
     public ArrayList autoSuchen(String pMarke, String pModell, String pKategorie, double pLeistung){
         QueryResult auto = null;
         autos.clear();
         int leistung = (int)pLeistung;
         if (!pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();
         } else if (pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();    
         } else if (pModell.isEmpty() && !pMarke.isEmpty() && !pKategorie.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();    
         } else if (pKategorie.isEmpty() && !pModell.isEmpty() && !pMarke.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();
         } else if (pMarke.isEmpty() && pModell.isEmpty() && !pKategorie.isEmpty()) {
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();
         } else if (pMarke.isEmpty() && pKategorie.isEmpty() && !pModell.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Modell = '"+pModell+"' AND Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Modell = '"+pModell+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();
         } else if ( pModell.isEmpty() && pKategorie.isEmpty() && !pMarke.isEmpty()){
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Marke = '"+pMarke+"' AND Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Marke = '"+pMarke+"' AND Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();
         } else {
-            dbConnector.executeStatement("SELECT * FROM auto WHERE Leistung > '"+leistung+"'");  
+            dbConnector.executeStatement("SELECT * FROM auto, preisklassen WHERE Leistung > '"+leistung+"'AND auto.PreisklasseID = preisklassen.ID");  
             auto = dbConnector.getCurrentQueryResult();    
         }
         String[][] autoArray = auto.getData();
         for(int i = 0; i<autoArray.length; i++){
-            autos.add(new Auto(Integer.parseInt(autoArray[i][0]),autoArray[i][1],autoArray[i][2],autoArray[i][3],Integer.parseInt(autoArray[i][4]), autoArray[i][5],Integer.parseInt(autoArray[i][6]), null));    
+            autos.add(new Auto(Integer.parseInt(autoArray[i][0]),autoArray[i][1],autoArray[i][2],autoArray[i][3],Integer.parseInt(autoArray[i][4]), autoArray[i][5],Integer.parseInt(autoArray[i][8]), null));    
         }
         
         return autos;
