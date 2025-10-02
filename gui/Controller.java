@@ -371,6 +371,7 @@ public class Controller {
 
     @FXML
     void autoÜbertragen(ActionEvent event)throws IOException {
+        ausleihen1.setVisible(true);
         Auto ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
         if (ausgewähltesAuto != null) {
             String marke = ausgewähltesAuto.getMarke();
@@ -383,7 +384,7 @@ public class Controller {
             modellAnzeige.setText(modell);
             kategorieAnzeige.setText(kategorie);
             LeistungAnzeige.setText(""+leistung+" PS");
-            preisAnzeige1.setText(""+preisklasse+" €");
+            preisAnzeige1.setText(""+preisklasse+" € / Tag");
         }
     }
 }
