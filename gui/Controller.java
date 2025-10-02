@@ -20,6 +20,7 @@ import javafx.scene.control.TableColumn;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.application.Platform;
 
 public class Controller {
     // Für Anmeldung:
@@ -114,6 +115,9 @@ public class Controller {
    
     // Für die Hauptseite:
     @FXML
+    private Button abmelden1;
+    
+    @FXML
     private Label kontoLöschen2;
     
     @FXML
@@ -174,6 +178,9 @@ public class Controller {
     private Button suchen1;
     
     @FXML
+    private Button autoHinzuügen1;
+
+    @FXML
     private Button autoAuswählen1;
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
@@ -188,7 +195,7 @@ public class Controller {
     }    
     
     @FXML 
-    void anmelden(ActionEvent event) {
+    void anmelden(ActionEvent event) throws IOException {
         String benutzername = benutzername1.getText();
         if (benutzername == "") {
             text2.setText("Benutzername muss angegeben sein!");
@@ -199,11 +206,21 @@ public class Controller {
             text2.setText("Passwort muss angegeben sein!");
             return;
         }
-        text2.setText(model.anmelden(benutzername, passwort));
+        String rückgabe = model.anmelden(benutzername, passwort);
+        if (rückgabe.equals("Anmeldung erfolgreich!")) {
+            switchToHauptseite(event);
+        } else {
+            text2.setText(rückgabe);   
+        }
+    }
+    
+    @FXML 
+    void abmelden(ActionEvent event) throws IOException {
+        model.abmelden();
     }
     
     @FXML
-    void registrieren(ActionEvent event) {
+    void registrieren(ActionEvent event) throws IOException {
         if(benutzername2.getText() == "") {
             text1.setText("Benutzername muss angegeben sein!");
             return;
@@ -269,7 +286,12 @@ public class Controller {
         String geburtsdatum = geburtsdatum1.getValue().toString();
 
         // Ab hier ist die Anmeldung erfolgreich ausgelesen und validiert!
-        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, new Standort(ort, plzParsed, straße, hausNrParsed), 0, 0));  
+        String rückgabe = model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, new Standort(ort, plzParsed, straße, hausNrParsed), 0, 0);
+        if (rückgabe.equals("Konto angelegt!")) {
+            switchToHauptseite(event);
+        } else {
+            text1.setText(rückgabe);   
+        }
     }
     
     @FXML
@@ -306,7 +328,32 @@ public class Controller {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show(); 
+        
+        Platform.runLater(() -> {
+            abmelden1.setVisible(true);
+            anmelden3.setVisible(false);
+            kontoLöschen1.setVisible(true);
+        
+            if(model.getUser().getIstMitarbeiter()) {
+                autoHinzufügen1.setVisible(true);
+            }
+        });
+        
+ 
     } 
+    
+    @FXML
+    void buttonVisibility()throws IOException{
+        if(model.getUser() != null){
+            anmelden3.setVisible(false);
+            kontoLöschen1.setVisible(true);
+            if(model.getUser().getIstMitarbeiter()){
+                autoHinzufügen1.setVisible(true);
+            }
+            abmelden1.setVisible(true);
+        }
+    }
+    
     
     @FXML
     void switchToAnmeldung(ActionEvent event)throws IOException{
