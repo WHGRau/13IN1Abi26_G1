@@ -22,6 +22,8 @@ public class Verwalter {
         autos = new ArrayList<Auto>();
         kunden = new ArrayList<User>();
         datenbankVerbinden();
+        
+        anmelden("Klogang420", "stuhlgang69");
     }
     
     /**
@@ -31,6 +33,8 @@ public class Verwalter {
         autos = pAutos;
         kunden = pKunden;
         datenbankVerbinden();
+        
+        anmelden("Klogang420", "stuhlgang69");
     }
     
     public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, Standort pAdresse, int pMitarbeiter, int pVerifiziert){
@@ -109,7 +113,12 @@ public class Verwalter {
         ich = new User(id, benutzername, name, vorname, geburtsdatum, mitarbeiterBool, verifiziertBool, adresse); 
         
         if (ich != null) {
-            return ("Anmeldung erfolgreich!");
+            if (ich.getIstMitarbeiter()) {
+                return ("Erfolgreich als Mitarbeiter angemeldet!");
+            }
+            else {
+                return ("Erfolgreich als Kunde angemeldet!");
+            }
         } else {
             return ("Anmeldung fehlgeschlagen!");  
         }
@@ -265,14 +274,14 @@ public class Verwalter {
     }
     
     private ArrayList getGemieteteAutosInternal(int userID, boolean früher) {
-        Date date = new java.util.Date();
+        String timestamp = getNowDateTime();
         String query = getGemieteteAutosSql + " AND mietet.UserID = " + userID;
         // Nur früher gemietete Autos, sonst momentan Gemietete
         if (früher) {
-            query += " AND mietet.RückgabeAm < " + date;
+            query += " AND mietet.RückgabeAm < " + timestamp;
         }
         else {
-            query += " AND mietet.RückgabeAm >= " + date;
+            query += " AND mietet.RückgabeAm >= " + timestamp;
         }
         
         dbConnector.executeStatement(query);
@@ -286,24 +295,118 @@ public class Verwalter {
         return list;
     }
     
-    public String autoMieten(int autoID, int userID) {
-        /*
-        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
-        if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine Autos mieten!");
+    public String autoMieten(int autoID, int userID, String rückgabeAm) {
+        if (ich == null) return "Nicht angemeldet!";
+        if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter dürfen Autos vermieten!";
         
-        dbConnector.executeStatement(query);
+        // Prüfen ob Auto existiert
+        if (!existiertAuto(autoID)) {
+            return "Auto existiert nicht in der Datenbank!";
+        }
+        
+        // Prüfen ob der Nutzer existiert und Kunde ist
+        dbConnector.executeStatement("SELECT benutzer.ID, benutzer.IstMitarbeiter FROM benutzer WHERE benutzer.ID = " + userID);
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
-            return new ArrayList();
-        }      
+            return "Auto wird gerade bereits vermietet!";
+        }
+        else if (r.getData()[0][1] != "0") {
+            return "Nur Kunden darf man Autos vermieten!";
+        }
+        
+        String timestamp = getNowDateTime();
+        
+        // Prüfen ob niemand das Auto gerade am Mieten ist
+        dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, UserID FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
+        r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() > 0) {
+            return "Auto wird gerade bereits vermietet!";
+        }
+        
+        // Relation endlich hinzufügen
+        dbConnector.executeStatement("INSERT INTO mietet (UserID, AutoID, AusgeliehenAm, RückgabeAm) VALUES (" + userID + ", " + autoID + ", '" + timestamp + "', '" + rückgabeAm + "')");
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
+        /*
+        r = dbConnector.getCurrentQueryResult();
+        
+        // Prüfen ob Relation erstellt wurde
+        dbConnector.executeStatement("SELECT COUNT(*) FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + userID);
+        r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "Konnte das Auto aus unbekanntem Grund nicht vermieten!!";
+        }
         */
-       return "j";
+        
+        return "Auto erfolgreich vermietet!";
     }
     
     public String autoRückgabe(int autoID) {
         if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
-        if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine Autos zurückgeben!");
-        return "WIP";   
+        if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine selbst ausgeliehenen Autos zurückgeben!");
+        
+        // Prüfen ob Auto existiert
+        if (!existiertAuto(autoID)) {
+            return "Auto existiert nicht in der Datenbank!";
+        }
+        
+        String timestamp = getNowDateTime();
+        int ownID = ich.getID();
+        
+        // Prüfen ob wir das Auto überhaupt gemietet haben
+        dbConnector.executeStatement("SELECT COUNT(*) FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "Du mietest dieses Auto nicht mal, hau ab!";
+        }
+        
+        // Relation endlich entfernen
+        dbConnector.executeStatement("DELETE FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
+        // Prüfen ob wir immer noch das Auto mieten
+        dbConnector.executeStatement("SELECT COUNT(*) FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
+        r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() > 0) {
+            return "Fehlschlag: Nutzer mietet das Auto immer noch!";
+        }
+        
+        return "Nun mietet keiner das Auto mehr";   
+    }
+    
+    public String autoZwangsRückgabe(int autoID) {
+        if (ich == null) return "Nicht angemeldet!";
+        if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter können Autos zurück ins Lager erzwingen!";
+        
+        // Prüfen ob Auto existiert
+        if (!existiertAuto(autoID)) {
+            return "Auto existiert nicht in der Datenbank!";
+        }
+        
+        String timestamp = getNowDateTime();
+        dbConnector.executeStatement("UPDATE mietet SET RückgabeAm = " + timestamp + " WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
+        // Prüfen ob nun immer noch wer das Auto mietet
+        dbConnector.executeStatement("SELECT COUNT(*) FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() > 0) {
+            return "Fehlschlag: " + r.getData()[0][0] + " Nutzer mieten das Auto immer noch!";
+        }
+        
+        return "Nun mietet keiner das Auto mehr";        
+    }
+    
+    private boolean existiertAuto(int autoID) {
+        dbConnector.executeStatement("SELECT ID FROM auto WHERE auto.ID = " + autoID);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        return r.getRowCount() > 0;
     }
     
     public MietInfo getMietRelation(int autoID) {
@@ -377,7 +480,7 @@ public class Verwalter {
     }
     
     public String getNowDateTime() {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()); // HH -> 24h; hh -> 12h am/pm
     }
     
     public User getUser () {
