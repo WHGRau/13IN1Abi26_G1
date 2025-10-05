@@ -12,6 +12,7 @@ comment13.params=event
 comment13.target=void\ autoHinzuf\u00FCgen(javafx.event.ActionEvent)
 comment14.params=event
 comment14.target=void\ auto\u00DCbertragen(javafx.event.ActionEvent)
+comment14.text=\r\n\ Ein\ in\ der\ Tabelle\ ausgew\u00E4hltes\ Auto\ wird\ durch\ Dr\u00FCcken\ des\ dazu-\r\n\ geh\u00F6rigen\ Buttons\ in\ die\ Anzeige\ daneben\ gebracht.\r\n
 comment2.params=
 comment2.target=void\ initialize()
 comment3.params=event

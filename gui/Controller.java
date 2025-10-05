@@ -438,9 +438,15 @@ public class Controller {
         text3.setText(model.autoHinzufügen(marke, modell, kategorie, leistung, kennzeichen, preisklasse));
     }
 
+    
+    /**
+     * Ein in der Tabelle ausgewähltes Auto wird durch Drücken des dazu-
+     * gehörigen Buttons in die Anzeige daneben gebracht.
+     */
     @FXML
     void autoÜbertragen(ActionEvent event)throws IOException {
         ausleihen1.setVisible(true);
+        rückgabe1.setVisible(true);
         Auto ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
         if (ausgewähltesAuto != null) {
             String marke = ausgewähltesAuto.getMarke();
