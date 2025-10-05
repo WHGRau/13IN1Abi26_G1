@@ -16,6 +16,10 @@ public class Auto {
     private int leistung;
     private String kennzeichen;
     private Preisklasse pk;
+    
+    // Mietinfo
+    private MietInfo mietInfo;
+    
     public Auto(int pId, String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, Preisklasse pPreis){
         id = pId;
         marke = pMarke;
@@ -24,6 +28,17 @@ public class Auto {
         leistung = pLeistung;
         kennzeichen = pKennzeichen; 
         pk = pPreis;
+    }
+    
+    public Auto(int pId, String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, Preisklasse pPreis, MietInfo pMietInfo){
+        id = pId;
+        marke = pMarke;
+        modell = pModell;
+        kategorie = pKategorie;
+        leistung = pLeistung;
+        kennzeichen = pKennzeichen; 
+        pk = pPreis;
+        mietInfo = pMietInfo;
     }
     
     public int getID() {
@@ -52,5 +67,9 @@ public class Auto {
     
     public Preisklasse getPreis(){
         return pk;
+    }
+    
+    public MietInfo getMietInfo(){
+        return mietInfo;
     }
 }

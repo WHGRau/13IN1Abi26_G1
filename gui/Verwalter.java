@@ -1,7 +1,7 @@
 package gui;
 import java.util.ArrayList;
 import java.sql.*;
-
+import java.util.Date;
 
 /**
  * Beschreiben Sie hier die Klasse Verwalter.
@@ -203,7 +203,7 @@ public class Verwalter {
     }
     
     public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
         String fehler = dbConnector.getErrorMessage();
         if (fehler == null) {
           System.out.println("Datenbank wurde erfolgreich verbunden!");
@@ -221,7 +221,7 @@ public class Verwalter {
         QueryResult auto = null;
         autos.clear();
         int leistung = (int)pLeistung;
-        String query = getAutoSelectSql;
+        String query = getAutoSql;
         
         if (!pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
             query += "AND Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'";  
@@ -245,33 +245,92 @@ public class Verwalter {
         auto = dbConnector.getCurrentQueryResult();
         System.out.println("auto query: " + query);
         
-        ArrayList list = parseAutos(auto);
+        ArrayList list = parseAutos(auto, false);
         autos = list;
         return list;
     }
     
-    public ArrayList getGemieteteAutos(QueryResult result){
-        if (ich == null) throw new IllegalCallerException("Kann keine Autos gemietet haben wenn ich nicht angemeldet bin!");
+    public ArrayList getGemieteteAutos(boolean früher){
+        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
         if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine Autos mieten!");
         
-        dbConnector.executeStatement(getAutoSelectSql);
+        return this.getGemieteteAutosInternal(ich.getID(), früher);
+    }
+    
+    public ArrayList getGemieteteAutosVon(int userID, boolean früher){
+        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) throw new IllegalCallerException("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
         
+        return this.getGemieteteAutosInternal(userID, früher);
+    }
+    
+    private ArrayList getGemieteteAutosInternal(int userID, boolean früher) {
+        Date date = new java.util.Date();
+        String query = getGemieteteAutosSql + " AND mietet.UserID = " + userID;
+        // Nur früher gemietete Autos, sonst momentan Gemietete
+        if (früher) {
+            query += " AND mietet.RückgabeAm < " + date;
+        }
+        else {
+            query += " AND mietet.RückgabeAm >= " + date;
+        }
+        
+        dbConnector.executeStatement(query);
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
             return new ArrayList();
         }
         
-        ArrayList list = parseAutos(r);
+        ArrayList list = parseAutos(r, true);
         autos = list;
         return list;
     }
     
-    private String getAutoSelectSql = "SELECT "+
-        "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
-        "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis "+
-        "FROM auto, preisklassen WHERE auto.PreisklasseID = preisklassen.ID ";
+    public String autoMieten(int autoID, int userID) {
+        /*
+        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine Autos mieten!");
+        
+        dbConnector.executeStatement(query);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return new ArrayList();
+        }      
+        */
+       return "j";
+    }
     
-    private ArrayList parseAutos(QueryResult result) {
+    public String autoRückgabe(int autoID) {
+        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine Autos zurückgeben!");
+        return "WIP";   
+    }
+    
+    public MietInfo getMietRelation(int autoID) {
+        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
+        
+        dbConnector.executeStatement("SELECT mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID FROM mietet WHERE mietet.AutoID = " + autoID);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return null;
+        }
+        String[] row = r.getData()[0];
+        
+        int muID = Helper.tryParseInt(row[2]);
+        MietInfo mietInfo = new MietInfo(row[0], row[1], muID);
+        return mietInfo;
+    }
+    
+    private String autoSelectSql = "SELECT "+
+        "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
+        "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis";
+    
+    private String getAutoSql = autoSelectSql + " FROM auto, preisklassen WHERE auto.PreisklasseID = preisklassen.ID ";
+    
+    private String getGemieteteAutosSql = autoSelectSql + ", mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID "+
+        "FROM auto, preisklassen, mietet WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID ";
+        
+    private ArrayList parseAutos(QueryResult result, boolean hatMietInfo) {
         ArrayList list = new ArrayList();
         String[][] autoArray = result.getData();
         
@@ -289,6 +348,11 @@ public class Verwalter {
             int aLeistung = Helper.tryParseInt(row[4]);
             Auto auto = new Auto(aId, row[1], row[2], row[3], aLeistung, row[5], pk);
             
+            if (hatMietInfo) {
+                int muID = Helper.tryParseInt(row[11]);
+                MietInfo mietInfo = new MietInfo(row[9], row[10], muID);
+            }
+            
             list.add(auto);    
         }
         
@@ -305,6 +369,15 @@ public class Verwalter {
         else {
             return r.getData()[0][0];
         }
+    }
+    
+    // source: https://stackoverflow.com/questions/8345023/need-to-get-current-timestamp-in-java
+    public String getNowDate() {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    }
+    
+    public String getNowDateTime() {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date());
     }
     
     public User getUser () {
