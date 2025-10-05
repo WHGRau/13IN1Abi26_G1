@@ -182,6 +182,12 @@ public class Controller {
 
     @FXML
     private Button autoAuswählen1;
+
+    @FXML
+    private Label preis4;
+    
+    @FXML
+    private DatePicker rückgabe1;
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -217,6 +223,7 @@ public class Controller {
     @FXML 
     void abmelden(ActionEvent event) throws IOException {
         model.abmelden();
+        switchToHauptseite(event); //Hauptseite neuladen
     }
     
     @FXML
@@ -321,25 +328,40 @@ public class Controller {
         stage.show(); 
     } 
     
+    /**
+     * Ruft die Hauptseite auf oder lädt sie neu.
+     * Überprüft dabei ob ein Nutzer angemeldet ist usw. um aufgrunddessen
+     * Elemente anzuzeigen oder zu verbergeben.
+     */
     @FXML
     void switchToHauptseite(ActionEvent event)throws IOException{
-        Parent root = FXMLLoader.load(getClass().getResource("scenes/hauptseite.fxml"));
+        // Verbesserter Code von ChatGPT
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/hauptseite.fxml"));
+        Parent root = loader.load();
+        
+        // Zugriff auf den Controller
+        Controller controller = loader.getController(); 
+                
+        // Code aus Vorlage
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show(); 
         
+        // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
+        // Fensters ausgeführt werden
         Platform.runLater(() -> {
-            abmelden1.setVisible(true);
-            anmelden3.setVisible(false);
-            kontoLöschen1.setVisible(true);
-        
+            if(model.getUser() != null){
+                controller.abmelden1.setVisible(true);
+                controller.anmelden3.setVisible(false);
+                controller.kontoLöschen1.setVisible(true);  
+            }
+
             if(model.getUser().getIstMitarbeiter()) {
-                autoHinzufügen1.setVisible(true);
+                controller.autoHinzufügen1.setVisible(true);
             }
         });
         
- 
     } 
     
     @FXML

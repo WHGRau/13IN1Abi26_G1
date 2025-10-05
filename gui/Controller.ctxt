@@ -28,4 +28,5 @@ comment8.params=event
 comment8.target=void\ switchToRegistrierung(javafx.event.ActionEvent)
 comment9.params=event
 comment9.target=void\ switchToHauptseite(javafx.event.ActionEvent)
+comment9.text=\r\n\ Ruft\ die\ Hauptseite\ auf\ oder\ l\u00E4dt\ sie\ neu.\r\n\ \u00DCberpr\u00FCft\ dabei\ ob\ ein\ Nutzer\ angemeldet\ ist\ usw.\ um\ aufgrunddessen\r\n\ Elemente\ anzuzeigen\ oder\ zu\ verbergeben.\r\n
 numComments=15
