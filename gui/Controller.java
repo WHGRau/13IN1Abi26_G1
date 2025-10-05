@@ -356,12 +356,10 @@ public class Controller {
                 controller.anmelden3.setVisible(false);
                 controller.kontoLöschen1.setVisible(true);  
             }
-
             if(model.getUser().getIstMitarbeiter()) {
-                controller.autoHinzufügen1.setVisible(true);
+                controller.autoHinzuügen1.setVisible(true);
             }
         });
-        
     } 
     
     @FXML
