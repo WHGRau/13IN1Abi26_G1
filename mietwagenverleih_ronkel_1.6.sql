@@ -133,7 +133,8 @@ CREATE TABLE `mietet` (
   `UserID` int(11) NOT NULL,
   `AutoID` int(11) NOT NULL,
   `AusgeliehenAm` datetime NOT NULL,
-  `RückgabeAm` datetime NOT NULL
+  `RückgabeAm` datetime NOT NULL,
+  PRIMARY KEY (`UserID`,`AutoID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -145,9 +146,9 @@ LOCK TABLES `mietet` WRITE;
 /*!40000 ALTER TABLE `mietet` DISABLE KEYS */;
 set autocommit=0;
 INSERT INTO `mietet` VALUES
-(2,1,'2001-09-11 00:00:00','2026-05-20 00:00:00'),
-(2,1,'2001-09-11 00:00:00','2023-05-24 00:00:00'),
-(5,3,'2001-09-11 00:00:00','2023-05-24 00:00:00');
+(5,3,'2001-09-11 00:00:00','2027-05-24 00:00:00'),
+(4,4,'2025-10-06 19:03:38','2025-10-06 19:04:01'),
+(2,6,'2025-10-06 19:51:43','2027-05-24 00:00:50');
 /*!40000 ALTER TABLE `mietet` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -263,4 +264,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-10-05 19:04:02
+-- Dump completed on 2025-10-06 19:58:16

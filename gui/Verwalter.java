@@ -33,8 +33,6 @@ public class Verwalter {
         autos = pAutos;
         kunden = pKunden;
         datenbankVerbinden();
-        
-        anmelden("Klogang420", "stuhlgang69");
     }
     
     public String registrieren (String pBenutzername, String pPasswort, String pName, String pVorname, String pGeburtsdatum, Standort pAdresse, int pMitarbeiter, int pVerifiziert){
@@ -211,22 +209,11 @@ public class Verwalter {
         }
     }
     
-    public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
-        String fehler = dbConnector.getErrorMessage();
-        if (fehler == null) {
-          System.out.println("Datenbank wurde erfolgreich verbunden!");
-        } else {
-          System.out.println("Fehlermeldung: " + fehler);
-          // TODO: Irgendwann passenderen Exceptiontyp suchen
-          throw new NullPointerException("Datenbankverbindung Fehlermeldung: " + fehler);
-        }
-    }
-    
     /**
      * Sucht nach Autos mit den angebeben Parametern, es können auch alle leer gelassen werden.
+     * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
      */
-    public ArrayList autoSuchen(String pMarke, String pModell, String pKategorie, int pLeistung){
+    public String autoSuchen(String pMarke, String pModell, String pKategorie, int pLeistung){
         QueryResult auto = null;
         autos.clear();
         int leistung = (int)pLeistung;
@@ -250,52 +237,93 @@ public class Verwalter {
             query += "AND Leistung > '"+leistung+"'";    
         }
         
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
         dbConnector.executeStatement(query);
         auto = dbConnector.getCurrentQueryResult();
         System.out.println("auto query: " + query);
         
         ArrayList list = parseAutos(auto, false);
         autos = list;
-        return list;
+        return null;
     }
     
-    public ArrayList getGemieteteAutos(boolean früher){
-        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
-        if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine Autos mieten!");
+    /**
+     * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
+     */
+    public String getGemieteteAutos(boolean aktuell){
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() == true) return ("Mitarbeiter dürfen keine Autos mieten!");
         
-        return this.getGemieteteAutosInternal(ich.getID(), früher);
+        autos = this.getGemieteteAutosInternal(ich.getID(), aktuell);
+        return null; 
     }
     
-    public ArrayList getGemieteteAutosVon(int userID, boolean früher){
-        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
-        if (ich.getIstMitarbeiter() != true) throw new IllegalCallerException("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
+    /**
+     * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg.
+     */
+    public String getGemieteteAutosVon(int userID, boolean aktuell){
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
         
-        return this.getGemieteteAutosInternal(userID, früher);
+        autos = this.getGemieteteAutosInternal(userID, aktuell);
+        return null; 
     }
     
-    private ArrayList getGemieteteAutosInternal(int userID, boolean früher) {
+    private ArrayList getGemieteteAutosInternal(int userID, boolean aktuell) {
         String timestamp = getNowDateTime();
         String query = getGemieteteAutosSql + " AND mietet.UserID = " + userID;
+        
         // Nur früher gemietete Autos, sonst momentan Gemietete
-        if (früher) {
-            query += " AND mietet.RückgabeAm < " + timestamp;
+        if (!aktuell) {
+            query += " AND mietet.RückgabeAm < '" + timestamp + "'";
         }
         else {
-            query += " AND mietet.RückgabeAm >= " + timestamp;
+            query += " AND mietet.RückgabeAm >= '" + timestamp + "'";
         }
         
         dbConnector.executeStatement(query);
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
-            return new ArrayList();
+            return new ArrayList(); // leere Liste
+        }
+        
+        ArrayList list = parseAutos(r, true);
+        return list;
+    }
+    
+    /**
+     * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
+     */
+    public String getGemieteteAutosVonAllen(boolean aktuell){
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
+        
+        String timestamp = getNowDateTime();
+        String query = getGemieteteAutosSql;
+        // Nur früher gemietete Autos, sonst momentan Gemietete
+        if (!aktuell) {
+            query += " AND mietet.RückgabeAm < '" + timestamp + "'";
+        }
+        else {
+            query += " AND mietet.RückgabeAm >= '" + timestamp + "'";
+        }
+        
+        dbConnector.executeStatement(query);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            autos = new ArrayList(); // leere Liste
+            return null;
         }
         
         ArrayList list = parseAutos(r, true);
         autos = list;
-        return list;
+        return null;
     }
     
-    public String autoMieten(int autoID, int userID, String rückgabeAm) {
+    public String autoVermieten(int autoID, int userID, String rückgabeAm) {
         if (ich == null) return "Nicht angemeldet!";
         if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter dürfen Autos vermieten!";
         
@@ -310,7 +338,7 @@ public class Verwalter {
         if (r.getRowCount() == 0) {
             return "Auto wird gerade bereits vermietet!";
         }
-        else if (r.getData()[0][1] != "0") {
+        else if (!r.getData()[0][1].equals("0")) {
             return "Nur Kunden darf man Autos vermieten!";
         }
         
@@ -320,7 +348,7 @@ public class Verwalter {
         dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, UserID FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
         r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() > 0) {
-            return "Auto wird gerade bereits vermietet!";
+            return "Auto wird gerade bereits von Nutzer ID " + r.getData()[0][2] + " gemietet!";
         }
         
         // Relation endlich hinzufügen
@@ -347,29 +375,31 @@ public class Verwalter {
         if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
         if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine selbst ausgeliehenen Autos zurückgeben!");
         
+        /*
         // Prüfen ob Auto existiert
         if (!existiertAuto(autoID)) {
             return "Auto existiert nicht in der Datenbank!";
         }
+        */
         
         String timestamp = getNowDateTime();
         int ownID = ich.getID();
         
         // Prüfen ob wir das Auto überhaupt gemietet haben
-        dbConnector.executeStatement("SELECT COUNT(*) FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
+        dbConnector.executeStatement("SELECT * FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
             return "Du mietest dieses Auto nicht mal, hau ab!";
         }
         
-        // Relation endlich entfernen
-        dbConnector.executeStatement("DELETE FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
+        // Relation endlich aktualisieren
+        dbConnector.executeStatement("UPDATE mietet SET RückgabeAm = '" + timestamp + "' WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
         if (dbConnector.getErrorMessage() != null) {
             return "SQL Fehler: " + dbConnector.getErrorMessage();
         }
         
         // Prüfen ob wir immer noch das Auto mieten
-        dbConnector.executeStatement("SELECT COUNT(*) FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
+        dbConnector.executeStatement("SELECT * FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
         r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() > 0) {
             return "Fehlschlag: Nutzer mietet das Auto immer noch!";
@@ -378,7 +408,7 @@ public class Verwalter {
         return "Nun mietet keiner das Auto mehr";   
     }
     
-    public String autoZwangsRückgabe(int autoID) {
+    public String autoZwangsRücknahme(int autoID) {
         if (ich == null) return "Nicht angemeldet!";
         if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter können Autos zurück ins Lager erzwingen!";
         
@@ -388,16 +418,16 @@ public class Verwalter {
         }
         
         String timestamp = getNowDateTime();
-        dbConnector.executeStatement("UPDATE mietet SET RückgabeAm = " + timestamp + " WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
+        dbConnector.executeStatement("UPDATE mietet SET RückgabeAm = '" + timestamp + "' WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
         if (dbConnector.getErrorMessage() != null) {
             return "SQL Fehler: " + dbConnector.getErrorMessage();
         }
         
         // Prüfen ob nun immer noch wer das Auto mietet
-        dbConnector.executeStatement("SELECT COUNT(*) FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
+        dbConnector.executeStatement("SELECT * FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() > 0) {
-            return "Fehlschlag: " + r.getData()[0][0] + " Nutzer mieten das Auto immer noch!";
+            return "Fehlschlag: " + r.getData().length + " Nutzer mieten das Auto immer noch!";
         }
         
         return "Nun mietet keiner das Auto mehr";        
@@ -449,11 +479,15 @@ public class Verwalter {
             // Auto
             int aId = Helper.tryParseInt(row[0]);
             int aLeistung = Helper.tryParseInt(row[4]);
-            Auto auto = new Auto(aId, row[1], row[2], row[3], aLeistung, row[5], pk);
+            Auto auto; 
             
             if (hatMietInfo) {
                 int muID = Helper.tryParseInt(row[11]);
                 MietInfo mietInfo = new MietInfo(row[9], row[10], muID);
+                auto = new Auto(aId, row[1], row[2], row[3], aLeistung, row[5], pk, mietInfo);
+            }
+            else {
+                auto = new Auto(aId, row[1], row[2], row[3], aLeistung, row[5], pk);
             }
             
             list.add(auto);    
@@ -507,4 +541,16 @@ public class Verwalter {
         kunden = pKunden;   
     }
     
+    
+    public void datenbankVerbinden () {
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
+        String fehler = dbConnector.getErrorMessage();
+        if (fehler == null) {
+          System.out.println("Datenbank wurde erfolgreich verbunden!");
+        } else {
+          System.out.println("Fehlermeldung: " + fehler);
+          // TODO: Irgendwann passenderen Exceptiontyp suchen
+          throw new NullPointerException("Datenbankverbindung Fehlermeldung: " + fehler);
+        }
+    }
 }

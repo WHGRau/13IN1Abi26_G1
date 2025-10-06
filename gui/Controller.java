@@ -286,8 +286,13 @@ public class Controller {
         preisListe1.setCellValueFactory(new PropertyValueFactory<>("preis"));
         
         int leistung = (int)ps1.getValue();
-        ObservableList<Auto> daten = FXCollections.observableArrayList(model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), leistung));
-
+        String meldung = model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), leistung);
+        if (meldung != null) {
+            System.out.println(meldung);
+            return;
+        }
+        
+        ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
         autoListe1.setItems(daten);
     }
     
