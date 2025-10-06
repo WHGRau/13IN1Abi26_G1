@@ -1,0 +1,3 @@
+# Von BlueJ generierte Nicht-Quellcode Dateien (z.B. Binärdaten) ignorieren
+*.class
+*.ctxt

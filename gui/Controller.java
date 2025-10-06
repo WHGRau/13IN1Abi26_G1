@@ -424,8 +424,6 @@ public class Controller {
         });
     } 
     
-<<<<<<< HEAD
-=======
     @FXML
     void buttonVisibility()throws IOException{
         if(model.getUser() != null){
@@ -438,7 +436,6 @@ public class Controller {
         }
     }
 
->>>>>>> main
     /**
      * Ruft die Miethistorien-Seite auf.
      * Überprüft dabei ob ein Nutzer Mitarbeiter ist usw. um aufgrunddessen
@@ -471,11 +468,7 @@ public class Controller {
             }
         });    
     }
-<<<<<<< HEAD
-
-=======
     
->>>>>>> main
     /**
      * Ruft die Anmeldungs-Seite auf.
      */
