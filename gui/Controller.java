@@ -21,6 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.application.Platform;
+import javafx.scene.text.Text;
 
 public class Controller {
     // Für Anmeldung:
@@ -115,6 +116,9 @@ public class Controller {
    
     // Für die Hauptseite:
     @FXML
+    private Button miethistorie2;
+    
+    @FXML
     private Button abmelden1;
     
     @FXML
@@ -188,6 +192,36 @@ public class Controller {
     
     @FXML
     private DatePicker rückgabe1;
+    
+    
+    //Für die Miethistorie:
+    @FXML
+    private Text benutzer10;
+
+    @FXML
+    private TextField benutzerEingabe10;
+
+    @FXML
+    private TableColumn<?, ?> bis1;
+
+    @FXML
+    private TableView<?> miethistorie1;
+
+    @FXML
+    private TableColumn<?, ?> preis10;
+
+    @FXML
+    private Button suchen10;
+
+    @FXML
+    private TableColumn<?, ?> von1;
+    
+    @FXML
+    private Button zurück10;
+    
+    @FXML
+    private Button autoZurückgeben1;
+
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -307,6 +341,16 @@ public class Controller {
      * in der Tabelle zurück.
      */
     @FXML
+    void mieteSuchen(ActionEvent event) {
+
+    }
+    
+    @FXML
+    void autoZurückgeben(ActionEvent event) {
+
+    }
+    
+    @FXML
     void kontoLöschen(ActionEvent event){
         kontoLöschen2.setText(model.kontoLoeschen());
     }
@@ -371,7 +415,8 @@ public class Controller {
             if(model.getUser() != null){
                 controller.abmelden1.setVisible(true);
                 controller.anmelden3.setVisible(false);
-                controller.kontoLöschen1.setVisible(true);  
+                controller.kontoLöschen1.setVisible(true); 
+                controller.miethistorie2.setVisible(true);
             }
             if(model.getUser().getIstMitarbeiter()) {
                 controller.autoHinzuügen1.setVisible(true);
@@ -379,6 +424,8 @@ public class Controller {
         });
     } 
     
+<<<<<<< HEAD
+=======
     @FXML
     void buttonVisibility()throws IOException{
         if(model.getUser() != null){
@@ -391,11 +438,13 @@ public class Controller {
         }
     }
 
+>>>>>>> main
     /**
      * Ruft die Miethistorien-Seite auf.
      * Überprüft dabei ob ein Nutzer Mitarbeiter ist usw. um aufgrunddessen
      * Elemente anzuzeigen oder zu verbergeben.
      */
+
     @FXML 
     void switchToMiethistorie(ActionEvent event)throws IOException{
         // Verbesserter Code von ChatGPT
@@ -422,7 +471,11 @@ public class Controller {
             }
         });    
     }
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> main
     /**
      * Ruft die Anmeldungs-Seite auf.
      */
