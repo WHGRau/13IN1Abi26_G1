@@ -20,6 +20,7 @@ import javafx.scene.control.TableColumn;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.application.Platform;
 
 public class Controller {
     // Für Anmeldung:
@@ -114,6 +115,9 @@ public class Controller {
    
     // Für die Hauptseite:
     @FXML
+    private Button abmelden1;
+    
+    @FXML
     private Label kontoLöschen2;
     
     @FXML
@@ -174,7 +178,16 @@ public class Controller {
     private Button suchen1;
     
     @FXML
+    private Button autoHinzuügen1;
+
+    @FXML
     private Button autoAuswählen1;
+
+    @FXML
+    private Label preis4;
+    
+    @FXML
+    private DatePicker rückgabe1;
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -188,7 +201,7 @@ public class Controller {
     }    
     
     @FXML 
-    void anmelden(ActionEvent event) {
+    void anmelden(ActionEvent event) throws IOException {
         String benutzername = benutzername1.getText();
         if (benutzername == "") {
             text2.setText("Benutzername muss angegeben sein!");
@@ -199,11 +212,23 @@ public class Controller {
             text2.setText("Passwort muss angegeben sein!");
             return;
         }
-        text2.setText(model.anmelden(benutzername, passwort));
+        String rückgabe = model.anmelden(benutzername, passwort);
+        if (rückgabe.equals("Anmeldung erfolgreich!")) {
+            switchToHauptseite(event);
+        } else {
+            text2.setText(rückgabe);   
+        }
+    }
+    
+    @FXML 
+    void abmelden(ActionEvent event) throws IOException {
+        model.abmelden();
+        switchToHauptseite(event); //Hauptseite neuladen
     }
     
     @FXML
-    void registrieren(ActionEvent event) {
+    void registrieren(ActionEvent event) throws IOException {
+        //Überprüfung dass die Eingabefelder alle gefüllt sind
         if(benutzername2.getText() == "") {
             text1.setText("Benutzername muss angegeben sein!");
             return;
@@ -269,14 +294,26 @@ public class Controller {
         String geburtsdatum = geburtsdatum1.getValue().toString();
 
         // Ab hier ist die Anmeldung erfolgreich ausgelesen und validiert!
-        text1.setText(model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, new Standort(ort, plzParsed, straße, hausNrParsed), 0, 0));  
+        String rückgabe = model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, new Standort(ort, plzParsed, straße, hausNrParsed), 0, 0);
+        if (rückgabe.equals("Konto angelegt!")) {
+            switchToHauptseite(event);
+        } else {
+            text1.setText(rückgabe);   
+        }
     }
     
+    /**
+     * Methode gibt alle aktuellen und zurückliegenden Mieten des ausgelesen Benutzers
+     * in der Tabelle zurück.
+     */
     @FXML
     void kontoLöschen(ActionEvent event){
         kontoLöschen2.setText(model.kontoLoeschen());
     }
     
+    /**
+     * Sucht das Auto mit den eingegeben Merkmalen und zeigt alle Treffer in der Tabelle an.
+     */
     @FXML
     void autoSuchen(ActionEvent event){
         markeListe1.setCellValueFactory(new PropertyValueFactory<>("marke"));
@@ -296,6 +333,9 @@ public class Controller {
         autoListe1.setItems(daten);
     }
     
+    /**
+     * Wechselt zur Registrierungs-Seite.
+     */
     @FXML
     void switchToRegistrierung(ActionEvent event)throws IOException{
         Parent root = FXMLLoader.load(getClass().getResource("scenes/registrierung.fxml"));
@@ -305,15 +345,87 @@ public class Controller {
         stage.show(); 
     } 
     
+    /**
+     * Ruft die Hauptseite auf oder lädt sie neu.
+     * Überprüft dabei ob ein Nutzer angemeldet ist usw. um aufgrunddessen
+     * Elemente anzuzeigen oder zu verbergeben.
+     */
     @FXML
     void switchToHauptseite(ActionEvent event)throws IOException{
-        Parent root = FXMLLoader.load(getClass().getResource("scenes/hauptseite.fxml"));
+        // Verbesserter Code von ChatGPT
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/hauptseite.fxml"));
+        Parent root = loader.load();
+        
+        // Zugriff auf den Controller
+        Controller controller = loader.getController(); 
+                
+        // Code aus Vorlage
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show(); 
+        
+        // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
+        // Fensters ausgeführt werden
+        Platform.runLater(() -> {
+            if(model.getUser() != null){
+                controller.abmelden1.setVisible(true);
+                controller.anmelden3.setVisible(false);
+                controller.kontoLöschen1.setVisible(true);  
+            }
+            if(model.getUser().getIstMitarbeiter()) {
+                controller.autoHinzuügen1.setVisible(true);
+            }
+        });
     } 
     
+    @FXML
+    void buttonVisibility()throws IOException{
+        if(model.getUser() != null){
+            anmelden3.setVisible(false);
+            kontoLöschen1.setVisible(true);
+            if(model.getUser().getIstMitarbeiter()){
+                autoHinzufügen1.setVisible(true);
+            }
+            abmelden1.setVisible(true);
+        }
+    }
+
+    /**
+     * Ruft die Miethistorien-Seite auf.
+     * Überprüft dabei ob ein Nutzer Mitarbeiter ist usw. um aufgrunddessen
+     * Elemente anzuzeigen oder zu verbergeben.
+     */
+    @FXML 
+    void switchToMiethistorie(ActionEvent event)throws IOException{
+        // Verbesserter Code von ChatGPT
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/miethistorie.fxml"));
+        Parent root = loader.load();
+        
+        // Zugriff auf den Controller
+        Controller controller = loader.getController(); 
+                
+        // Code aus Vorlage
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+        
+        // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
+        // Fensters ausgeführt werden
+        Platform.runLater(() -> {
+            if(model.getUser().getIstMitarbeiter()) {
+                controller.suchen10.setVisible(true);
+                controller.benutzerEingabe1.setVisible(true);
+            } else {
+                controller.benutzer1.setText(model.getUser().getBenutzername());
+            }
+        });    
+    }
+    
+    /**
+     * Ruft die Anmeldungs-Seite auf.
+     */
     @FXML
     void switchToAnmeldung(ActionEvent event)throws IOException{
         Parent root = FXMLLoader.load(getClass().getResource("scenes/anmeldung.fxml"));
@@ -323,7 +435,9 @@ public class Controller {
         stage.show(); 
     }
     
-    
+    /**
+     * Ruft die autoHinzufügen-Seite auf.
+     */
     @FXML
     void switchToHinzufügen(ActionEvent event)throws IOException{
         Parent root = FXMLLoader.load(getClass().getResource("scenes/autoHinzufügen.fxml"));
@@ -333,9 +447,12 @@ public class Controller {
         stage.show(); 
     }
     
+    /**
+     * Fügt Autos mit den in den dazugehörigen Feldern eingegebenen Daten in die Datenbank ein.
+     */
     @FXML
     void autoHinzufügen(ActionEvent event)throws IOException {
-        
+        //Prüft dass alle Felder ausgefüllt sind
         if(marke1.getText() == "") {
             text3.setText("Alle Felder müssen ausgefüllt sein!");
             return;
@@ -375,9 +492,14 @@ public class Controller {
         text3.setText(model.autoHinzufügen(marke, modell, kategorie, leistung, kennzeichen, preisklasse));
     }
 
+    /**
+     * Ein in der Tabelle ausgewähltes Auto wird durch Drücken des dazu-
+     * gehörigen Buttons in die Anzeige daneben gebracht.
+     */
     @FXML
     void autoÜbertragen(ActionEvent event)throws IOException {
         ausleihen1.setVisible(true);
+        rückgabe1.setVisible(true);
         Auto ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
         if (ausgewähltesAuto != null) {
             String marke = ausgewähltesAuto.getMarke();
