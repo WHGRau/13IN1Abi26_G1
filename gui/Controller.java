@@ -21,6 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.application.Platform;
+import javafx.scene.text.Text;
 
 public class Controller {
     // Für Anmeldung:
@@ -115,6 +116,9 @@ public class Controller {
    
     // Für die Hauptseite:
     @FXML
+    private Button miethistorie2;
+    
+    @FXML
     private Button abmelden1;
     
     @FXML
@@ -188,6 +192,32 @@ public class Controller {
     
     @FXML
     private DatePicker rückgabe1;
+    
+    
+    //Für die Miethistorie:
+    @FXML
+    private Text benutzer10;
+
+    @FXML
+    private TextField benutzerEingabe10;
+
+    @FXML
+    private TableColumn<?, ?> bis1;
+
+    @FXML
+    private TableView<?> miethistorie1;
+
+    @FXML
+    private TableColumn<?, ?> preis10;
+
+    @FXML
+    private Button suchen10;
+
+    @FXML
+    private TableColumn<?, ?> von1;
+    
+    @FXML
+    private Button zurück10;
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -302,6 +332,11 @@ public class Controller {
     }
     
     @FXML
+    void mieteSuchen(ActionEvent event) {
+
+    }
+    
+    @FXML
     void kontoLöschen(ActionEvent event){
         kontoLöschen2.setText(model.kontoLoeschen());
     }
@@ -354,7 +389,8 @@ public class Controller {
             if(model.getUser() != null){
                 controller.abmelden1.setVisible(true);
                 controller.anmelden3.setVisible(false);
-                controller.kontoLöschen1.setVisible(true);  
+                controller.kontoLöschen1.setVisible(true); 
+                controller.miethistorie2.setVisible(true);
             }
             if(model.getUser().getIstMitarbeiter()) {
                 controller.autoHinzuügen1.setVisible(true);
@@ -374,6 +410,32 @@ public class Controller {
         }
     }
     
+    @FXML 
+    void switchToMiethistorie(ActionEvent event)throws IOException{
+        // Verbesserter Code von ChatGPT
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/miethistorie.fxml"));
+        Parent root = loader.load();
+        
+        // Zugriff auf den Controller
+        Controller controller = loader.getController(); 
+                
+        // Code aus Vorlage
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+        
+        // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
+        // Fensters ausgeführt werden
+        Platform.runLater(() -> {
+            if(model.getUser().getIstMitarbeiter()) {
+                controller.suchen10.setVisible(true);
+                controller.benutzerEingabe10.setVisible(true);
+            } else {
+                controller.benutzer10.setText(model.getUser().getBenutzername());
+            }
+        });    
+    }
     
     @FXML
     void switchToAnmeldung(ActionEvent event)throws IOException{
