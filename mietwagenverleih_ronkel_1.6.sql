@@ -86,8 +86,7 @@ INSERT INTO `benutzer` VALUES
 (2,'sirtobius','d5699d48cee8484d89f253b93c3b46d97886f7f3d6e8e9f2dc9e1715a8110991','Tobias','Ahrens','2007-07-04',0,1,2),
 (3,'Xxx_shadowgodslayer69_xxX','ed963d0fe6ed0ae7abf2afa069e50f9b5da9b95f1fa215569e50c0d5e42afc47','Gerhard','Müller','1959-03-12',0,0,3),
 (4,'Klogang420','ff9540b6e66986499d255cd318a281e457c5970eab899e5d98abaad2da6d36d8','Franz','Kloger','2001-09-11',0,0,4),
-(5,'Ich lol','b89cdab4acf087d19b54bc290a6b281bc50a0cac810688aeaab5c9e6bd628254','davis','marcell','2025-09-03',0,0,5),
-(6,'e','42538602949f370aa331d2c07a1ee7ff26caac9cc676288f94b82eb2188b8465','e','e','2025-10-04',0,0,11);
+(5,'Ich lol','b89cdab4acf087d19b54bc290a6b281bc50a0cac810688aeaab5c9e6bd628254','davis','marcell','2025-09-03',0,0,5);
 /*!40000 ALTER TABLE `benutzer` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -120,6 +119,37 @@ INSERT INTO `bewertungen` VALUES
 (1,3,'Dieser Wagen war ein Erlebnis für mich und meine Frau Gertrude, wir haben es auf der Autobahn mächtig getrieben. Durch die starke Beschleunigung verlor Gertrude beinahe ihr Gebiss!\r\n\r\nJedoch ist der Komfort nicht sehr hoch, wir kamen nur noch mit Hilfe aus diesem Gefährt. ',3,3),
 (2,5,'Kuhl!!',1,1);
 /*!40000 ALTER TABLE `bewertungen` ENABLE KEYS */;
+UNLOCK TABLES;
+commit;
+
+--
+-- Table structure for table `mietet`
+--
+
+DROP TABLE IF EXISTS `mietet`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mietet` (
+  `UserID` int(11) NOT NULL,
+  `AutoID` int(11) NOT NULL,
+  `AusgeliehenAm` datetime NOT NULL,
+  `RückgabeAm` datetime NOT NULL,
+  PRIMARY KEY (`UserID`,`AutoID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mietet`
+--
+
+LOCK TABLES `mietet` WRITE;
+/*!40000 ALTER TABLE `mietet` DISABLE KEYS */;
+set autocommit=0;
+INSERT INTO `mietet` VALUES
+(5,3,'2001-09-11 00:00:00','2027-05-24 00:00:00'),
+(4,4,'2025-10-06 19:03:38','2025-10-06 19:04:01'),
+(2,6,'2025-10-06 19:51:43','2027-05-24 00:00:50');
+/*!40000 ALTER TABLE `mietet` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
 
@@ -188,8 +218,7 @@ INSERT INTO `standort` VALUES
 ('z',6,'z',6,7),
 ('q',8,'q',8,8),
 ('q',6,'q',6,9),
-('t',6,'t',6,10),
-('r',5,'r',5,11);
+('t',6,'t',6,10);
 /*!40000 ALTER TABLE `standort` ENABLE KEYS */;
 UNLOCK TABLES;
 commit;
@@ -235,4 +264,4 @@ commit;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-10-01 20:14:47
+-- Dump completed on 2025-10-06 19:58:16
