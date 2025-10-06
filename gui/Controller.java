@@ -321,9 +321,15 @@ public class Controller {
         kategorieListe1.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
         psListe1.setCellValueFactory(new PropertyValueFactory<>("leistung"));
         preisListe1.setCellValueFactory(new PropertyValueFactory<>("preis"));
-
-        ObservableList<Auto> daten = FXCollections.observableArrayList(model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), ps1.getValue()));
-
+        
+        int leistung = (int)ps1.getValue();
+        String meldung = model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), leistung);
+        if (meldung != null) {
+            System.out.println(meldung);
+            return;
+        }
+        
+        ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
         autoListe1.setItems(daten);
     }
     
@@ -373,7 +379,6 @@ public class Controller {
         });
     } 
     
-<<<<<<< Updated upstream
     @FXML
     void buttonVisibility()throws IOException{
         if(model.getUser() != null){
@@ -385,8 +390,7 @@ public class Controller {
             abmelden1.setVisible(true);
         }
     }
-    
-=======
+
     /**
      * Ruft die Miethistorien-Seite auf.
      * Überprüft dabei ob ein Nutzer Mitarbeiter ist usw. um aufgrunddessen
@@ -412,13 +416,12 @@ public class Controller {
         Platform.runLater(() -> {
             if(model.getUser().getIstMitarbeiter()) {
                 controller.suchen10.setVisible(true);
-                controller.benutzerEingabe10.setVisible(true);
+                controller.benutzerEingabe1.setVisible(true);
             } else {
-                controller.benutzer10.setText(model.getUser().getBenutzername());
+                controller.benutzer1.setText(model.getUser().getBenutzername());
             }
         });    
     }
->>>>>>> Stashed changes
     
     /**
      * Ruft die Anmeldungs-Seite auf.
@@ -503,13 +506,14 @@ public class Controller {
             String modell = ausgewähltesAuto.getModell();
             String kategorie = ausgewähltesAuto.getKategorie();
             int leistung = ausgewähltesAuto.getLeistung();
-            int preisklasse = ausgewähltesAuto.getPreis();
+            Preisklasse pk = ausgewähltesAuto.getPreis();
+            int preis = pk.getPreis();
             
             markeAnzeige.setText(marke);
             modellAnzeige.setText(modell);
             kategorieAnzeige.setText(kategorie);
             LeistungAnzeige.setText(""+leistung+" PS");
-            preisAnzeige1.setText(""+preisklasse+" € / Tag");
+            preisAnzeige1.setText(""+preis+" € / Tag");
         }
     }
 }

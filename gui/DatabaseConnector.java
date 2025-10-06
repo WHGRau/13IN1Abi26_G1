@@ -52,6 +52,9 @@ public class DatabaseConnector{
    * abgerufen werden.
    */
   public void executeStatement(String pSQLStatement){  
+    // Zum Debuggen
+    System.out.println("SQL: " + pSQLStatement + "\n"); 
+    
     //Altes Ergebnis löschen
     currentQueryResult = null;
     message = null;

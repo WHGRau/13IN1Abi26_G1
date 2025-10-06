@@ -15,17 +15,30 @@ public class Auto {
     private String kategorie;
     private int leistung;
     private String kennzeichen;
-    private int preis;
-    private ArrayList bewertungen;
-    public Auto(int pId, String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, int pPreis, ArrayList pBewertungen){
+    private Preisklasse pk;
+    
+    // Mietinfo
+    private MietInfo mietInfo;
+    
+    public Auto(int pId, String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, Preisklasse pPreis){
         id = pId;
         marke = pMarke;
         modell = pModell;
         kategorie = pKategorie;
         leistung = pLeistung;
         kennzeichen = pKennzeichen; 
-        preis = pPreis;
-        bewertungen = pBewertungen;
+        pk = pPreis;
+    }
+    
+    public Auto(int pId, String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, Preisklasse pPreis, MietInfo pMietInfo){
+        id = pId;
+        marke = pMarke;
+        modell = pModell;
+        kategorie = pKategorie;
+        leistung = pLeistung;
+        kennzeichen = pKennzeichen; 
+        pk = pPreis;
+        mietInfo = pMietInfo;
     }
     
     public int getID() {
@@ -52,21 +65,11 @@ public class Auto {
         return kennzeichen;
     }
     
-    public ArrayList getBewertungen() {
-        return bewertungen;    
+    public Preisklasse getPreis(){
+        return pk;
     }
     
-    public int getPreis(){
-        return preis;
+    public MietInfo getMietInfo(){
+        return mietInfo;
     }
-    
-    /**
-    public void addBewertung(Bewertung pBewertung) {
-        bewertungen.add(pBewertung);    
-    }
-    
-    public void removeBewertung(Bewertung pBewertung) {
-        bewertungen.remove(pBewertung);    
-    }
-    **/
 }
