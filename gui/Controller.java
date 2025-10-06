@@ -219,6 +219,10 @@ public class Controller {
     @FXML
     private Button zurück10;
     
+    @FXML
+    private Button autoZurückgeben1;
+
+    
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
     
@@ -333,6 +337,11 @@ public class Controller {
     
     @FXML
     void mieteSuchen(ActionEvent event) {
+
+    }
+    
+    @FXML
+    void autoZurückgeben(ActionEvent event) {
 
     }
     

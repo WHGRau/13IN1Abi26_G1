@@ -122,7 +122,7 @@
             <Button fx:id="abmelden1" layoutX="555.0" layoutY="15.0" mnemonicParsing="false" onAction="#abmelden" text="Abmelden" visible="false" />
             <DatePicker fx:id="rückgabe1" layoutX="492.0" layoutY="238.0" prefHeight="25.0" prefWidth="95.0" promptText="Rückgabe" visible="false" />
             <Label fx:id="preis4" layoutX="455.0" layoutY="291.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
-            <Button fx:id="miethistorie2" layoutX="134.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToMiethistorie" text="Miethistorie" visible="false" />
+            <Button fx:id="miethistorie2" layoutX="134.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToMiethistorie" text="Mietübersicht" visible="false" />
       </children>
     </AnchorPane>
   </children>

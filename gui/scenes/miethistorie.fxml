@@ -94,14 +94,14 @@
             <Font size="18.0" />
           </font>
         </Label>
-            <Text layoutX="262.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Miethistorie">
+            <Text layoutX="253.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mietübersicht">
                <font>
                   <Font size="22.0" />
                </font>
             </Text>
             <TextField fx:id="benutzerEingabe10" layoutX="203.0" layoutY="51.0" promptText="Benutzername" visible="false" />
-            <Text fx:id="benutzer10" layoutX="246.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="149.0" />
-            <TableView fx:id="miethistorie1" layoutX="19.0" layoutY="104.0" prefHeight="246.0" prefWidth="602.0">
+            <Text fx:id="benutzer10" layoutX="246.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="149.0" />
+            <TableView fx:id="miethistorie1" layoutX="18.0" layoutY="68.0" prefHeight="246.0" prefWidth="604.0">
               <columns>
                 <TableColumn fx:id="von1" prefWidth="75.0" text="Von" />
                 <TableColumn fx:id="bis1" prefWidth="75.0" text="Bis" />
@@ -113,6 +113,7 @@
             </TableView>
             <Button fx:id="suchen10" layoutX="368.0" layoutY="51.0" mnemonicParsing="false" onAction="#mieteSuchen" text="Suchen" visible="false" />
             <Button fx:id="zurück10" layoutX="19.0" layoutY="16.0" mnemonicParsing="false" onAction="#switchToHauptseite" text="⬅ Zurück" />
+            <Button fx:id="autoZurückgeben1" layoutX="17.0" layoutY="330.0" mnemonicParsing="false" onAction="#autoZurückgeben" prefHeight="25.0" prefWidth="604.0" text="Auto zurückgeben" />
       </children>
     </AnchorPane>
   </children>
