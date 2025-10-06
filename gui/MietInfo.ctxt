@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=MietInfo
-comment0.text=\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ MietInfo.\n\ \n\ @author\ (Ihr\ Name)\ \n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\n
+comment0.text=\r\n\ Beschreiben\ Sie\ hier\ die\ Klasse\ MietInfo.\r\n\ \r\n\ @author\ (Ihr\ Name)\ \r\n\ @version\ (eine\ Versionsnummer\ oder\ ein\ Datum)\r\n
 comment1.params=pAusleihDatum\ pR\u00FCckgabeDatum\ pLeiherUserId
 comment1.target=MietInfo(java.lang.String,\ java.lang.String,\ int)
 comment2.params=

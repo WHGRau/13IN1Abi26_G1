@@ -179,6 +179,9 @@ public class Controller {
     private TableColumn<Auto, Integer> preisListe1; 
     
     @FXML
+    private TableColumn<Auto, Integer> idListe1; 
+    
+    @FXML
     private Button suchen1;
     
     @FXML
@@ -347,7 +350,7 @@ public class Controller {
     
     @FXML
     void autoZurückgeben(ActionEvent event) {
-
+        
     }
     
     @FXML
@@ -360,6 +363,7 @@ public class Controller {
      */
     @FXML
     void autoSuchen(ActionEvent event){
+        idListe1.setCellValueFactory(new PropertyValueFactory<>("iD"));
         markeListe1.setCellValueFactory(new PropertyValueFactory<>("marke"));
         modellListe1.setCellValueFactory(new PropertyValueFactory<>("modell"));
         kategorieListe1.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
@@ -423,28 +427,13 @@ public class Controller {
             }
         });
     } 
-    
-<<<<<<< HEAD
-=======
-    @FXML
-    void buttonVisibility()throws IOException{
-        if(model.getUser() != null){
-            anmelden3.setVisible(false);
-            kontoLöschen1.setVisible(true);
-            if(model.getUser().getIstMitarbeiter()){
-                autoHinzufügen1.setVisible(true);
-            }
-            abmelden1.setVisible(true);
-        }
-    }
 
->>>>>>> main
     /**
      * Ruft die Miethistorien-Seite auf.
      * Überprüft dabei ob ein Nutzer Mitarbeiter ist usw. um aufgrunddessen
      * Elemente anzuzeigen oder zu verbergeben.
      */
-
+    
     @FXML 
     void switchToMiethistorie(ActionEvent event)throws IOException{
         // Verbesserter Code von ChatGPT
@@ -465,17 +454,13 @@ public class Controller {
         Platform.runLater(() -> {
             if(model.getUser().getIstMitarbeiter()) {
                 controller.suchen10.setVisible(true);
-                controller.benutzerEingabe1.setVisible(true);
+                controller.benutzerEingabe10.setVisible(true);
             } else {
-                controller.benutzer1.setText(model.getUser().getBenutzername());
+                controller.benutzer10.setText(model.getUser().getBenutzername());
             }
         });    
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> main
     /**
      * Ruft die Anmeldungs-Seite auf.
      */
@@ -568,5 +553,13 @@ public class Controller {
             LeistungAnzeige.setText(""+leistung+" PS");
             preisAnzeige1.setText(""+preis+" € / Tag");
         }
+    }
+    
+    @FXML
+    void autoMieten(ActionEvent event)throws IOException {
+        int autoId = autoListe1.getSelectionModel().getSelectedItem().getID();
+        int userId = model.getUser().getID();
+        String rückgabe = rückgabe1.getValue().toString();
+        kontoLöschen2.setText(model.autoVermieten(autoId, userId, rückgabe)); 
     }
 }

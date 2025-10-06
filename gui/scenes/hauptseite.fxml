@@ -105,20 +105,21 @@
             <Label fx:id="LeistungAnzeige" layoutX="456.0" layoutY="188.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
             <Label fx:id="kategorieAnzeige" layoutX="456.0" layoutY="214.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
             <Label fx:id="preisAnzeige1" layoutX="455.0" layoutY="268.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
-            <Button fx:id="ausleihen1" layoutX="505.0" layoutY="318.0" mnemonicParsing="false" text="Ausleihen" visible="false" />
+            <Button fx:id="ausleihen1" layoutX="505.0" layoutY="318.0" mnemonicParsing="false" onAction="#autoMieten" text="Ausleihen" visible="false" />
             <Button fx:id="anmelden3" layoutX="555.0" layoutY="15.0" mnemonicParsing="false" onAction="#switchToAnmeldung" text="Anmelden" />
             <Button fx:id="kontoLöschen1" layoutX="455.0" layoutY="15.0" mnemonicParsing="false" onAction="#kontoLöschen" text="Konto löschen" visible="false" />
             <Button fx:id="autoHinzuügen1" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToHinzufügen" text="Auto hinzufügen" visible="false" />
             <TableView fx:id="autoListe1" layoutX="10.0" layoutY="99.0" prefHeight="263.0" prefWidth="432.0">
               <columns>
                 <TableColumn fx:id="markeListe1" prefWidth="95.0" text="Marke" />
-                  <TableColumn fx:id="modellListe1" prefWidth="107.0" text="Modell" />
-                  <TableColumn fx:id="kategorieListe1" minWidth="0.0" prefWidth="110.0" text="Kategorie" />
-                <TableColumn fx:id="psListe1" prefWidth="68.0" text="Leistung" />
-                  <TableColumn fx:id="preisListe1" minWidth="0.0" prefWidth="44.0" text="Preis" />
+                  <TableColumn fx:id="modellListe1" prefWidth="98.0" text="Modell" />
+                  <TableColumn fx:id="kategorieListe1" minWidth="0.0" prefWidth="90.0" text="Kategorie" />
+                <TableColumn fx:id="psListe1" prefWidth="77.0" text="Leistung" />
+                  <TableColumn fx:id="preisListe1" minWidth="0.0" prefWidth="49.0" text="Preis" />
+                  <TableColumn fx:id="idListe1" prefWidth="22.0" text="ID" />
               </columns>
             </TableView>
-            <Button fx:id="autoAuswählen1" layoutX="456.0" layoutY="100.0" mnemonicParsing="false" onAction="#autoÜbertragen" prefHeight="25.0" prefWidth="168.0" text="Auto auswählen" />
+            <Button fx:id="autoAuswählen1" layoutX="455.0" layoutY="100.0" mnemonicParsing="false" onAction="#autoÜbertragen" prefHeight="25.0" prefWidth="168.0" text="Auto auswählen" />
             <Button fx:id="abmelden1" layoutX="555.0" layoutY="15.0" mnemonicParsing="false" onAction="#abmelden" text="Abmelden" visible="false" />
             <DatePicker fx:id="rückgabe1" layoutX="492.0" layoutY="238.0" prefHeight="25.0" prefWidth="95.0" promptText="Rückgabe" visible="false" />
             <Label fx:id="preis4" layoutX="455.0" layoutY="291.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
