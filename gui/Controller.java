@@ -462,9 +462,9 @@ public class Controller {
         Platform.runLater(() -> {
             if(model.getUser().getIstMitarbeiter()) {
                 controller.suchen10.setVisible(true);
-                controller.benutzerEingabe1.setVisible(true);
+                controller.benutzerEingabe10.setVisible(true);
             } else {
-                controller.benutzer1.setText(model.getUser().getBenutzername());
+                controller.benutzer10.setText(model.getUser().getBenutzername());
             }
         });    
     }
