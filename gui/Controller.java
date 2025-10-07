@@ -22,6 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.application.Platform;
 import javafx.scene.text.Text;
+import javafx.scene.control.CheckBox;
 
 public class Controller {
     // Für Anmeldung:
@@ -115,6 +116,10 @@ public class Controller {
 
    
     // Für die Hauptseite:
+    
+    @FXML
+    private TextField benutzer11;
+
     @FXML
     private Button miethistorie2;
     
@@ -199,31 +204,37 @@ public class Controller {
     
     //Für die Miethistorie:
     @FXML
+    private TableColumn<Auto, Integer> autoID1;
+    
+    @FXML
     private Text benutzer10;
 
     @FXML
     private TextField benutzerEingabe10;
 
     @FXML
-    private TableColumn<?, ?> bis1;
+    private TableColumn<MietInfo, String> bis1;
 
     @FXML
-    private TableView<?> miethistorie1;
+    private TableView<String> miethistorie1;
 
     @FXML
-    private TableColumn<?, ?> preis10;
+    private TableColumn<MietInfo, Integer> preis10;
 
     @FXML
     private Button suchen10;
 
     @FXML
-    private TableColumn<?, ?> von1;
+    private TableColumn<MietInfo, String> von1;
     
     @FXML
     private Button zurück10;
     
     @FXML
     private Button autoZurückgeben1;
+    
+    @FXML
+    private CheckBox tick1;
 
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
@@ -345,7 +356,15 @@ public class Controller {
      */
     @FXML
     void mieteSuchen(ActionEvent event) {
-
+        int benutzerID = model.nutzerSuchen(benutzer10.getText());
+        model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
+        autoID1.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        von1.setCellValueFactory(new PropertyValueFactory<>("ausleihDatum"));
+        bis1.setCellValueFactory(new PropertyValueFactory<>("rückgabeDatum"));
+        preis10.setCellValueFactory(new PropertyValueFactory<>("preis"));
+        
+        ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
+        miethistorie1.setItems(daten);
     }
     
     @FXML
@@ -354,8 +373,9 @@ public class Controller {
     }
     
     @FXML
-    void kontoLöschen(ActionEvent event){
+    void kontoLöschen(ActionEvent event) throws IOException{
         kontoLöschen2.setText(model.kontoLoeschen());
+        switchToHauptseite(event);
     }
     
     /**
@@ -553,12 +573,20 @@ public class Controller {
             LeistungAnzeige.setText(""+leistung+" PS");
             preisAnzeige1.setText(""+preis+" € / Tag");
         }
+        if(model.getUser() != null && model.getUser().getIstMitarbeiter()){
+            benutzer11.setVisible (true);
+        }
     }
     
     @FXML
     void autoMieten(ActionEvent event)throws IOException {
         int autoId = autoListe1.getSelectionModel().getSelectedItem().getID();
-        int userId = model.getUser().getID();
+        int userId;
+        if(model.getUser().getIstMitarbeiter()){
+            userId = model.nutzerSuchen(benutzer11.getText());       
+        } else if(model.getUser().getIstVerifiziert()) {
+            userId = model.getUser().getID();    
+        }
         String rückgabe = rückgabe1.getValue().toString();
         kontoLöschen2.setText(model.autoVermieten(autoId, userId, rückgabe)); 
     }

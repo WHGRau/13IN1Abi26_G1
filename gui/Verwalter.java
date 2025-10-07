@@ -127,18 +127,26 @@ public class Verwalter {
         return("Abmeldung erfolgreich");
     }
     
+    /**
+     * Das Konto und alle dazugehörigen Daten werden gelöscht. 
+     * Funktioniert nur wenn im Moment nichts mehr gemietet wird.
+     */
+    
     public String kontoLoeschen(){
-        /*
-         * AUSSCHLIESSLICH AUSFÜHREN WENN DER BENUTZER NICHTS MEHR MIETET!!!!!!!!!
-         */
         if(ich == null) return("Nicht angemeldet!");
         String benutzername = ich.getBenutzername();
         
-        dbConnector.executeStatement("SELECT id FROM benutzer WHERE benutzername ='" + benutzername + "'");
-        QueryResult x = dbConnector.getCurrentQueryResult();
-        int id = Integer.parseInt(x.getData() [0][0]);
-        if (x.getRowCount() == 0) {
+        int id = nutzerSuchen(benutzername);
+        if (id == -1) {
             return("Konnte zu löschenden Nutzer nicht finden!");
+        }
+        
+        //Überprüfen ob der Nutzer noch etwas ausleiht
+        String datum = getNowDateTime();
+        dbConnector.executeStatement("SELECT * FROM mietet WHERE UserId = '"+id+"' AND RückgabeAm = '"+datum+"'");
+        QueryResult x = dbConnector.getCurrentQueryResult();
+        if (x.getRowCount() != 0) {
+            return("Es wird noch etwas ausgeliehen!");
         }
         
         dbConnector.executeStatement("SELECT AdresseID FROM benutzer WHERE benutzername ='" + benutzername + "'");
@@ -152,6 +160,7 @@ public class Verwalter {
         dbConnector.executeStatement("DELETE FROM standort WHERE id = '" + adresseId + "'");
         dbConnector.executeStatement("DELETE FROM bewertungen WHERE benutzerID = '" + id + "'");
         dbConnector.executeStatement("DELETE FROM wunschliste WHERE benutzerID = '" + id + "'");
+        dbConnector.executeStatement("DELETE FROM mietet WHERE UserID = '" + id + "'");
         return("Konto erfolgreich gelöscht.");
     }
     
@@ -266,7 +275,8 @@ public class Verwalter {
      */
     public String getGemieteteAutosVon(int userID, boolean aktuell){
         if (ich == null) return ("Nicht angemeldet!");
-        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
+        //Wird bereits in GUi kontrolliert und stört dortigen Ablauf:
+        //if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
         
         autos = this.getGemieteteAutosInternal(userID, aktuell);
         return null; 
@@ -505,6 +515,16 @@ public class Verwalter {
         }
         else {
             return r.getData()[0][0];
+        }
+    }
+    
+    public int nutzerSuchen(String pBenutzername) {
+        if(!pBenutzername.isEmpty()){
+            dbConnector.executeStatement("SELECT ID FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
+            QueryResult r = dbConnector.getCurrentQueryResult();   
+            return Integer.parseInt(r.getData()[0][0]);
+        } else {
+            return -1;
         }
     }
     

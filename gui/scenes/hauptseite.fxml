@@ -100,11 +100,11 @@
             <Text layoutX="362.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min. PS" />
             <Button fx:id="suchen1" layoutX="455.0" layoutY="56.0" mnemonicParsing="false" onAction="#autoSuchen" prefHeight="25.0" prefWidth="168.0" text="Suchen" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1c7eb" height="224.0" layoutX="456.0" layoutY="138.0" stroke="BLACK" strokeType="INSIDE" width="168.0" />
-            <Label fx:id="markeAnzeige" layoutX="456.0" layoutY="144.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
-            <Label fx:id="modellAnzeige" layoutX="456.0" layoutY="171.0" prefHeight="17.0" prefWidth="168.0" />
-            <Label fx:id="LeistungAnzeige" layoutX="456.0" layoutY="188.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
-            <Label fx:id="kategorieAnzeige" layoutX="456.0" layoutY="214.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
-            <Label fx:id="preisAnzeige1" layoutX="455.0" layoutY="268.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
+            <Label fx:id="markeAnzeige" layoutX="456.0" layoutY="144.0" prefHeight="17.0" prefWidth="82.0" textAlignment="CENTER" />
+            <Label fx:id="modellAnzeige" layoutX="539.0" layoutY="144.0" prefHeight="17.0" prefWidth="82.0" />
+            <Label fx:id="LeistungAnzeige" layoutX="454.0" layoutY="161.0" prefHeight="17.0" prefWidth="82.0" textAlignment="CENTER" />
+            <Label fx:id="kategorieAnzeige" layoutX="539.0" layoutY="161.0" prefHeight="17.0" prefWidth="82.0" textAlignment="CENTER" />
+            <Label fx:id="preisAnzeige1" layoutX="456.0" layoutY="188.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
             <Button fx:id="ausleihen1" layoutX="505.0" layoutY="318.0" mnemonicParsing="false" onAction="#autoMieten" text="Ausleihen" visible="false" />
             <Button fx:id="anmelden3" layoutX="555.0" layoutY="15.0" mnemonicParsing="false" onAction="#switchToAnmeldung" text="Anmelden" />
             <Button fx:id="kontoLöschen1" layoutX="455.0" layoutY="15.0" mnemonicParsing="false" onAction="#kontoLöschen" text="Konto löschen" visible="false" />
@@ -121,9 +121,10 @@
             </TableView>
             <Button fx:id="autoAuswählen1" layoutX="455.0" layoutY="100.0" mnemonicParsing="false" onAction="#autoÜbertragen" prefHeight="25.0" prefWidth="168.0" text="Auto auswählen" />
             <Button fx:id="abmelden1" layoutX="555.0" layoutY="15.0" mnemonicParsing="false" onAction="#abmelden" text="Abmelden" visible="false" />
-            <DatePicker fx:id="rückgabe1" layoutX="492.0" layoutY="238.0" prefHeight="25.0" prefWidth="95.0" promptText="Rückgabe" visible="false" />
-            <Label fx:id="preis4" layoutX="455.0" layoutY="291.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
+            <DatePicker fx:id="rückgabe1" layoutX="493.0" layoutY="218.0" prefHeight="25.0" prefWidth="95.0" promptText="Rückgabe" visible="false" />
+            <Label fx:id="preis4" layoutX="456.0" layoutY="250.0" prefHeight="17.0" prefWidth="168.0" textAlignment="CENTER" />
             <Button fx:id="miethistorie2" layoutX="134.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToMiethistorie" text="Mietübersicht" visible="false" />
+            <TextField fx:id="benutzer11" layoutX="466.0" layoutY="267.0" promptText="Benutzername" visible="false" />
       </children>
     </AnchorPane>
   </children>
