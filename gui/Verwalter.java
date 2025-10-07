@@ -275,8 +275,7 @@ public class Verwalter {
      */
     public String getGemieteteAutosVon(int userID, boolean aktuell){
         if (ich == null) return ("Nicht angemeldet!");
-        //Wird bereits in GUi kontrolliert und stört dortigen Ablauf:
-        //if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
         
         autos = this.getGemieteteAutosInternal(userID, aktuell);
         return null; 

@@ -356,8 +356,14 @@ public class Controller {
      */
     @FXML
     void mieteSuchen(ActionEvent event) {
-        int benutzerID = model.nutzerSuchen(benutzer10.getText());
-        model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
+        int benutzerID = model.nutzerSuchen(benutzerEingabe10.getText());
+        if (model.getUser().getIstMitarbeiter()) {
+            model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
+        }
+        else {
+            model.getGemieteteAutos(tick1.isSelected());
+        }
+
         autoID1.setCellValueFactory(new PropertyValueFactory<>("iD"));
         von1.setCellValueFactory(new PropertyValueFactory<>("ausleihDatum"));
         bis1.setCellValueFactory(new PropertyValueFactory<>("rückgabeDatum"));
