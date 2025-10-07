@@ -213,11 +213,6 @@ public class Verwalter {
      * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
      */
     public String autoSuchen(String pMarke, String pModell, String pKategorie, int pLeistung){
-        // Eingaben prüfen
-        if (!isInputValid(pMarke, 20) || !isInputValid(pModell, 45) || !isInputValid(pKategorie, 20)) {
-            return "Ungültiges Rückgabedatum!";
-        }
-        
         QueryResult auto = null;
         autos.clear();
         int leistung = (int)pLeistung;
@@ -330,11 +325,6 @@ public class Verwalter {
     public String autoVermieten(int autoID, int userID, String rückgabeAm) {
         if (ich == null) return "Nicht angemeldet!";
         if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter dürfen Autos vermieten!";
-        
-        // Eingaben prüfen
-        if (!isInputValid(rückgabeAm, 23)) {
-            return "Ungültiges Rückgabedatum!";
-        }
         
         // Prüfen ob Auto existiert
         if (!existiertAuto(autoID)) {
