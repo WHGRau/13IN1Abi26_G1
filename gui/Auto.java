@@ -65,8 +65,12 @@ public class Auto {
         return kennzeichen;
     }
     
-    public Preisklasse getPreis(){
+    public Preisklasse getPreisklasse(){
         return pk;
+    }
+    
+    public int getPreis() {
+        return pk.getPreis();
     }
     
     public MietInfo getMietInfo(){

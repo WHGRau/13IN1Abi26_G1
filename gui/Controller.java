@@ -589,7 +589,7 @@ public class Controller {
             String modell = ausgewähltesAuto.getModell();
             String kategorie = ausgewähltesAuto.getKategorie();
             int leistung = ausgewähltesAuto.getLeistung();
-            Preisklasse pk = ausgewähltesAuto.getPreis();
+            Preisklasse pk = ausgewähltesAuto.getPreisklasse();
             int preis = pk.getPreis();
             
             markeAnzeige.setText(marke);
