@@ -334,7 +334,9 @@ public class Verwalter {
     
     public String autoVermieten(int autoID, int userID, String rückgabeAm) {
         if (ich == null) return "Nicht angemeldet!";
-        if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter dürfen Autos vermieten!";
+        if (ich.getIstMitarbeiter() != true && ich.getIstVerifiziert() != true ) {
+            return "Nur Berechtigte dürfen Autos vermieten!";    
+        }
         
         // Prüfen ob Auto existiert
         if (!existiertAuto(autoID)) {
@@ -355,7 +357,7 @@ public class Verwalter {
         
         // Prüfen ob niemand das Auto gerade am Mieten ist
         dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, UserID FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
-        r = dbConnector.getCurrentQueryResult();
+        r = dbConnector.getCurrentQueryResult();        
         if (r.getRowCount() > 0) {
             return "Auto wird gerade bereits von Nutzer ID " + r.getData()[0][2] + " gemietet!";
         }

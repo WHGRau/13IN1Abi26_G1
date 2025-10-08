@@ -204,7 +204,25 @@ public class Controller {
     
     //Für die Miethistorie:
     @FXML
-    private TableColumn<Auto, Integer> autoID1;
+    private TableColumn<Auto, Integer> id100;
+
+    @FXML
+    private TableColumn<Auto, Integer> kategorie100;
+
+    @FXML
+    private TableColumn<Auto, Integer> leistung100;
+
+    @FXML
+    private TableColumn<Auto, String> marke100;
+
+    @FXML
+    private TableView<Auto> miethistorie1;
+
+    @FXML
+    private TableColumn<Auto, String> modell100;
+
+    @FXML
+    private TableColumn<Auto, Integer> preis100;
     
     @FXML
     private Text benutzer10;
@@ -213,19 +231,7 @@ public class Controller {
     private TextField benutzerEingabe10;
 
     @FXML
-    private TableColumn<MietInfo, String> bis1;
-
-    @FXML
-    private TableView<String> miethistorie1;
-
-    @FXML
-    private TableColumn<MietInfo, Integer> preis10;
-
-    @FXML
     private Button suchen10;
-
-    @FXML
-    private TableColumn<MietInfo, String> von1;
     
     @FXML
     private Button zurück10;
@@ -235,6 +241,9 @@ public class Controller {
     
     @FXML
     private CheckBox tick1;
+    
+    @FXML
+    private Label fehler10;
 
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
@@ -356,18 +365,22 @@ public class Controller {
      */
     @FXML
     void mieteSuchen(ActionEvent event) {
-        int benutzerID = model.nutzerSuchen(benutzerEingabe10.getText());
         if (model.getUser().getIstMitarbeiter()) {
+            int benutzerID = model.nutzerSuchen(benutzerEingabe10.getText());
             model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
         }
         else {
+            int benutzerID = model.getUser().getID();
             model.getGemieteteAutos(tick1.isSelected());
         }
 
-        autoID1.setCellValueFactory(new PropertyValueFactory<>("iD"));
-        von1.setCellValueFactory(new PropertyValueFactory<>("ausleihDatum"));
-        bis1.setCellValueFactory(new PropertyValueFactory<>("rückgabeDatum"));
-        preis10.setCellValueFactory(new PropertyValueFactory<>("preis"));
+        id100.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        marke100.setCellValueFactory(new PropertyValueFactory<>("marke"));
+        modell100.setCellValueFactory(new PropertyValueFactory<>("modell"));
+        kategorie100.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
+        leistung100.setCellValueFactory(new PropertyValueFactory<>("leistung"));
+        
+        preis100.setCellValueFactory(new PropertyValueFactory<>("preis"));
         
         ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
         miethistorie1.setItems(daten);
@@ -375,7 +388,12 @@ public class Controller {
     
     @FXML
     void autoZurückgeben(ActionEvent event) {
-        
+        int autoID= miethistorie1.getSelectionModel().getSelectedItem().getID();
+        if (model.getUser().getIstMitarbeiter()){
+            fehler10.setText(model.autoZwangsRücknahme(autoID));    
+        } else {
+            fehler10.setText(model.autoRückgabe(autoID));   
+        }
     }
     
     @FXML
@@ -453,18 +471,6 @@ public class Controller {
             }
         });
     } 
-    
-    @FXML
-    void buttonVisibility()throws IOException{
-        if(model.getUser() != null){
-            anmelden3.setVisible(false);
-            kontoLöschen1.setVisible(true);
-            if(model.getUser().getIstMitarbeiter()){
-                autoHinzufügen1.setVisible(true);
-            }
-            abmelden1.setVisible(true);
-        }
-    }
 
     /**
      * Ruft die Miethistorien-Seite auf.
@@ -496,6 +502,7 @@ public class Controller {
             } else {
                 controller.benutzer10.setText(model.getUser().getBenutzername());
             }
+            mieteSuchen(event);
         });    
     }
     
@@ -596,13 +603,18 @@ public class Controller {
         }
     }
     
+    /**
+     * Ein Auto mit den auf der Hauptseite gewählten Präferenzen wird gemietet.
+     * Ein Mitarbeiter kann ein Auto an jeden, ein Verifizierter Kunde jedoch nur
+     * an sich selbst vermieten.
+     */
     @FXML
     void autoMieten(ActionEvent event)throws IOException {
         int autoId = autoListe1.getSelectionModel().getSelectedItem().getID();
-        int userId;
+        int userId = -1;
         if(model.getUser().getIstMitarbeiter()){
             userId = model.nutzerSuchen(benutzer11.getText());       
-        } else if(model.getUser().getIstVerifiziert()) {
+        } else if(model.getUser().getIstVerifiziert() && !model.getUser().getIstMitarbeiter()) {
             userId = model.getUser().getID();    
         }
         String rückgabe = rückgabe1.getValue().toString();

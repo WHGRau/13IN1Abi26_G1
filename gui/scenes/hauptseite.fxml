@@ -92,7 +92,7 @@
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="375.0" prefWidth="770.0" VBox.vgrow="ALWAYS">
       <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1c7eb" height="38.0" layoutX="8.0" layoutY="8.0" stroke="BLACK" strokeType="INSIDE" width="624.0" />
-            <Label fx:id="kontoLöschen2" layoutX="306.0" layoutY="19.0" prefHeight="17.0" prefWidth="137.0" textFill="RED" />
+            <Label fx:id="kontoLöschen2" layoutX="234.0" layoutY="19.0" prefHeight="17.0" prefWidth="209.0" textFill="RED" />
             <TextField fx:id="marke2" layoutX="8.0" layoutY="55.0" prefHeight="25.0" prefWidth="95.0" promptText="Marke" />
             <TextField fx:id="modell2" layoutX="119.0" layoutY="55.0" prefHeight="25.0" prefWidth="95.0" promptText="Modell" />
             <TextField fx:id="kategorie2" layoutX="226.0" layoutY="55.0" prefHeight="25.0" prefWidth="95.0" promptText="Kategorie" />
