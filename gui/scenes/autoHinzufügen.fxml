@@ -103,7 +103,7 @@
                   <Font name="Noto Sans Regular" size="12.0" />
                </font>
             </Button>
-            <Label fx:id="text3" layoutX="231.0" layoutY="70.0" prefHeight="17.0" prefWidth="189.0" textAlignment="CENTER" textFill="RED" />
+            <Label fx:id="text3" alignment="CENTER" layoutX="175.0" layoutY="70.0" prefHeight="17.0" prefWidth="311.0" textAlignment="CENTER" textFill="RED" />
             <Button fx:id="zuHauptseiteAutoHinzufügen" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToHauptseite" text="⬅ Zurück" />
       </children>
     </AnchorPane>

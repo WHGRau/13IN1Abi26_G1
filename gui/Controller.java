@@ -23,6 +23,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.application.Platform;
 import javafx.scene.text.Text;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.ImageView;
 
 public class Controller {
     // Für Anmeldung:
@@ -116,6 +117,12 @@ public class Controller {
 
    
     // Für die Hauptseite:
+    
+    @FXML
+    private ImageView bild1;
+
+    @FXML
+    private ImageView bild2;
     
     @FXML
     private TextField benutzer11;
@@ -672,8 +679,14 @@ public class Controller {
      */
     @FXML
     void autoÜbertragen(ActionEvent event)throws IOException {
-        ausleihen1.setVisible(true);
-        rückgabe1.setVisible(true);
+        if(model.getUser() != null){
+            if(model.getUser().getIstMitarbeiter() || model.getUser().getIstVerifiziert()){
+            ausleihen1.setVisible(true);
+            rückgabe1.setVisible(true);  
+            }    
+        }
+        bild1.setVisible(true);
+        bild2.setVisible(true);
         Auto ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
         if (ausgewähltesAuto != null) {
             String marke = ausgewähltesAuto.getMarke();
