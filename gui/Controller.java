@@ -453,6 +453,18 @@ public class Controller {
             }
         });
     } 
+    
+    @FXML
+    void buttonVisibility()throws IOException{
+        if(model.getUser() != null){
+            anmelden3.setVisible(false);
+            kontoLöschen1.setVisible(true);
+            if(model.getUser().getIstMitarbeiter()){
+                autoHinzufügen1.setVisible(true);
+            }
+            abmelden1.setVisible(true);
+        }
+    }
 
     /**
      * Ruft die Miethistorien-Seite auf.
@@ -486,7 +498,7 @@ public class Controller {
             }
         });    
     }
-
+    
     /**
      * Ruft die Anmeldungs-Seite auf.
      */
