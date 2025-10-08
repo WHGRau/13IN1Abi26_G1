@@ -66,20 +66,21 @@ public abstract class Helper
     
     /**
      * Prüft den eingegebenen String auf bestimmte Zeichen, die auf SQL-Injection oder Ähnliches deuten könnten.
+     * Gibt eine Fehlermeldung zurück, null = Eingabe ist gültig
      */
-    public static boolean isInputValid(String input, int maxLength) {
+    public static String isInputValid(String input, int maxLength) {
         // Länge
         if (input.length() > maxLength) {
-            return false;
+            return "zu lang! (über " + maxLength + " Zeichen)";
         }
         
         // ungültige Zeichen
         if (input.contains("'") || input.contains("\"") 
         || input.contains("--") ||input.contains("/") 
         || input.contains("#") || input.contains("=") ) {
-            return false;
+            return "enthält ungültige Zeichen! (benutzen Sie am besten nur Buchstaben und Zahlen)";
         }
         
-        return true;
+        return null;
     }
 }

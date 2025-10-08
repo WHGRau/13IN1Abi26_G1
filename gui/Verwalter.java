@@ -22,7 +22,6 @@ public class Verwalter {
         autos = new ArrayList<Auto>();
         kunden = new ArrayList<User>();
         datenbankVerbinden();
-        anmelden("Klogang420", "stuhlgang69");
     }
     
     /**
@@ -539,77 +538,6 @@ public class Verwalter {
     public void setKunden (ArrayList<User> pKunden) {
         kunden = pKunden;   
     } 
-    
-    //2025-10-06 19:51:43.000
-    private boolean isDateValid(String input) {
-        if (!Helper.isInputValid(input, 23)) {
-            return false;
-        }
-        
-        int iLength = input.length();
-        // Länge genauer prüfen
-        switch (iLength) {
-            case 10:
-            case 19:
-            case 23:
-                // Nix tun
-                break;
-            default:
-                return false;
-        }
-        
-        // Ein eingegebenes DateTime String kann 3 Formen haben:
-        // - Nur Datum (2025-10-06)
-        // - Datum + Zeit bis Sekunden (2025-10-06 19:51:43)
-        // - Datum + komplette Zeit (2025-10-06 19:51:43.000), also auch Millisekunden
-        
-        // Zeichen durchgehen und prüfen, zuerst Datum
-        for (int i = 0; i < 10; i++) {
-            char current = input.charAt(i);
-            
-            switch (i) {
-                case 4:
-                case 7:
-                    if (current != '-') return false;
-                default:
-                    if (!Helper.isInt(current + "")) return false;
-            }
-        }
-        
-        // Dann Zeit bis Sekunden, falls vorhanden
-        if (iLength <= 10) return true;
-        // 19:51:43
-        for (int i = 10; i < 19; i++) {
-            char current = input.charAt(i);
-            
-            switch (i) {
-                case 10:
-                    if (current != ' ') return false;
-                case 13:
-                case 16:
-                    if (current != ':') return false;
-                default:
-                    if (!Helper.isInt(current + "")) return false;
-            }
-        }
-        
-        // Zuletzt Millisekunden, falls vorhanden
-        if (iLength <= 19) return true;
-        //.654
-        for (int i = 19; i < 23; i++) {
-            char current = input.charAt(i);
-            
-            switch (i) {
-                case 19:
-                    if (current != '.') return false;
-                default:
-                    if (!Helper.isInt(current + "")) return false;
-            }
-        }
-        
-        return true;
-    }
-    
     
     public void datenbankVerbinden () {
         dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");

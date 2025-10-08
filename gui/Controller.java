@@ -241,8 +241,9 @@ public class Controller {
             text2.setText("Benutzername muss angegeben sein!");
             return;
         }
-        if (!Helper.isInputValid(benutzername, 20)) {
-            text1.setText("Ungültiger Benutzername angegeben!");
+        String error = Helper.isInputValid(benutzername, 20);
+        if (error != null) {
+            text1.setText("Ungültiger Benutzername angegeben: " + error);
             return;
         }
         
@@ -251,8 +252,9 @@ public class Controller {
             text2.setText("Passwort muss angegeben sein!");
             return;
         }
-        if (!Helper.isInputValid(passwort, 99)) {
-            text1.setText("Ungültiges Passwort angegeben!");
+        error = Helper.isInputValid(passwort, 99);
+        if (error != null) {
+            text1.setText("Ungültiges Passwort angegeben: " + error);
             return;
         }
         
@@ -278,8 +280,9 @@ public class Controller {
             text1.setText("Benutzername muss angegeben sein!");
             return;
         }
-        if (!Helper.isInputValid(benutzername, 20)) {
-            text1.setText("Ungültiger Benutzername angegeben!");
+        String error = Helper.isInputValid(benutzername, 20);
+        if (error != null) {
+            text1.setText("Ungültiger Benutzername angegeben: " + error);
             return;
         }
         
@@ -288,8 +291,9 @@ public class Controller {
             text1.setText("Passwort muss angegeben sein!");
             return;
         }
-        if (!Helper.isInputValid(passwort, 99)) {
-            text1.setText("Ungültiges Passwort angegeben!");
+        error = Helper.isInputValid(passwort, 99);
+        if (error != null) {
+            text1.setText("Ungültiges Passwort angegeben: " + error);
             return;
         }
         
@@ -298,8 +302,9 @@ public class Controller {
             text1.setText("Name muss angegeben sein");
             return;
         }
-        if (!Helper.isInputValid(name, 30)) {
-            text1.setText("Ungültiger Name angegeben!");
+        error = Helper.isInputValid(benutzername, 20);
+        if (error != null) {
+            text1.setText("Ungültiger Name angegeben: " + error);
             return;
         }
         
@@ -308,8 +313,9 @@ public class Controller {
             text1.setText("Vorname muss angegeben sein");
             return;
         }
-        if (!Helper.isInputValid(vorname, 30)) {
-            text1.setText("Ungültiger Vorname angegeben!");
+        error = Helper.isInputValid(benutzername, 20);
+        if (error != null) {
+            text1.setText("Ungültiger Vorname angegeben: " + error);
             return;
         }
         
@@ -320,7 +326,7 @@ public class Controller {
         }
         int plzParsed = Helper.tryParseInt(plz);
         if(plzParsed <= 0) {
-            text1.setText("Ungültige Postleitzahl angegeben!");
+            text1.setText("Postleitzahl ist keine gültige Zahl!");
             return;
         }
         
@@ -329,8 +335,9 @@ public class Controller {
             text1.setText("Ort muss angegeben sein!");
             return;
         }
-        if (!Helper.isInputValid(ort, 50)) {
-            text1.setText("Ungültiger Ort angegeben!");
+        error = Helper.isInputValid(ort, 50);
+        if (error != null) {
+            text1.setText("Ungültiger Ort angegeben: " + error);
             return;
         }
         
@@ -339,8 +346,9 @@ public class Controller {
             text1.setText("Straße muss angegeben sein!");
             return;
         }
-        if (!Helper.isInputValid(straße, 50)) {
-            text1.setText("Ungültige Straße angegeben!");
+        error = Helper.isInputValid(straße, 50);
+        if (error != null) {
+            text1.setText("Ungültige Straße angegeben: " + error);
             return;
         }
         
@@ -351,7 +359,7 @@ public class Controller {
         }
         int hausNrParsed = Helper.tryParseInt(hausnummer);
         if(hausNrParsed <= 0) {
-            text1.setText("Ungültige Hausnummer angegeben!");
+            text1.setText("Hausnummer ist keine gültige Zahl!");
             return;
         }
         
@@ -360,8 +368,9 @@ public class Controller {
             text1.setText("Geburtsdatum muss natürlich ausgefüllt sein!");
             return;
         }
-        if (!Helper.isInputValid(geburtsdatum, 23)) {
-            text1.setText("Ungültiges Geburtsdatum angegeben!");
+        error = Helper.isInputValid(geburtsdatum, 23);
+        if (error != null) {
+            text1.setText("Ungültiges Geburtsdatum angegeben: " + error);
             return;
         }
 
@@ -403,6 +412,26 @@ public class Controller {
         kategorieListe1.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
         psListe1.setCellValueFactory(new PropertyValueFactory<>("leistung"));
         preisListe1.setCellValueFactory(new PropertyValueFactory<>("preis"));
+        
+        // Eingaben validieren
+        String marke = marke2.getText();
+        String error = Helper.isInputValid(marke, 20);
+        if (error != null) {
+            text1.setText("Ungültige Marke angegeben: " + error);
+            return;
+        }
+        String modell = modell2.getText();
+        error = Helper.isInputValid(modell, 45);
+        if (error != null) {
+            text1.setText("Ungültiges Modell angegeben: " + error);
+            return;
+        }
+        String kategorie = kategorie2.getText();
+        error = Helper.isInputValid(kategorie, 20);
+        if (error != null) {
+            text1.setText("Ungültige Kategorie angegeben: " + error);
+            return;
+        }
         
         int leistung = (int)ps1.getValue();
         String meldung = model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), leistung);
@@ -539,63 +568,67 @@ public class Controller {
         //Prüft dass alle Felder ausgefüllt sind
         String marke = marke1.getText();
         if(marke1.getText().equals("")) {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
+            text3.setText("Marke nicht angegeben!");
             return;
         }
-        if (!Helper.isInputValid(marke, 20)) {
-            text1.setText("Ungültige Marke angegeben!");
+        String error = Helper.isInputValid(marke, 20);
+        if (error != null) {
+            text1.setText("Ungültige Marke angegeben: " + error);
             return;
         }
         
         String modell = modell1.getText();
         if(modell1.getText().equals("")) {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
+            text3.setText("Modell nicht angegeben!");
             return;
         }
-        if (!Helper.isInputValid(modell, 45)) {
-            text1.setText("Ungültiges Modell angegeben!");
+        error = Helper.isInputValid(modell, 45);
+        if (error != null) {
+            text1.setText("Ungültiges Modell angegeben: " + error);
             return;
         }
         
         String kennzeichen = kennzeichen1.getText();
         if(kennzeichen1.getText().equals("")) {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
+            text3.setText("Kennzeichen nicht angegeben!");
             return;
         }
-        if (!Helper.isInputValid(kennzeichen, 12)) {
-            text1.setText("Ungültiges Kennzeichen angegeben!");
+        error = Helper.isInputValid(kennzeichen, 12);
+        if (error != null) {
+            text1.setText("Ungültiges Kennzeichen angegeben: " + error);
             return;
         }
         
         String leistung = leistung1.getText(); 
         if(leistung1.getText().equals("")) {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
+            text3.setText("Leistung nicht angegeben!");
             return;
         }
         int leistungParsed = Helper.tryParseInt(leistung1.getText());
         if(leistungParsed <= 0) {
-            text1.setText("Ungültige Leistung angegeben!");
+            text3.setText("Leistung ist keine gültige Zahl!");
             return;
         }
         
         String kategorie = kategorie1.getText();
         if(kategorie1.getText().equals("")) {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
+            text3.setText("Kategorie nicht angegeben!");
             return;
         }
-        if (!Helper.isInputValid(kategorie, 20)) {
-            text1.setText("Ungültige Kategorie angegeben!");
+        error = Helper.isInputValid(kategorie, 20);
+        if (error != null) {
+            text1.setText("Ungültige Kategorie angegeben: " + error);
             return;
         }
         
         String preisklasse = preisklasse1.getText();
         if(preisklasse1.getText().equals("")) {
-            text3.setText("Alle Felder müssen ausgefüllt sein!");
+            text3.setText("Preisklasse nicht angegeben!");
             return;
         }
         int pkParsed = Helper.tryParseInt(preisklasse1.getText());
         if(pkParsed <= 0) {
-            text1.setText("Ungültige Preisklasse angegeben!");
+            text3.setText("Preisklasse ist kein gültiger Betrag!");
             return;
         }
         
