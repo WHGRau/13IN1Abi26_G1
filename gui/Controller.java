@@ -768,10 +768,20 @@ public class Controller {
             fehler11.setText("Kein Benutzername angegeben!");
             return;
         }
+        String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
+        if(error != null){
+            fehler11.setText("Benutzername: " + error);
+            return;    
+        }
         
         if(passwort.equals("")){
             fehler11.setText("Kein Benutzername angegeben!");
             return;
+        }
+        error = Helper.isInputValid(passwort, Constants.passwortMaxLength);
+        if(error != null){
+            fehler11.setText("Passwort: " + error);
+            return;    
         }
         
         if(frage1.getText().equalsIgnoreCase("Ja")) {
