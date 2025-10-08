@@ -29,6 +29,9 @@ public class Controller {
     // Für Anmeldung:
     
     @FXML
+    private Button passwortVergessen1;
+    
+    @FXML
     private Button zuHauptseiteAnmeldung;
     
     @FXML
@@ -248,6 +251,26 @@ public class Controller {
     
     @FXML
     private Label fehler10;
+    
+    //Für Passwort ändern:
+    
+    @FXML
+    private TextField benutzer111;
+
+    @FXML
+    private Label fehler11;
+
+    @FXML
+    private TextField frage1;
+
+    @FXML
+    private TextField passwort111;
+
+    @FXML
+    private Button passwortÄndern1;
+    
+    @FXML
+    private Button zurück111;
 
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
@@ -440,6 +463,18 @@ public class Controller {
     } 
     
     /**
+     * Wechselt zur Passwort Änderungs Seite.
+     */
+    @FXML
+    void switchToPasswortÄndern(ActionEvent event)throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("scenes/passwortÄndern.fxml"));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();        
+    }
+    
+    /**
      * Ruft die Hauptseite auf oder lädt sie neu.
      * Überprüft dabei ob ein Nutzer angemeldet ist usw. um aufgrunddessen
      * Elemente anzuzeigen oder zu verbergeben.
@@ -626,5 +661,27 @@ public class Controller {
         }
         String rückgabe = rückgabe1.getValue().toString();
         kontoLöschen2.setText(model.autoVermieten(autoId, userId, rückgabe)); 
+    }
+    
+    @FXML
+    void passwortÄndern(ActionEvent event)throws IOException {
+        String passwort = passwort111.getText();
+        String benutzername = benutzer111.getText();
+        if(benutzername.equals("")){
+            fehler11.setText("Kein Benutzername angegeben!");
+            return;
+        }
+        
+        if(passwort.equals("")){
+            fehler11.setText("Kein Benutzername angegeben!");
+            return;
+        }
+        
+        if(frage1.getText().equalsIgnoreCase("Ja")) {
+            fehler11.setText(model.passwortÄndern(benutzername, passwort)); 
+            switchToAnmeldung(event);
+        } else {
+            fehler11.setText("Sicherheitsfrage falsch!!");
+        }
     }
 }
