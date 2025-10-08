@@ -49,6 +49,10 @@ public abstract class Helper
         }
     }
     
+    public static boolean isInt(String input) {
+        return tryParseInt(input) != -2;
+    }
+    
     public static boolean tryParseBool(String input) {
         switch(input) {
             case "0":
@@ -58,5 +62,25 @@ public abstract class Helper
             default:
                 throw new IllegalArgumentException("'" + input + "' kann nicht zu boolean geparst werden.");
         }
+    }
+    
+    /**
+     * Prüft den eingegebenen String auf bestimmte Zeichen, die auf SQL-Injection oder Ähnliches deuten könnten.
+     * Gibt eine Fehlermeldung zurück, null = Eingabe ist gültig
+     */
+    public static String isInputValid(String input, int maxLength) {
+        // Länge
+        if (input.length() > maxLength) {
+            return "zu lang! (über " + maxLength + " Zeichen)";
+        }
+        
+        // ungültige Zeichen
+        if (input.contains("'") || input.contains("\"") 
+        || input.contains("--") ||input.contains("/") 
+        || input.contains("#") || input.contains("=") ) {
+            return "enthält ungültige Zeichen!";
+        }
+        
+        return null;
     }
 }

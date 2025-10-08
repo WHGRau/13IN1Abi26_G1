@@ -569,11 +569,10 @@ public class Verwalter {
     
     public void setKunden (ArrayList<User> pKunden) {
         kunden = pKunden;   
-    }
-    
+    } 
     
     public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
         String fehler = dbConnector.getErrorMessage();
         if (fehler == null) {
           System.out.println("Datenbank wurde erfolgreich verbunden!");
