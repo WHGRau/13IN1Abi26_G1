@@ -2,6 +2,7 @@ package gui;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 /**
  * Beschreiben Sie hier die Klasse Helper.
@@ -82,5 +83,14 @@ public abstract class Helper
         }
         
         return null;
+    }
+    
+    // source: https://stackoverflow.com/questions/8345023/need-to-get-current-timestamp-in-java
+    public static String getNowDate() {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    }
+    
+    public static String getNowDateTime() {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()); // HH -> 24h; hh -> 12h am/pm
     }
 }

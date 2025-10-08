@@ -57,8 +57,12 @@ public class Auto {
         return kategorie;
     }
     
-    public int getLeistung() {
+    public int getLeistungNum() {
         return leistung;
+    }
+    
+    public String getLeistung() {
+        return leistung + " PS";
     }
     
     public String getKennzeichen() {
@@ -69,8 +73,12 @@ public class Auto {
         return pk;
     }
     
-    public int getPreis() {
+    public int getPreisNum() {
         return pk.getPreis();
+    }
+    
+    public String getPreis() {
+        return pk.getPreis() + "€";
     }
     
     public MietInfo getMietInfo(){

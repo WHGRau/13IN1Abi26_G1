@@ -24,6 +24,11 @@ import javafx.application.Platform;
 import javafx.scene.text.Text;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
+import java.util.Date;
+import java.time.LocalDateTime;
+
+//import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Controller {
     // Für Anmeldung:
@@ -185,10 +190,10 @@ public class Controller {
     private TableColumn<Auto, String> kategorieListe1; 
     
     @FXML
-    private TableColumn<Auto, Integer> psListe1; 
+    private TableColumn<Auto, String> psListe1; 
     
     @FXML
-    private TableColumn<Auto, Integer> preisListe1; 
+    private TableColumn<Auto, String> preisListe1; 
     
     @FXML
     private TableColumn<Auto, Integer> idListe1; 
@@ -214,10 +219,10 @@ public class Controller {
     private TableColumn<Auto, Integer> id100;
 
     @FXML
-    private TableColumn<Auto, Integer> kategorie100;
+    private TableColumn<Auto, String> kategorie100;
 
     @FXML
-    private TableColumn<Auto, Integer> leistung100;
+    private TableColumn<Auto, String> leistung100;
 
     @FXML
     private TableColumn<Auto, String> marke100;
@@ -417,7 +422,19 @@ public class Controller {
     @FXML
     void mieteSuchen(ActionEvent event) {
         if (model.getUser().getIstMitarbeiter()) {
-            int benutzerID = model.nutzerSuchen(benutzerEingabe10.getText());
+            // TODO: Falls Benutzername leer ist, alle Mieten jemals zurückgeben
+            String benutzername = benutzerEingabe10.getText();
+            if(benutzername.equals("")) {
+                text1.setText("Kein Benutzername angegeben!");
+                return;
+            }
+            String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
+            if (error != null) {
+                text1.setText("Ungültiger Benutzername: " + error);
+                return;
+            }
+            
+            int benutzerID = model.getBenutzerID(benutzername);
             model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
         }
         else {
@@ -509,7 +526,7 @@ public class Controller {
     /**
      * Ruft die Hauptseite auf oder lädt sie neu.
      * Überprüft dabei ob ein Nutzer angemeldet ist usw. um aufgrunddessen
-     * Elemente anzuzeigen oder zu verbergeben.
+     * Elemente anzuzeigen oder zu verbergen.
      */
     @FXML
     void switchToHauptseite(ActionEvent event)throws IOException{
@@ -679,20 +696,22 @@ public class Controller {
      */
     @FXML
     void autoÜbertragen(ActionEvent event)throws IOException {
-        if(model.getUser() != null){
-            if(model.getUser().getIstMitarbeiter() || model.getUser().getIstVerifiziert()){
+        User user = model.getUser();
+        if(user != null && (user.getIstMitarbeiter() || user.getIstVerifiziert())){
             ausleihen1.setVisible(true);
-            rückgabe1.setVisible(true);  
-            }    
+            rückgabe1.setVisible(true);
         }
+        
         bild1.setVisible(true);
         bild2.setVisible(true);
+        // TODO: Auto automatisch durch Doppelklick auf Tabellenzeile auswählen
         Auto ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
+        
         if (ausgewähltesAuto != null) {
             String marke = ausgewähltesAuto.getMarke();
             String modell = ausgewähltesAuto.getModell();
             String kategorie = ausgewähltesAuto.getKategorie();
-            int leistung = ausgewähltesAuto.getLeistung();
+            int leistung = ausgewähltesAuto.getLeistungNum();
             Preisklasse pk = ausgewähltesAuto.getPreisklasse();
             int preis = pk.getPreis();
             
@@ -702,7 +721,8 @@ public class Controller {
             LeistungAnzeige.setText(""+leistung+" PS");
             preisAnzeige1.setText(""+preis+" € / Tag");
         }
-        if(model.getUser() != null && model.getUser().getIstMitarbeiter()){
+        
+        if(user != null && user.getIstMitarbeiter()){
             benutzer11.setVisible (true);
         }
     }
@@ -714,14 +734,61 @@ public class Controller {
      */
     @FXML
     void autoMieten(ActionEvent event)throws IOException {
-        int autoId = autoListe1.getSelectionModel().getSelectedItem().getID();
-        int userId = -1;
-        if(model.getUser().getIstMitarbeiter()){
-            userId = model.nutzerSuchen(benutzer11.getText());       
-        } else if(model.getUser().getIstVerifiziert() && !model.getUser().getIstMitarbeiter()) {
-            userId = model.getUser().getID();    
+        User user = model.getUser();
+        if (user == null) {
+            kontoLöschen2.setText("Nicht angemeldet!");
+            return;
         }
-        String rückgabe = rückgabe1.getValue().toString();
-        kontoLöschen2.setText(model.autoVermieten(autoId, userId, rückgabe)); 
+        
+        String benutzername = benutzer11.getText();
+        if (benutzername.equals("")) {
+            kontoLöschen2.setText("Kein Benutzername angegeben!");
+            return;
+        }
+        String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
+        if (error != null) {
+            kontoLöschen2.setText("Ungültiger Benutzername: " + error);
+            return;
+        }
+        
+        LocalDate rückgabeDatum = rückgabe1.getValue();
+        
+        if (rückgabeDatum == null) {
+            kontoLöschen2.setText("Kein Rückgabedatum angegeben!");
+            return;
+        }
+        String rückgabeDatumParsed = rückgabe1.getValue().toString();
+        // TODO: Nachschauen ob diese Extraprüfung überhaupt notwendig ist
+        if (rückgabeDatumParsed == null || rückgabeDatumParsed.equals("")) {
+            kontoLöschen2.setText("Kein Rückgabedatum angegeben!");
+            return;
+        }
+        error = Helper.isInputValid(rückgabeDatumParsed, Constants.fullDateTimeMaxLength);
+        if (error != null) {
+            kontoLöschen2.setText("Ungültiges Rückgabedatum: " + error);
+            return;
+        }
+        else if (LocalDate.now().isBefore(rückgabeDatum)) { // FIXME: Funktioniert nicht
+            kontoLöschen2.setText("Rückgabedatum darf nicht in der Vergangenheit sein!");
+            return;
+        }
+        
+        int autoId = autoListe1.getSelectionModel().getSelectedItem().getID(); // FIXME: Bei leerem/ungültigem Rückgabedatum: java.lang.NullPointerException: Cannot invoke "gui.Auto.getID()" because the return value of "javafx.scene.control.TableView$TableViewSelectionModel.getSelectedItem()" is null
+        int userId = -1;
+        if(user.getIstMitarbeiter()){
+            userId = model.getBenutzerID(benutzername);       
+        } else if(user.getIstVerifiziert()) {
+            userId = user.getID();    
+        }
+        else {
+            kontoLöschen2.setText("Keine Berechtigung!");
+            return;
+        }
+        
+        if (userId <= 0) {
+            kontoLöschen2.setText("Kein Kunde unter dem Namen vorhanden!");
+            return;
+        }
+        kontoLöschen2.setText(model.autoVermieten(autoId, userId, rückgabeDatumParsed)); 
     }
 }
