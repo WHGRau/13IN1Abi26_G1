@@ -125,18 +125,26 @@ public class Verwalter {
         return("Abmeldung erfolgreich");
     }
     
+    /**
+     * Das Konto und alle dazugehörigen Daten werden gelöscht. 
+     * Funktioniert nur wenn im Moment nichts mehr gemietet wird.
+     */
+    
     public String kontoLoeschen(){
-        /*
-         * AUSSCHLIESSLICH AUSFÜHREN WENN DER BENUTZER NICHTS MEHR MIETET!!!!!!!!!
-         */
         if(ich == null) return("Nicht angemeldet!");
         String benutzername = ich.getBenutzername();
         
-        dbConnector.executeStatement("SELECT id FROM benutzer WHERE benutzername ='" + benutzername + "'");
-        QueryResult x = dbConnector.getCurrentQueryResult();
-        int id = Integer.parseInt(x.getData() [0][0]);
-        if (x.getRowCount() == 0) {
+        int id = nutzerSuchen(benutzername);
+        if (id == -1) {
             return("Konnte zu löschenden Nutzer nicht finden!");
+        }
+        
+        //Überprüfen ob der Nutzer noch etwas ausleiht
+        String datum = getNowDateTime();
+        dbConnector.executeStatement("SELECT * FROM mietet WHERE UserId = '"+id+"' AND RückgabeAm = '"+datum+"'");
+        QueryResult x = dbConnector.getCurrentQueryResult();
+        if (x.getRowCount() != 0) {
+            return("Es wird noch etwas ausgeliehen!");
         }
         
         dbConnector.executeStatement("SELECT AdresseID FROM benutzer WHERE benutzername ='" + benutzername + "'");
@@ -150,6 +158,7 @@ public class Verwalter {
         dbConnector.executeStatement("DELETE FROM standort WHERE id = '" + adresseId + "'");
         dbConnector.executeStatement("DELETE FROM bewertungen WHERE benutzerID = '" + id + "'");
         dbConnector.executeStatement("DELETE FROM wunschliste WHERE benutzerID = '" + id + "'");
+        dbConnector.executeStatement("DELETE FROM mietet WHERE UserID = '" + id + "'");
         return("Konto erfolgreich gelöscht.");
     }
     
@@ -210,6 +219,7 @@ public class Verwalter {
     /**
      * Sucht nach Autos mit den angebeben Parametern, es können auch alle leer gelassen werden.
      * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
+     * Es werden nur Autos zurückgegeben die noch nicht vermietet sind!!
      */
     public String autoSuchen(String pMarke, String pModell, String pKategorie, int pLeistung){
         QueryResult auto = null;
@@ -323,7 +333,9 @@ public class Verwalter {
     
     public String autoVermieten(int autoID, int userID, String rückgabeAm) {
         if (ich == null) return "Nicht angemeldet!";
-        if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter dürfen Autos vermieten!";
+        if (ich.getIstMitarbeiter() != true && ich.getIstVerifiziert() != true ) {
+            return "Nur Berechtigte dürfen Autos vermieten!";    
+        }
         
         // Prüfen ob Auto existiert
         if (!existiertAuto(autoID)) {
@@ -344,7 +356,7 @@ public class Verwalter {
         
         // Prüfen ob niemand das Auto gerade am Mieten ist
         dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, UserID FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
-        r = dbConnector.getCurrentQueryResult();
+        r = dbConnector.getCurrentQueryResult();        
         if (r.getRowCount() > 0) {
             return "Auto wird gerade bereits von Nutzer ID " + r.getData()[0][2] + " gemietet!";
         }
@@ -456,7 +468,7 @@ public class Verwalter {
         "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
         "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis";
     
-    private String getAutoSql = autoSelectSql + " FROM auto, preisklassen WHERE auto.PreisklasseID = preisklassen.ID ";
+    private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID WHERE (mietet1.letzteRueckgabe < '"+getNowDateTime()+"' OR mietet1.letzteRueckgabe IS NULL)";
     
     private String getGemieteteAutosSql = autoSelectSql + ", mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID "+
         "FROM auto, preisklassen, mietet WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID ";
@@ -503,6 +515,16 @@ public class Verwalter {
         }
         else {
             return r.getData()[0][0];
+        }
+    }
+    
+    public int nutzerSuchen(String pBenutzername) {
+        if(!pBenutzername.isEmpty()){
+            dbConnector.executeStatement("SELECT ID FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
+            QueryResult r = dbConnector.getCurrentQueryResult();   
+            return Integer.parseInt(r.getData()[0][0]);
+        } else {
+            return -1;
         }
     }
     
