@@ -270,7 +270,7 @@ public class Controller {
             return;
         }
         String rückgabe = model.anmelden(benutzername, passwort);
-        if (rückgabe.equals("Anmeldung erfolgreich!")) {
+        if (rückgabe.equals("Erfolgreich als Kunde angemeldet!")|| rückgabe.equals("Erfolgreich als Mitarbeiter angemeldet!")) {
             switchToHauptseite(event);
         } else {
             text2.setText(rückgabe);   
