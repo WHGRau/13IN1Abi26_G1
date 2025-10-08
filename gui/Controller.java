@@ -220,9 +220,6 @@ public class Controller {
 
     @FXML
     private TableColumn<Auto, String> modell100;
-
-    @FXML
-    private TableColumn<Auto, Integer> preis100;
     
     @FXML
     private Text benutzer10;
@@ -380,8 +377,6 @@ public class Controller {
         kategorie100.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
         leistung100.setCellValueFactory(new PropertyValueFactory<>("leistung"));
         
-        preis100.setCellValueFactory(new PropertyValueFactory<>("preis"));
-        
         ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
         miethistorie1.setItems(daten);
     }
@@ -502,7 +497,6 @@ public class Controller {
             } else {
                 controller.benutzer10.setText(model.getUser().getBenutzername());
             }
-            mieteSuchen(event);
         });    
     }
     
