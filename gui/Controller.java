@@ -238,23 +238,23 @@ public class Controller {
     void anmelden(ActionEvent event) throws IOException {
         String benutzername = benutzername1.getText();
         if (benutzername.equals("")) {
-            text2.setText("Benutzername muss angegeben sein!");
+            text2.setText("Kein Benutzername angegeben!");
             return;
         }
-        String error = Helper.isInputValid(benutzername, 20);
+        String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
         if (error != null) {
-            text1.setText("Ungültiger Benutzername angegeben: " + error);
+            text2.setText("Ungültiger Benutzername: " + error);
             return;
         }
         
         String passwort = passwort1.getText();
         if (passwort.equals("")) {
-            text2.setText("Passwort muss angegeben sein!");
+            text2.setText("Kein Passwort angegeben!");
             return;
         }
-        error = Helper.isInputValid(passwort, 99);
+        error = Helper.isInputValid(passwort, Constants.passwortMaxLength);
         if (error != null) {
-            text1.setText("Ungültiges Passwort angegeben: " + error);
+            text2.setText("Ungültiges Passwort: " + error);
             return;
         }
         
@@ -277,51 +277,51 @@ public class Controller {
         //Überprüfung dass die Eingabefelder alle gefüllt sind
         String benutzername = benutzername2.getText();
         if(benutzername.equals("")) {
-            text1.setText("Benutzername muss angegeben sein!");
+            text1.setText("Kein Benutzername angegeben!");
             return;
         }
-        String error = Helper.isInputValid(benutzername, 20);
+        String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
         if (error != null) {
-            text1.setText("Ungültiger Benutzername angegeben: " + error);
+            text1.setText("Ungültiger Benutzername: " + error);
             return;
         }
         
         String passwort = passwort2.getText();
         if(passwort.equals("")) {
-            text1.setText("Passwort muss angegeben sein!");
+            text1.setText("Kein Passwort angegeben!");
             return;
         }
-        error = Helper.isInputValid(passwort, 99);
+        error = Helper.isInputValid(passwort, Constants.passwortMaxLength);
         if (error != null) {
-            text1.setText("Ungültiges Passwort angegeben: " + error);
+            text1.setText("Ungültiges Passwort: " + error);
             return;
         }
         
         String name = name1.getText();
         if(name.equals("")) {
-            text1.setText("Name muss angegeben sein");
+            text1.setText("Kein Name angegeben!");
             return;
         }
-        error = Helper.isInputValid(benutzername, 20);
+        error = Helper.isInputValid(name, Constants.nameMaxLength);
         if (error != null) {
-            text1.setText("Ungültiger Name angegeben: " + error);
+            text1.setText("Ungültiger Name: " + error);
             return;
         }
         
         String vorname = vorname1.getText();
         if(vorname.equals("")) {
-            text1.setText("Vorname muss angegeben sein");
+            text1.setText("Kein Vorname angegeben!");
             return;
         }
-        error = Helper.isInputValid(benutzername, 20);
+        error = Helper.isInputValid(vorname, Constants.vornameMaxLength);
         if (error != null) {
-            text1.setText("Ungültiger Vorname angegeben: " + error);
+            text1.setText("Ungültiger Vorname: " + error);
             return;
         }
         
         String plz = plz1.getText();
         if(plz.equals("")) {
-            text1.setText("Postleitzahl muss angegeben sein!");
+            text1.setText("Keine Postleitzahl angegeben!");
             return;
         }
         int plzParsed = Helper.tryParseInt(plz);
@@ -332,29 +332,29 @@ public class Controller {
         
         String ort = ort1.getText();
         if(ort.equals("")) {
-            text1.setText("Ort muss angegeben sein!");
+            text1.setText("Kein Ort angegeben!");
             return;
         }
-        error = Helper.isInputValid(ort, 50);
+        error = Helper.isInputValid(ort, Constants.ortMaxLength);
         if (error != null) {
-            text1.setText("Ungültiger Ort angegeben: " + error);
+            text1.setText("Ungültiger Ort: " + error);
             return;
         }
         
         String straße = straße1.getText();
         if(straße.equals("")) {
-            text1.setText("Straße muss angegeben sein!");
+            text1.setText("Keine Straße angegeben!");
             return;
         }
-        error = Helper.isInputValid(straße, 50);
+        error = Helper.isInputValid(straße, Constants.straßeMaxLength);
         if (error != null) {
-            text1.setText("Ungültige Straße angegeben: " + error);
+            text1.setText("Ungültige Straße: " + error);
             return;
         }
         
         String hausnummer = hausnummer1.getText();
         if(hausnummer.equals("")) {
-            text1.setText("Hausnummer muss angegeben sein!");
+            text1.setText("Keine Hausnummer angegeben!");
             return;
         }
         int hausNrParsed = Helper.tryParseInt(hausnummer);
@@ -368,9 +368,9 @@ public class Controller {
             text1.setText("Geburtsdatum muss natürlich ausgefüllt sein!");
             return;
         }
-        error = Helper.isInputValid(geburtsdatum, 23);
+        error = Helper.isInputValid(geburtsdatum, Constants.fullDateTimeMaxLength);
         if (error != null) {
-            text1.setText("Ungültiges Geburtsdatum angegeben: " + error);
+            text1.setText("Ungültiges Geburtsdatum: " + error);
             return;
         }
 
@@ -415,26 +415,26 @@ public class Controller {
         
         // Eingaben validieren
         String marke = marke2.getText();
-        String error = Helper.isInputValid(marke, 20);
+        String error = Helper.isInputValid(marke, Constants.markeMaxLength);
         if (error != null) {
-            text1.setText("Ungültige Marke angegeben: " + error);
+            kontoLöschen2.setText("Ungültige Marke: " + error);
             return;
         }
         String modell = modell2.getText();
-        error = Helper.isInputValid(modell, 45);
+        error = Helper.isInputValid(modell, Constants.modellMaxLength);
         if (error != null) {
-            text1.setText("Ungültiges Modell angegeben: " + error);
+            kontoLöschen2.setText("Ungültiges Modell: " + error);
             return;
         }
         String kategorie = kategorie2.getText();
-        error = Helper.isInputValid(kategorie, 20);
+        error = Helper.isInputValid(kategorie, Constants.kategorieMaxLength);
         if (error != null) {
-            text1.setText("Ungültige Kategorie angegeben: " + error);
+            kontoLöschen2.setText("Ungültige Kategorie: " + error);
             return;
         }
         
         int leistung = (int)ps1.getValue();
-        String meldung = model.autoSuchen(marke2.getText(), modell2.getText(), kategorie2.getText(), leistung);
+        String meldung = model.autoSuchen(marke, modell, kategorie, leistung);
         if (meldung != null) {
             System.out.println(meldung);
             return;
@@ -571,9 +571,9 @@ public class Controller {
             text3.setText("Marke nicht angegeben!");
             return;
         }
-        String error = Helper.isInputValid(marke, 20);
+        String error = Helper.isInputValid(marke, Constants.markeMaxLength);
         if (error != null) {
-            text1.setText("Ungültige Marke angegeben: " + error);
+            text3.setText("Ungültige Marke: " + error);
             return;
         }
         
@@ -582,9 +582,9 @@ public class Controller {
             text3.setText("Modell nicht angegeben!");
             return;
         }
-        error = Helper.isInputValid(modell, 45);
+        error = Helper.isInputValid(modell, Constants.modellMaxLength);
         if (error != null) {
-            text1.setText("Ungültiges Modell angegeben: " + error);
+            text3.setText("Ungültiges Modell: " + error);
             return;
         }
         
@@ -593,9 +593,9 @@ public class Controller {
             text3.setText("Kennzeichen nicht angegeben!");
             return;
         }
-        error = Helper.isInputValid(kennzeichen, 12);
+        error = Helper.isInputValid(kennzeichen, Constants.kennzeichenMaxLength);
         if (error != null) {
-            text1.setText("Ungültiges Kennzeichen angegeben: " + error);
+            text3.setText("Ungültiges Kennzeichen: " + error);
             return;
         }
         
@@ -615,9 +615,9 @@ public class Controller {
             text3.setText("Kategorie nicht angegeben!");
             return;
         }
-        error = Helper.isInputValid(kategorie, 20);
+        error = Helper.isInputValid(kategorie, Constants.kategorieMaxLength);
         if (error != null) {
-            text1.setText("Ungültige Kategorie angegeben: " + error);
+            text1.setText("Ungültige Kategorie: " + error);
             return;
         }
         

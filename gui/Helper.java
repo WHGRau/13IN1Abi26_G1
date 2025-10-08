@@ -78,7 +78,7 @@ public abstract class Helper
         if (input.contains("'") || input.contains("\"") 
         || input.contains("--") ||input.contains("/") 
         || input.contains("#") || input.contains("=") ) {
-            return "enthält ungültige Zeichen! (benutzen Sie am besten nur Buchstaben und Zahlen)";
+            return "enthält ungültige Zeichen!";
         }
         
         return null;
