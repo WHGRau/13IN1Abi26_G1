@@ -22,8 +22,6 @@ public class Verwalter {
         autos = new ArrayList<Auto>();
         kunden = new ArrayList<User>();
         datenbankVerbinden();
-        
-        anmelden("Klogang420", "stuhlgang69");
     }
     
     /**
