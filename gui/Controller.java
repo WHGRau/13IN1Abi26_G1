@@ -22,6 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.application.Platform;
 import javafx.scene.text.Text;
+import javafx.scene.control.CheckBox;
 
 public class Controller {
     // Für Anmeldung:
@@ -115,6 +116,10 @@ public class Controller {
 
    
     // Für die Hauptseite:
+    
+    @FXML
+    private TextField benutzer11;
+
     @FXML
     private Button miethistorie2;
     
@@ -179,6 +184,9 @@ public class Controller {
     private TableColumn<Auto, Integer> preisListe1; 
     
     @FXML
+    private TableColumn<Auto, Integer> idListe1; 
+    
+    @FXML
     private Button suchen1;
     
     @FXML
@@ -196,31 +204,43 @@ public class Controller {
     
     //Für die Miethistorie:
     @FXML
+    private TableColumn<Auto, Integer> id100;
+
+    @FXML
+    private TableColumn<Auto, Integer> kategorie100;
+
+    @FXML
+    private TableColumn<Auto, Integer> leistung100;
+
+    @FXML
+    private TableColumn<Auto, String> marke100;
+
+    @FXML
+    private TableView<Auto> miethistorie1;
+
+    @FXML
+    private TableColumn<Auto, String> modell100;
+    
+    @FXML
     private Text benutzer10;
 
     @FXML
     private TextField benutzerEingabe10;
 
     @FXML
-    private TableColumn<?, ?> bis1;
-
-    @FXML
-    private TableView<?> miethistorie1;
-
-    @FXML
-    private TableColumn<?, ?> preis10;
-
-    @FXML
     private Button suchen10;
-
-    @FXML
-    private TableColumn<?, ?> von1;
     
     @FXML
     private Button zurück10;
     
     @FXML
     private Button autoZurückgeben1;
+    
+    @FXML
+    private CheckBox tick1;
+    
+    @FXML
+    private Label fehler10;
 
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
@@ -247,7 +267,7 @@ public class Controller {
             return;
         }
         String rückgabe = model.anmelden(benutzername, passwort);
-        if (rückgabe.equals("Anmeldung erfolgreich!")) {
+        if (rückgabe.equals("Erfolgreich als Kunde angemeldet!")|| rückgabe.equals("Erfolgreich als Mitarbeiter angemeldet!")) {
             switchToHauptseite(event);
         } else {
             text2.setText(rückgabe);   
@@ -342,17 +362,39 @@ public class Controller {
      */
     @FXML
     void mieteSuchen(ActionEvent event) {
+        if (model.getUser().getIstMitarbeiter()) {
+            int benutzerID = model.nutzerSuchen(benutzerEingabe10.getText());
+            model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
+        }
+        else {
+            int benutzerID = model.getUser().getID();
+            model.getGemieteteAutos(tick1.isSelected());
+        }
 
+        id100.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        marke100.setCellValueFactory(new PropertyValueFactory<>("marke"));
+        modell100.setCellValueFactory(new PropertyValueFactory<>("modell"));
+        kategorie100.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
+        leistung100.setCellValueFactory(new PropertyValueFactory<>("leistung"));
+        
+        ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
+        miethistorie1.setItems(daten);
     }
     
     @FXML
     void autoZurückgeben(ActionEvent event) {
-
+        int autoID= miethistorie1.getSelectionModel().getSelectedItem().getID();
+        if (model.getUser().getIstMitarbeiter()){
+            fehler10.setText(model.autoZwangsRücknahme(autoID));    
+        } else {
+            fehler10.setText(model.autoRückgabe(autoID));   
+        }
     }
     
     @FXML
-    void kontoLöschen(ActionEvent event){
+    void kontoLöschen(ActionEvent event) throws IOException{
         kontoLöschen2.setText(model.kontoLoeschen());
+        switchToHauptseite(event);
     }
     
     /**
@@ -360,6 +402,7 @@ public class Controller {
      */
     @FXML
     void autoSuchen(ActionEvent event){
+        idListe1.setCellValueFactory(new PropertyValueFactory<>("iD"));
         markeListe1.setCellValueFactory(new PropertyValueFactory<>("marke"));
         modellListe1.setCellValueFactory(new PropertyValueFactory<>("modell"));
         kategorieListe1.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
@@ -423,25 +466,13 @@ public class Controller {
             }
         });
     } 
-    
-    @FXML
-    void buttonVisibility()throws IOException{
-        if(model.getUser() != null){
-            anmelden3.setVisible(false);
-            kontoLöschen1.setVisible(true);
-            if(model.getUser().getIstMitarbeiter()){
-                autoHinzufügen1.setVisible(true);
-            }
-            abmelden1.setVisible(true);
-        }
-    }
 
     /**
      * Ruft die Miethistorien-Seite auf.
      * Überprüft dabei ob ein Nutzer Mitarbeiter ist usw. um aufgrunddessen
      * Elemente anzuzeigen oder zu verbergeben.
      */
-
+    
     @FXML 
     void switchToMiethistorie(ActionEvent event)throws IOException{
         // Verbesserter Code von ChatGPT
@@ -462,9 +493,9 @@ public class Controller {
         Platform.runLater(() -> {
             if(model.getUser().getIstMitarbeiter()) {
                 controller.suchen10.setVisible(true);
-                controller.benutzerEingabe1.setVisible(true);
+                controller.benutzerEingabe10.setVisible(true);
             } else {
-                controller.benutzer1.setText(model.getUser().getBenutzername());
+                controller.benutzer10.setText(model.getUser().getBenutzername());
             }
         });    
     }
@@ -552,7 +583,7 @@ public class Controller {
             String modell = ausgewähltesAuto.getModell();
             String kategorie = ausgewähltesAuto.getKategorie();
             int leistung = ausgewähltesAuto.getLeistung();
-            Preisklasse pk = ausgewähltesAuto.getPreis();
+            Preisklasse pk = ausgewähltesAuto.getPreisklasse();
             int preis = pk.getPreis();
             
             markeAnzeige.setText(marke);
@@ -561,5 +592,26 @@ public class Controller {
             LeistungAnzeige.setText(""+leistung+" PS");
             preisAnzeige1.setText(""+preis+" € / Tag");
         }
+        if(model.getUser() != null && model.getUser().getIstMitarbeiter()){
+            benutzer11.setVisible (true);
+        }
+    }
+    
+    /**
+     * Ein Auto mit den auf der Hauptseite gewählten Präferenzen wird gemietet.
+     * Ein Mitarbeiter kann ein Auto an jeden, ein Verifizierter Kunde jedoch nur
+     * an sich selbst vermieten.
+     */
+    @FXML
+    void autoMieten(ActionEvent event)throws IOException {
+        int autoId = autoListe1.getSelectionModel().getSelectedItem().getID();
+        int userId = -1;
+        if(model.getUser().getIstMitarbeiter()){
+            userId = model.nutzerSuchen(benutzer11.getText());       
+        } else if(model.getUser().getIstVerifiziert() && !model.getUser().getIstMitarbeiter()) {
+            userId = model.getUser().getID();    
+        }
+        String rückgabe = rückgabe1.getValue().toString();
+        kontoLöschen2.setText(model.autoVermieten(autoId, userId, rückgabe)); 
     }
 }
