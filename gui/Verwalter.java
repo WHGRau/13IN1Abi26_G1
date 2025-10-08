@@ -528,6 +528,16 @@ public class Verwalter {
         }
     }
     
+    public String passwortÄndern(String pBenutzername, String pPasswort)  {
+        int id = nutzerSuchen(pBenutzername);
+        String passwortHash = Helper.toSha256(pPasswort);
+        if(id == -1) {
+            return("Nutzer nicht gefunden!");
+        }
+        dbConnector.executeStatement("UPDATE benutzer SET passwort = '"+passwortHash+"'WHERE id= '"+id+"'");
+        return("Passwort geändert");
+    }
+    
     // source: https://stackoverflow.com/questions/8345023/need-to-get-current-timestamp-in-java
     public String getNowDate() {
         return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -562,7 +572,7 @@ public class Verwalter {
     } 
     
     public void datenbankVerbinden () {
-        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "amogus");
+        dbConnector = new DatabaseConnector("localhost", 3306, "mietwagenverleih_ronkel", "root", "");
         String fehler = dbConnector.getErrorMessage();
         if (fehler == null) {
           System.out.println("Datenbank wurde erfolgreich verbunden!");
