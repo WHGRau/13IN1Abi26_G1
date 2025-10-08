@@ -221,6 +221,7 @@ public class Verwalter {
     /**
      * Sucht nach Autos mit den angebeben Parametern, es können auch alle leer gelassen werden.
      * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
+     * Es werden nur Autos zurückgegeben die noch nicht vermietet sind!!
      */
     public String autoSuchen(String pMarke, String pModell, String pKategorie, int pLeistung){
         QueryResult auto = null;
@@ -469,7 +470,7 @@ public class Verwalter {
         "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
         "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis";
     
-    private String getAutoSql = autoSelectSql + " FROM auto, preisklassen WHERE auto.PreisklasseID = preisklassen.ID ";
+    private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID WHERE (mietet1.letzteRueckgabe < '"+getNowDateTime()+"' OR mietet1.letzteRueckgabe IS NULL)";
     
     private String getGemieteteAutosSql = autoSelectSql + ", mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID "+
         "FROM auto, preisklassen, mietet WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID ";
