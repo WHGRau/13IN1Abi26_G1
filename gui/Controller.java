@@ -768,7 +768,7 @@ public class Controller {
             kontoLöschen2.setText("Ungültiges Rückgabedatum: " + error);
             return;
         }
-        else if (LocalDate.now().isBefore(rückgabeDatum)) { // FIXME: Funktioniert nicht
+        else if (LocalDate.now().isAfter(rückgabeDatum)) {
             kontoLöschen2.setText("Rückgabedatum darf nicht in der Vergangenheit sein!");
             return;
         }
