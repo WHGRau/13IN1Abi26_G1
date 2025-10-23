@@ -422,23 +422,31 @@ public class Controller {
     @FXML
     void mieteSuchen(ActionEvent event) {
         String benutzername = benutzerEingabe10.getText();
+        ObservableList<Auto> daten;
         
         if (model.getUser().getIstMitarbeiter()) {
-            // TODO: Falls Benutzername leer ist, alle Mieten jemals zurückgeben
-            if(benutzername.equals("")) {
-                fehler10.setText("Kein Benutzername angegeben!");
-                return;
+            if (benutzername.equals("")) {
+                fehler10.setText("Lade alle Miethistorien");
+                model.getGemieteteAutosVonAllen(tick1.isSelected());
             }
-            String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
-            if (error != null) {
-                fehler10.setText("Ungültiger Benutzername: " + error);
-                return;
+            else {
+                String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
+                if (error != null) {
+                    fehler10.setText("Ungültiger Benutzername: " + error);
+                    return;
+                }
+                int benutzerID = model.getBenutzerID(benutzername);
+                if (benutzerID <= 0) {
+                    fehler10.setText("Benutzer '" + benutzername + "' existiert nicht. Vielleicht Tippfehler?");
+                    return;
+                }
+                
+                fehler10.setText("Lade Miethistorie von '" + benutzername + "'");
+                model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
             }
-            
-            int benutzerID = model.getBenutzerID(benutzername);
-            model.getGemieteteAutosVon(benutzerID, tick1.isSelected());
         }
         else {
+            fehler10.setText("Lade eigene Miethistorie");
             int benutzerID = model.getUser().getID();
             model.getGemieteteAutos(tick1.isSelected());
         }
@@ -449,9 +457,9 @@ public class Controller {
         kategorie100.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
         leistung100.setCellValueFactory(new PropertyValueFactory<>("leistung"));
         
-        ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
+        daten = FXCollections.observableArrayList(model.getAutos());
         miethistorie1.setItems(daten);
-        fehler10.setText("Zeige Miethistorie von '" + benutzername + "'");
+        
     }
     
     @FXML
