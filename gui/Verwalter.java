@@ -374,10 +374,11 @@ public class Verwalter {
         String timestamp = Helper.getNowDateTime();
         
         // Prüfen ob niemand das Auto gerade am Mieten ist
-        dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, UserID FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
+        dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, mietet.UserID, benutzer.Benutzername FROM mietet, benutzer WHERE mietet.UserID = benutzer.ID AND mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
         r = dbConnector.getCurrentQueryResult();        
         if (r.getRowCount() > 0) {
-            return "Auto wird gerade bereits von Nutzer ID " + r.getData()[0][2] + " gemietet!";
+            String[] row = r.getData()[0];
+            return "Auto wird gerade bereits von Nutzer " + row[3] + " (ID " + row[2] + ") gemietet!";
         }
         
         // Relation endlich hinzufügen
