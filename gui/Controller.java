@@ -421,16 +421,17 @@ public class Controller {
      */
     @FXML
     void mieteSuchen(ActionEvent event) {
+        String benutzername = benutzerEingabe10.getText();
+        
         if (model.getUser().getIstMitarbeiter()) {
             // TODO: Falls Benutzername leer ist, alle Mieten jemals zurückgeben
-            String benutzername = benutzerEingabe10.getText();
             if(benutzername.equals("")) {
-                text1.setText("Kein Benutzername angegeben!");
+                fehler10.setText("Kein Benutzername angegeben!");
                 return;
             }
             String error = Helper.isInputValid(benutzername, Constants.benutzernameMaxLength);
             if (error != null) {
-                text1.setText("Ungültiger Benutzername: " + error);
+                fehler10.setText("Ungültiger Benutzername: " + error);
                 return;
             }
             
@@ -450,11 +451,12 @@ public class Controller {
         
         ObservableList<Auto> daten = FXCollections.observableArrayList(model.getAutos());
         miethistorie1.setItems(daten);
+        fehler10.setText("Zeige Miethistorie von '" + benutzername + "'");
     }
     
     @FXML
     void autoZurückgeben(ActionEvent event) {
-        int autoID= miethistorie1.getSelectionModel().getSelectedItem().getID();
+        int autoID = miethistorie1.getSelectionModel().getSelectedItem().getID();
         if (model.getUser().getIstMitarbeiter()){
             fehler10.setText(model.autoZwangsRücknahme(autoID));    
         } else {
