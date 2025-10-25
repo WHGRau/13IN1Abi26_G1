@@ -237,6 +237,24 @@ public class Controller {
     private TableColumn<Auto, String> modell100;
     
     @FXML
+    private TableColumn<Auto, String> mieterBenutzername100;
+    
+    @FXML
+    private TableColumn<Auto, String> mieterName100;
+    
+    @FXML
+    private TableColumn<Auto, String> mieterVorname100;
+    
+    @FXML
+    private TableColumn<Auto, String> ausgeliehen100;
+    
+    @FXML
+    private TableColumn<Auto, String> rückgabe100;
+    
+    @FXML
+    private TableColumn<Auto, String> mietId100;
+    
+    @FXML
     private Text benutzer10;
 
     @FXML
@@ -498,10 +516,15 @@ public class Controller {
         modell100.setCellValueFactory(new PropertyValueFactory<>("modell"));
         kategorie100.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
         leistung100.setCellValueFactory(new PropertyValueFactory<>("leistung"));
+        mieterBenutzername100.setCellValueFactory(new PropertyValueFactory<>("mieterBenutzername"));
+        mieterName100.setCellValueFactory(new PropertyValueFactory<>("mieterName"));
+        mieterVorname100.setCellValueFactory(new PropertyValueFactory<>("mieterVorname"));
+        ausgeliehen100.setCellValueFactory(new PropertyValueFactory<>("ausleihDatum"));
+        rückgabe100.setCellValueFactory(new PropertyValueFactory<>("rückgabeDatum"));
+        mietId100.setCellValueFactory(new PropertyValueFactory<>("mietId"));
         
         daten = FXCollections.observableArrayList(model.getAutos());
         miethistorie1.setItems(daten);
-        
     }
     
     @FXML

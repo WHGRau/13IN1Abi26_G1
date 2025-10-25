@@ -20,6 +20,10 @@ public class MietInfo
         rückgabeDatum = pRückgabeDatum;
         mieter = pMieter;
     }
+    
+    public int getId() {
+        return id;
+    }
 
     public String getAusleihDatum() {
         return ausleihDatum;
