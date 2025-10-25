@@ -94,7 +94,7 @@
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="392.0" prefWidth="788.0" VBox.vgrow="ALWAYS">
       <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1c7eb" height="38.0" layoutX="11.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="769.0" />
-            <Label fx:id="kontoLöschen2" alignment="CENTER" layoutX="244.0" layoutY="25.0" prefHeight="17.0" prefWidth="314.0" textFill="RED" />
+            <Label fx:id="kontoLöschen2" alignment="CENTER" layoutX="291.0" layoutY="17.0" prefHeight="32.0" prefWidth="215.0" textFill="RED" />
             <TextField fx:id="marke2" layoutX="9.0" layoutY="79.0" prefHeight="25.0" prefWidth="95.0" promptText="Marke" />
             <TextField fx:id="modell2" layoutX="120.0" layoutY="79.0" prefHeight="25.0" prefWidth="95.0" promptText="Modell" />
             <TextField fx:id="kategorie2" layoutX="227.0" layoutY="79.0" prefHeight="25.0" prefWidth="95.0" promptText="Kategorie" />
@@ -108,23 +108,23 @@
             <Label fx:id="kategorieAnzeige" alignment="CENTER" layoutX="679.0" layoutY="167.0" prefHeight="17.0" prefWidth="82.0" textAlignment="CENTER" />
             <Label fx:id="preisAnzeige1" alignment="CENTER" layoutX="563.0" layoutY="189.0" prefHeight="17.0" prefWidth="82.0" textAlignment="CENTER" />
             <Button fx:id="ausleihen1" layoutX="469.0" layoutY="342.0" mnemonicParsing="false" onAction="#autoMieten" prefHeight="25.0" prefWidth="300.0" text="Ausleihen" visible="false" />
-            <Button fx:id="anmelden3" layoutX="674.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToAnmeldung" prefHeight="25.0" prefWidth="95.0" text="Anmelden" />
-            <Button fx:id="kontoLöschen1" layoutX="569.0" layoutY="21.0" mnemonicParsing="false" onAction="#kontoLöschen" prefHeight="25.0" prefWidth="95.0" text="Konto löschen" visible="false" />
-            <Button fx:id="autoHinzuügen1" layoutX="25.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToHinzufügen" prefHeight="25.0" prefWidth="95.0" text="Auto hinzufügen" visible="false" />
+            <Button fx:id="anmelden3" layoutX="648.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToAnmeldung" prefHeight="25.0" prefWidth="121.0" text="Anmelden" />
+            <Button fx:id="kontoLöschen1" layoutX="509.0" layoutY="21.0" mnemonicParsing="false" onAction="#kontoLöschen" prefHeight="25.0" prefWidth="121.0" text="Konto löschen" visible="false" />
+            <Button fx:id="autoHinzuügen1" layoutX="25.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToHinzufügen" prefHeight="25.0" prefWidth="121.0" text="Auto hinzufügen" visible="false" />
             <TableView fx:id="autoListe1" layoutX="11.0" layoutY="118.0" prefHeight="263.0" prefWidth="432.0">
               <columns>
-                <TableColumn fx:id="markeListe1" prefWidth="95.0" text="Marke" />
-                  <TableColumn fx:id="modellListe1" prefWidth="98.0" text="Modell" />
-                  <TableColumn fx:id="kategorieListe1" minWidth="0.0" prefWidth="90.0" text="Kategorie" />
-                <TableColumn fx:id="psListe1" prefWidth="77.0" text="Leistung" />
-                  <TableColumn fx:id="preisListe1" minWidth="0.0" prefWidth="49.0" text="Preis" />
-                  <TableColumn fx:id="idListe1" prefWidth="22.0" text="ID" />
+                <TableColumn fx:id="markeListe1" editable="false" prefWidth="95.0" text="Marke" />
+                  <TableColumn fx:id="modellListe1" editable="false" prefWidth="98.0" text="Modell" />
+                  <TableColumn fx:id="kategorieListe1" editable="false" minWidth="0.0" prefWidth="90.0" text="Kategorie" />
+                <TableColumn fx:id="psListe1" editable="false" prefWidth="77.0" text="Leistung" />
+                  <TableColumn fx:id="preisListe1" editable="false" minWidth="0.0" prefWidth="49.0" text="Preis" />
+                  <TableColumn fx:id="idListe1" editable="false" prefWidth="22.0" text="ID" />
               </columns>
             </TableView>
             <Button fx:id="autoAuswählen1" layoutX="456.0" layoutY="124.0" mnemonicParsing="false" onAction="#autoÜbertragen" prefHeight="25.0" prefWidth="321.0" text="Auto auswählen" />
-            <Button fx:id="abmelden1" layoutX="676.0" layoutY="21.0" mnemonicParsing="false" onAction="#abmelden" prefHeight="25.0" prefWidth="95.0" text="Abmelden" visible="false" />
+            <Button fx:id="abmelden1" layoutX="650.0" layoutY="21.0" mnemonicParsing="false" onAction="#abmelden" prefHeight="25.0" prefWidth="121.0" text="Abmelden" visible="false" />
             <DatePicker fx:id="rückgabe1" layoutX="469.0" layoutY="307.0" prefHeight="25.0" prefWidth="300.0" promptText="Rückgabe" visible="false" />
-            <Button fx:id="miethistorie2" layoutX="132.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToMiethistorie" prefHeight="25.0" prefWidth="95.0" text="Mietübersicht" visible="false" />
+            <Button fx:id="miethistorie2" layoutX="168.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToMiethistorie" prefHeight="25.0" prefWidth="121.0" text="Mietübersicht" visible="false" />
             <TextField fx:id="benutzer11" layoutX="469.0" layoutY="271.0" prefHeight="25.0" prefWidth="300.0" promptText="Benutzername" visible="false" />
             <ImageView fx:id="bild1" fitHeight="67.0" fitWidth="95.0" layoutX="671.0" layoutY="200.0" visible="false">
                <image>

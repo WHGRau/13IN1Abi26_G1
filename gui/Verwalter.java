@@ -543,6 +543,16 @@ public class Verwalter {
         }
     }
     
+    public String passwortÄndern(String pBenutzername, String pPasswort)  {
+        int id = nutzerSuchen(pBenutzername);
+        String passwortHash = Helper.toSha256(pPasswort);
+        if(id == -1) {
+            return("Nutzer nicht gefunden!");
+        }
+        dbConnector.executeStatement("UPDATE benutzer SET passwort = '"+passwortHash+"'WHERE id= '"+id+"'");
+        return("Passwort geändert");
+    }
+    
     public User getUser () {
         return ich;        
     }
