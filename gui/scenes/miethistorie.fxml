@@ -47,7 +47,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="668.0" prefWidth="1097.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
+<VBox prefHeight="670.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
   <children>
     <MenuBar prefWidth="898.0" VBox.vgrow="NEVER">
       <menus>
@@ -90,12 +90,7 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-        <Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
-          <font>
-            <Font size="18.0" />
-          </font>
-        </Label>
-            <Text layoutX="105.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mietübersicht">
+            <Text layoutX="451.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mietübersicht">
                <font>
                   <Font size="22.0" />
                </font>
@@ -119,8 +114,8 @@
             <Button fx:id="suchen10" layoutX="211.0" layoutY="54.0" mnemonicParsing="false" onAction="#mieteSuchen" prefHeight="25.0" prefWidth="76.0" text="Suchen" visible="false" />
             <Button fx:id="zurück10" layoutX="19.0" layoutY="16.0" mnemonicParsing="false" onAction="#switchToHauptseite" text="⬅ Zurück" />
             <Button fx:id="autoZurückgeben1" layoutX="19.0" layoutY="602.0" mnemonicParsing="false" onAction="#autoZurückgeben" prefHeight="25.0" prefWidth="1057.0" text="Auto zurückgeben" />
-            <CheckBox fx:id="tick1" layoutX="622.0" layoutY="64.0" mnemonicParsing="false" onAction="#mieteSuchen" text="Aktuell gemietete Autos" />
-            <Label fx:id="fehler10" alignment="CENTER" layoutX="277.0" layoutY="24.0" prefHeight="17.0" prefWidth="790.0" />
+            <CheckBox fx:id="tick1" layoutX="876.0" layoutY="18.0" mnemonicParsing="false" onAction="#mieteSuchen" text="Aktuell gemietete Autos" />
+            <Label fx:id="fehler10" alignment="CENTER" layoutX="66.0" layoutY="58.0" prefHeight="17.0" prefWidth="963.0" />
             <TextField fx:id="benutzerEingabe10" layoutX="14.0" layoutY="54.0" prefHeight="25.0" prefWidth="183.0" promptText="Benutzername" visible="false" />
       </children>
     </AnchorPane>

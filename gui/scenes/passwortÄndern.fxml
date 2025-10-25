@@ -92,11 +92,11 @@
                   <Font size="22.0" />
                </font>
             </Text>
-            <TextField fx:id="benutzer111" layoutX="246.0" layoutY="89.0" promptText="Benutzername" />
-            <TextField fx:id="passwort111" layoutX="246.0" layoutY="131.0" promptText="Neues Passwort" />
-            <TextField fx:id="frage1" layoutX="232.0" layoutY="178.0" prefHeight="25.0" prefWidth="177.0" promptText="Ist das wirklich dein Konto?" />
-            <Label fx:id="fehler11" alignment="CENTER" layoutX="206.0" layoutY="62.0" prefHeight="17.0" prefWidth="229.0" textFill="RED" />
-            <Button fx:id="passwortÄndern1" layoutX="269.0" layoutY="222.0" mnemonicParsing="false" onAction="#passwortÄndern" text="Passwort ändern" />
+            <TextField fx:id="benutzer111" layoutX="245.0" layoutY="124.0" promptText="Benutzername" />
+            <TextField fx:id="passwort111" layoutX="245.0" layoutY="166.0" promptText="Neues Passwort" />
+            <TextField fx:id="frage1" layoutX="231.0" layoutY="213.0" prefHeight="25.0" prefWidth="201.0" promptText="Ist das wirklich dein Konto?" />
+            <Label fx:id="fehler11" alignment="CENTER" layoutX="97.0" layoutY="75.0" prefHeight="17.0" prefWidth="447.0" textFill="RED" />
+            <Button fx:id="passwortÄndern1" layoutX="231.0" layoutY="267.0" mnemonicParsing="false" onAction="#passwortÄndern" prefHeight="24.0" prefWidth="201.0" text="Passwort ändern" />
             <Button fx:id="zurück111" layoutX="14.0" layoutY="24.0" mnemonicParsing="false" onAction="#switchToAnmeldung" text="⬅ Zurück" />
       </children>
     </AnchorPane>

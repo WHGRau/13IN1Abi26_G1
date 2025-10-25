@@ -114,11 +114,11 @@
             <TableView fx:id="autoListe1" layoutX="11.0" layoutY="129.0" prefHeight="508.0" prefWidth="661.0">
               <columns>
                 <TableColumn fx:id="markeListe1" editable="false" prefWidth="95.0" text="Marke" />
-                  <TableColumn fx:id="modellListe1" editable="false" prefWidth="98.0" text="Modell" />
-                  <TableColumn fx:id="kategorieListe1" editable="false" minWidth="0.0" prefWidth="90.0" text="Kategorie" />
-                <TableColumn fx:id="psListe1" editable="false" prefWidth="77.0" text="Leistung" />
-                  <TableColumn fx:id="preisListe1" editable="false" minWidth="0.0" prefWidth="49.0" text="Preis" />
-                  <TableColumn fx:id="idListe1" editable="false" prefWidth="162.0" text="ID" />
+                  <TableColumn fx:id="modellListe1" editable="false" prefWidth="133.0" text="Modell" />
+                  <TableColumn fx:id="kategorieListe1" editable="false" minWidth="0.0" prefWidth="144.0" text="Kategorie" />
+                <TableColumn fx:id="psListe1" editable="false" prefWidth="144.0" text="Leistung" />
+                  <TableColumn fx:id="preisListe1" editable="false" minWidth="0.0" prefWidth="79.0" text="Preis" />
+                  <TableColumn fx:id="idListe1" editable="false" prefWidth="64.0" text="ID" />
               </columns>
             </TableView>
             <Button fx:id="autoAuswählen1" layoutX="687.0" layoutY="183.0" mnemonicParsing="false" onAction="#autoÜbertragen" prefHeight="25.0" prefWidth="382.0" text="Auto auswählen" />
@@ -136,7 +136,7 @@
                   <Image url="@race-car-7624025_1280.jpg" />
                </image>
             </ImageView>
-            <Label fx:id="benutzerInfoSpan" alignment="CENTER" layoutX="744.0" layoutY="58.0" prefHeight="17.0" prefWidth="330.0" />
+            <Label fx:id="benutzerInfoSpan" alignment="CENTER" layoutX="692.0" layoutY="58.0" prefHeight="17.0" prefWidth="382.0" />
       </children>
     </AnchorPane>
   </children>
