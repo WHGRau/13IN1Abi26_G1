@@ -87,22 +87,22 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <Text layoutX="260.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Anmeldung">
+            <Text layoutX="257.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Anmeldung">
                <font>
                   <Font name="Noto Sans Regular" size="22.0" />
                </font>
             </Text>
-            <TextField fx:id="benutzername1" layoutX="246.0" layoutY="98.0" promptText="Benutzername" />
-            <TextField fx:id="passwort1" layoutX="246.0" layoutY="135.0" promptText="Passwort" />
-            <Button fx:id="anmelden1" layoutX="284.0" layoutY="188.0" mnemonicParsing="false" onAction="#anmelden" text="Anmelden">
+            <TextField fx:id="benutzername1" layoutX="221.0" layoutY="116.0" prefHeight="24.0" prefWidth="193.0" promptText="Benutzername" />
+            <TextField fx:id="passwort1" layoutX="221.0" layoutY="156.0" prefHeight="24.0" prefWidth="193.0" promptText="Passwort" />
+            <Button fx:id="anmelden1" layoutX="280.0" layoutY="206.0" mnemonicParsing="false" onAction="#anmelden" text="Anmelden">
                <font>
                   <Font name="Noto Sans Regular" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="registrieren1" layoutX="242.0" layoutY="231.0" mnemonicParsing="false" onAction="#switchToRegistrierung" prefHeight="25.0" prefWidth="159.0" text="Ich habe noch kein Konto" />
-            <Label fx:id="text2" alignment="CENTER" layoutX="158.0" layoutY="81.0" prefHeight="17.0" prefWidth="318.0" textAlignment="CENTER" textFill="RED" />
+            <Button fx:id="registrieren1" layoutX="221.0" layoutY="246.0" mnemonicParsing="false" onAction="#switchToRegistrierung" prefHeight="25.0" prefWidth="193.0" text="Ich habe noch kein Konto" />
+            <Label fx:id="text2" alignment="CENTER" layoutX="108.0" layoutY="75.0" prefHeight="17.0" prefWidth="424.0" textAlignment="CENTER" textFill="RED" />
             <Button fx:id="zuHauptseiteAnmeldung" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToHauptseite" text="⬅ Zurück" />
-            <Button fx:id="passwortVergessen1" layoutX="262.0" layoutY="274.0" mnemonicParsing="false" onAction="#switchToPasswortÄndern" text="Passwort vergessen" />
+            <Button fx:id="passwortVergessen1" layoutX="244.0" layoutY="287.0" mnemonicParsing="false" onAction="#switchToPasswortÄndern" text="Passwort vergessen" />
       </children>
     </AnchorPane>
   </children>

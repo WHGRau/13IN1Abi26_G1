@@ -237,6 +237,24 @@ public class Controller {
     private TableColumn<Auto, String> modell100;
     
     @FXML
+    private TableColumn<Auto, String> mieterBenutzername100;
+    
+    @FXML
+    private TableColumn<Auto, String> mieterName100;
+    
+    @FXML
+    private TableColumn<Auto, String> mieterVorname100;
+    
+    @FXML
+    private TableColumn<Auto, String> ausgeliehen100;
+    
+    @FXML
+    private TableColumn<Auto, String> rückgabe100;
+    
+    @FXML
+    private TableColumn<Auto, String> mietId100;
+    
+    @FXML
     private Text benutzer10;
 
     @FXML
@@ -276,6 +294,9 @@ public class Controller {
     
     @FXML
     private Button zurück111;
+    
+    @FXML
+    private Label benutzerInfoSpan;
 
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
@@ -327,6 +348,7 @@ public class Controller {
     void abmelden(ActionEvent event) throws IOException {
         model.abmelden();
         switchToHauptseite(event); //Hauptseite neuladen
+        benutzerInfoSpan.setText("Nicht angemeldet");
     }
     
     @FXML
@@ -440,6 +462,19 @@ public class Controller {
         }
     }
     
+    void setBenutzerInfoSpan(User user) {
+        // UserInfo label setzen
+        if (user.getIstMitarbeiter()) {
+            benutzerInfoSpan.setText("Als " + user.getBenutzername() + " (Mitarbeiter) angemeldet");
+        }
+        else if (user.getIstVerifiziert()) {
+            benutzerInfoSpan.setText("Als " + user.getBenutzername() + " (verifizierter Kunde) angemeldet");
+        }
+        else {
+            benutzerInfoSpan.setText("Als " + user.getBenutzername() + " (Kunde) angemeldet");
+        }
+    }
+    
     /**
      * Methode gibt alle aktuellen und zurückliegenden Mieten des ausgelesen Benutzers
      * in der Tabelle zurück.
@@ -481,10 +516,15 @@ public class Controller {
         modell100.setCellValueFactory(new PropertyValueFactory<>("modell"));
         kategorie100.setCellValueFactory(new PropertyValueFactory<>("kategorie"));
         leistung100.setCellValueFactory(new PropertyValueFactory<>("leistung"));
+        mieterBenutzername100.setCellValueFactory(new PropertyValueFactory<>("mieterBenutzername"));
+        mieterName100.setCellValueFactory(new PropertyValueFactory<>("mieterName"));
+        mieterVorname100.setCellValueFactory(new PropertyValueFactory<>("mieterVorname"));
+        ausgeliehen100.setCellValueFactory(new PropertyValueFactory<>("ausleihDatum"));
+        rückgabe100.setCellValueFactory(new PropertyValueFactory<>("rückgabeDatum"));
+        mietId100.setCellValueFactory(new PropertyValueFactory<>("mietId"));
         
         daten = FXCollections.observableArrayList(model.getAutos());
         miethistorie1.setItems(daten);
-        
     }
     
     @FXML
@@ -598,9 +638,12 @@ public class Controller {
                 controller.anmelden3.setVisible(false);
                 controller.kontoLöschen1.setVisible(true); 
                 controller.miethistorie2.setVisible(true);
-            }
-            if(model.getUser().getIstMitarbeiter()) {
-                controller.autoHinzuügen1.setVisible(true);
+                
+                if(model.getUser().getIstMitarbeiter()) {
+                    controller.autoHinzuügen1.setVisible(true);
+                }
+                
+                controller.setBenutzerInfoSpan(model.getUser());
             }
         });
     } 

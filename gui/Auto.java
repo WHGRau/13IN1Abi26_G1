@@ -84,4 +84,28 @@ public class Auto {
     public MietInfo getMietInfo(){
         return mietInfo;
     }
+    
+    public String getAusleihDatum(){
+        return mietInfo.getAusleihDatum();
+    }
+    
+    public String getRückgabeDatum(){
+        return mietInfo.getRückgabeDatum();
+    }
+    
+    public int getMietId(){
+        return mietInfo.getId();
+    }
+    
+    public String getMieterName(){
+        return mietInfo.getMieter().getName();
+    }
+    
+    public String getMieterBenutzername(){
+        return mietInfo.getMieter().getBenutzername();
+    }
+    
+    public String getMieterVorname(){
+        return mietInfo.getMieter().getVorname();
+    }
 }

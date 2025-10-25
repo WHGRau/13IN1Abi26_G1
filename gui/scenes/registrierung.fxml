@@ -45,7 +45,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
+<VBox prefHeight="462.0" prefWidth="658.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -88,31 +88,31 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <Text layoutX="267.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registrieren">
+            <Text layoutX="261.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registrierung">
                <font>
                   <Font name="Noto Sans Regular" size="22.0" />
                </font>
             </Text>
-            <TextField fx:id="benutzername2" layoutX="176.0" layoutY="87.0" promptText="Benutzername" />
-            <TextField fx:id="passwort2" layoutX="338.0" layoutY="87.0" promptText="Passwort" />
-            <TextField fx:id="vorname1" layoutX="176.0" layoutY="127.0" promptText="Vorname" />
-            <TextField fx:id="name1" layoutX="338.0" layoutY="127.0" promptText="Name" />
-            <TextField fx:id="plz1" layoutX="176.0" layoutY="163.0" prefHeight="25.0" prefWidth="45.0" promptText="PLZ" />
-            <TextField fx:id="ort1" layoutX="233.0" layoutY="163.0" prefHeight="25.0" prefWidth="80.0" promptText="Ort" />
-            <TextField fx:id="straße1" layoutX="320.0" layoutY="163.0" prefHeight="25.0" prefWidth="110.0" promptText="Straße " />
-            <TextField fx:id="hausnummer1" layoutX="442.0" layoutY="163.0" prefHeight="25.0" prefWidth="45.0" promptText="Hausnr. " />
-            <DatePicker fx:id="geburtsdatum1" layoutX="251.0" layoutY="197.0" promptText="Geburtsdatum" />
-            <Button fx:id="registrieren2" layoutX="294.0" layoutY="246.0" mnemonicParsing="false" onAction="#registrieren" text="Registrieren">
+            <TextField fx:id="benutzername2" layoutX="139.0" layoutY="122.0" promptText="Benutzername" />
+            <TextField fx:id="passwort2" layoutX="327.0" layoutY="122.0" prefHeight="24.0" prefWidth="192.0" promptText="Passwort" />
+            <TextField fx:id="vorname1" layoutX="139.0" layoutY="162.0" promptText="Vorname" />
+            <TextField fx:id="name1" layoutX="327.0" layoutY="162.0" prefHeight="24.0" prefWidth="192.0" promptText="Name" />
+            <TextField fx:id="plz1" layoutX="140.0" layoutY="211.0" prefHeight="25.0" prefWidth="87.0" promptText="PLZ" />
+            <TextField fx:id="ort1" layoutX="238.0" layoutY="211.0" prefHeight="25.0" prefWidth="279.0" promptText="Ort" />
+            <TextField fx:id="straße1" layoutX="139.0" layoutY="245.0" prefHeight="25.0" prefWidth="259.0" promptText="Straße " />
+            <TextField fx:id="hausnummer1" layoutX="412.0" layoutY="245.0" prefHeight="25.0" prefWidth="105.0" promptText="Hausnr. " />
+            <DatePicker fx:id="geburtsdatum1" layoutX="228.0" layoutY="289.0" promptText="Geburtsdatum" />
+            <Button fx:id="registrieren2" layoutX="249.0" layoutY="333.0" mnemonicParsing="false" onAction="#registrieren" prefHeight="25.0" prefWidth="165.0" text="Registrieren">
                <font>
                   <Font name="Noto Sans Regular" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="zuAnmeldung1" layoutX="257.0" layoutY="282.0" mnemonicParsing="false" onAction="#switchToAnmeldung" text="Ich habe bereits ein Konto">
+            <Button fx:id="zuAnmeldung1" layoutX="249.0" layoutY="373.0" mnemonicParsing="false" onAction="#switchToAnmeldung" text="Ich habe bereits ein Konto">
                <font>
                   <Font name="Noto Sans Regular" size="12.0" />
                </font>
             </Button>
-            <Label fx:id="text1" alignment="CENTER" layoutX="176.0" layoutY="70.0" prefHeight="17.0" prefWidth="311.0" textAlignment="CENTER" textFill="RED" />
+            <Label fx:id="text1" alignment="CENTER" layoutX="72.0" layoutY="74.0" prefHeight="17.0" prefWidth="519.0" textAlignment="CENTER" textFill="RED" />
             <Button fx:id="zuHauptseiteRegistrierung" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToHauptseite" text="⬅ Zurück" />
       </children>
     </AnchorPane>

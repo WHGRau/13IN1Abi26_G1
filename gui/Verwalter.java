@@ -272,6 +272,18 @@ public class Verwalter {
         return null;
     }
     
+    private String autoSelectSql = "SELECT "+
+        "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
+        "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis";
+    
+    private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID "+
+        "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID "+
+        "WHERE (mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL) ";
+    
+    private String getGemieteteAutosSql = autoSelectSql + ", mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID, mietet.ID, "+
+        "benutzer.Benutzername, benutzer.Name, benutzer.Vorname "+
+        "FROM auto, preisklassen, mietet, benutzer WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID AND mietet.UserID = benutzer.ID";
+    
     /**
      * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
      */
@@ -467,34 +479,8 @@ public class Verwalter {
         dbConnector.executeStatement("SELECT ID FROM auto WHERE auto.ID = " + autoID);
         QueryResult r = dbConnector.getCurrentQueryResult();
         return r.getRowCount() > 0;
-    }
+    }    
     
-    public MietInfo getMietRelation(int autoID) {
-        if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
-        
-        dbConnector.executeStatement("SELECT mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID FROM mietet WHERE mietet.AutoID = " + autoID);
-        QueryResult r = dbConnector.getCurrentQueryResult();
-        if (r.getRowCount() == 0) {
-            return null;
-        }
-        String[] row = r.getData()[0];
-        
-        int muID = Helper.tryParseInt(row[2]);
-        MietInfo mietInfo = new MietInfo(row[0], row[1], muID);
-        return mietInfo;
-    }
-    
-    private String autoSelectSql = "SELECT "+
-        "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
-        "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis";
-    
-    private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID "+
-        "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID "+
-        "WHERE (mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL) ";
-    
-    private String getGemieteteAutosSql = autoSelectSql + ", mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID "+
-        "FROM auto, preisklassen, mietet WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID ";
-        
     private ArrayList parseAutos(QueryResult result, boolean hatMietInfo) {
         ArrayList list = new ArrayList();
         String[][] autoArray = result.getData();
@@ -514,8 +500,10 @@ public class Verwalter {
             Auto auto; 
             
             if (hatMietInfo) {
-                int muID = Helper.tryParseInt(row[11]);
-                MietInfo mietInfo = new MietInfo(row[9], row[10], muID);
+                int mieterId = Helper.tryParseInt(row[11]);
+                int mietId = Helper.tryParseInt(row[12]);
+                User mieter = new User(mieterId, row[13], row[14], row[15]);
+                MietInfo mietInfo = new MietInfo(mietId, row[9], row[10], mieter);
                 auto = new Auto(aId, row[1], row[2], row[3], aLeistung, row[5], pk, mietInfo);
             }
             else {
@@ -544,7 +532,7 @@ public class Verwalter {
     }
     
     public String passwortÄndern(String pBenutzername, String pPasswort)  {
-        int id = nutzerSuchen(pBenutzername);
+        int id = getBenutzerID(pBenutzername);
         String passwortHash = Helper.toSha256(pPasswort);
         if(id == -1) {
             return("Nutzer nicht gefunden!");
