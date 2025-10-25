@@ -346,8 +346,7 @@ public class Verwalter {
         return null;
     }
     
-    // TODO: null zurückgeben bei Erfolg, Exceptions durch zurückgegebene Fehlermeldungen ersetzen,
-    // rausfinden warum die GUI keinen Fehler anzeigt falls 
+    // TODO: null zurückgeben bei Erfolg
     public String autoVermieten(int autoID, int userID, String rückgabeAm) {
         if (ich == null) {
             return "Nicht angemeldet!";
