@@ -32,6 +32,14 @@ public class User
         istVerifiziert = pVerifiziert;
         adresse = pAdresse;
     }
+    
+    public User(int pID, String pBenutzername, String pName, String pVorname)
+    {
+        id = pID;
+        benutzername = pBenutzername;
+        name = pName;
+        vorname = pVorname;
+    }
 
     public int getID(){
         return id;

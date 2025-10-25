@@ -8,15 +8,17 @@ package gui;
  */
 public class MietInfo
 {
+    private int id;
     private String ausleihDatum;
     private String rückgabeDatum;
-    private int leiherUserId;
-
-    public MietInfo(String pAusleihDatum, String pRückgabeDatum, int pLeiherUserId)
+    private User mieter;
+    
+    public MietInfo(int pMietID, String pAusleihDatum, String pRückgabeDatum, User pMieter)
     {
+        id = pMietID;
         ausleihDatum = pAusleihDatum;
         rückgabeDatum = pRückgabeDatum;
-        leiherUserId = pLeiherUserId;
+        mieter = pMieter;
     }
 
     public String getAusleihDatum() {
@@ -27,7 +29,7 @@ public class MietInfo
         return rückgabeDatum;
     }
     
-    public int getLeiherUserId() {
-        return leiherUserId;
+    public User getMieter() {
+        return mieter;
     }
 }
