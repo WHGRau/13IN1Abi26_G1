@@ -258,6 +258,8 @@ public class Controller {
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
     
+    Auto ausgewähltesAuto;
+    
     public Controller() {
         model = ModelLoader.getModel();
     }
@@ -715,7 +717,7 @@ public class Controller {
         bild1.setVisible(true);
         bild2.setVisible(true);
         // TODO: Auto automatisch durch Doppelklick auf Tabellenzeile auswählen
-        Auto ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
+        ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
         
         if (ausgewähltesAuto != null) {
             String marke = ausgewähltesAuto.getMarke();
@@ -783,7 +785,7 @@ public class Controller {
             return;
         }
         
-        int autoId = autoListe1.getSelectionModel().getSelectedItem().getID(); // FIXME: Bei leerem/ungültigem Rückgabedatum: java.lang.NullPointerException: Cannot invoke "gui.Auto.getID()" because the return value of "javafx.scene.control.TableView$TableViewSelectionModel.getSelectedItem()" is null
+        int autoId = ausgewähltesAuto.getID();
         int userId = -1;
         if(user.getIstMitarbeiter()){
             userId = model.getBenutzerID(benutzername);       
