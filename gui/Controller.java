@@ -276,6 +276,9 @@ public class Controller {
     
     @FXML
     private Button zurück111;
+    
+    @FXML
+    private Label benutzerInfoSpan;
 
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
@@ -327,6 +330,7 @@ public class Controller {
     void abmelden(ActionEvent event) throws IOException {
         model.abmelden();
         switchToHauptseite(event); //Hauptseite neuladen
+        benutzerInfoSpan.setText("Nicht angemeldet");
     }
     
     @FXML
@@ -437,6 +441,19 @@ public class Controller {
             switchToHauptseite(event);
         } else {
             text1.setText(rückgabe);   
+        }
+    }
+    
+    void setBenutzerInfoSpan(User user) {
+        // UserInfo label setzen
+        if (user.getIstMitarbeiter()) {
+            benutzerInfoSpan.setText("Als " + user.getBenutzername() + " (Mitarbeiter) angemeldet");
+        }
+        else if (user.getIstVerifiziert()) {
+            benutzerInfoSpan.setText("Als " + user.getBenutzername() + " (verifizierter Kunde) angemeldet");
+        }
+        else {
+            benutzerInfoSpan.setText("Als " + user.getBenutzername() + " (Kunde) angemeldet");
         }
     }
     
@@ -598,9 +615,12 @@ public class Controller {
                 controller.anmelden3.setVisible(false);
                 controller.kontoLöschen1.setVisible(true); 
                 controller.miethistorie2.setVisible(true);
-            }
-            if(model.getUser().getIstMitarbeiter()) {
-                controller.autoHinzuügen1.setVisible(true);
+                
+                if(model.getUser().getIstMitarbeiter()) {
+                    controller.autoHinzuügen1.setVisible(true);
+                }
+                
+                controller.setBenutzerInfoSpan(model.getUser());
             }
         });
     } 
