@@ -131,16 +131,18 @@ public class Verwalter {
      */
     
     public String kontoLoeschen(){
-        if(ich == null) return("Nicht angemeldet!");
+        if(ich == null) {
+            return("Nicht angemeldet!");
+        }
         String benutzername = ich.getBenutzername();
         
-        int id = nutzerSuchen(benutzername);
+        int id = getBenutzerID(benutzername);
         if (id == -1) {
             return("Konnte zu löschenden Nutzer nicht finden!");
         }
         
         //Überprüfen ob der Nutzer noch etwas ausleiht
-        String datum = getNowDateTime();
+        String datum = Helper.getNowDateTime();
         dbConnector.executeStatement("SELECT * FROM mietet WHERE UserId = '"+id+"' AND RückgabeAm = '"+datum+"'");
         QueryResult x = dbConnector.getCurrentQueryResult();
         if (x.getRowCount() != 0) {
@@ -163,7 +165,7 @@ public class Verwalter {
     }
     
     // Erstellt neuen Standort Datensatz falls nicht vorhanden
-    Standort getStandortFromDb(String pOrt, int pPlz, String pStraße, int pHausNr) {
+    public Standort getStandortFromDb(String pOrt, int pPlz, String pStraße, int pHausNr) {
         if (pPlz < 1 || pHausNr < 1) {
             // Ungültige ID/Zahleneingaben
             return null;
@@ -189,6 +191,18 @@ public class Verwalter {
         int hausNrParsed = Helper.tryParseInt(row[4]);
         
         return new Standort(row[0], row[1], plzParsed, row[3], hausNrParsed);
+    }
+    
+    private String getStandortID(String pOrt, int pPostleitzahl, String pStraße, int pHausnummer)
+    {
+        dbConnector.executeStatement("SELECT ID FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPostleitzahl+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausnummer+"'");
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "";
+        }
+        else {
+            return r.getData()[0][0];
+        }
     }
     
     /**
@@ -219,7 +233,7 @@ public class Verwalter {
     /**
      * Sucht nach Autos mit den angebeben Parametern, es können auch alle leer gelassen werden.
      * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
-     * Es werden nur Autos zurückgegeben die noch nicht vermietet sind!!
+     * Es werden nur Autos angefragt die noch nicht vermietet sind!!
      */
     public String autoSuchen(String pMarke, String pModell, String pKategorie, int pLeistung){
         QueryResult auto = null;
@@ -281,7 +295,7 @@ public class Verwalter {
     }
     
     private ArrayList getGemieteteAutosInternal(int userID, boolean aktuell) {
-        String timestamp = getNowDateTime();
+        String timestamp = Helper.getNowDateTime();
         String query = getGemieteteAutosSql + " AND mietet.UserID = " + userID;
         
         // Nur früher gemietete Autos, sonst momentan Gemietete
@@ -309,8 +323,9 @@ public class Verwalter {
         if (ich == null) return ("Nicht angemeldet!");
         if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
         
-        String timestamp = getNowDateTime();
+        String timestamp = Helper.getNowDateTime();
         String query = getGemieteteAutosSql;
+        
         // Nur früher gemietete Autos, sonst momentan Gemietete
         if (!aktuell) {
             query += " AND mietet.RückgabeAm < '" + timestamp + "'";
@@ -331,8 +346,11 @@ public class Verwalter {
         return null;
     }
     
+    // TODO: null zurückgeben bei Erfolg
     public String autoVermieten(int autoID, int userID, String rückgabeAm) {
-        if (ich == null) return "Nicht angemeldet!";
+        if (ich == null) {
+            return "Nicht angemeldet!";
+        }
         if (ich.getIstMitarbeiter() != true && ich.getIstVerifiziert() != true ) {
             return "Nur Berechtigte dürfen Autos vermieten!";    
         }
@@ -346,19 +364,20 @@ public class Verwalter {
         dbConnector.executeStatement("SELECT benutzer.ID, benutzer.IstMitarbeiter FROM benutzer WHERE benutzer.ID = " + userID);
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
-            return "Auto wird gerade bereits vermietet!";
+            return "Kunde existiert nicht in der Datenbank!";
         }
         else if (!r.getData()[0][1].equals("0")) {
             return "Nur Kunden darf man Autos vermieten!";
         }
         
-        String timestamp = getNowDateTime();
+        String timestamp = Helper.getNowDateTime();
         
         // Prüfen ob niemand das Auto gerade am Mieten ist
-        dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, UserID FROM mietet WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
+        dbConnector.executeStatement("SELECT mietet.AutoID, mietet.RückgabeAm, mietet.UserID, benutzer.Benutzername FROM mietet, benutzer WHERE mietet.UserID = benutzer.ID AND mietet.AutoID = " + autoID + " AND mietet.RückgabeAm >= '" + timestamp + "'");
         r = dbConnector.getCurrentQueryResult();        
         if (r.getRowCount() > 0) {
-            return "Auto wird gerade bereits von Nutzer ID " + r.getData()[0][2] + " gemietet!";
+            String[] row = r.getData()[0];
+            return "Auto wird gerade bereits von Nutzer " + row[3] + " (ID " + row[2] + ") gemietet!";
         }
         
         // Relation endlich hinzufügen
@@ -381,6 +400,7 @@ public class Verwalter {
         return "Auto erfolgreich vermietet!";
     }
     
+    // TODO: null zurückgeben bei Erfolg, Exceptions durch zurückgegebene Fehlermeldungen ersetzen
     public String autoRückgabe(int autoID) {
         if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
         if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine selbst ausgeliehenen Autos zurückgeben!");
@@ -392,7 +412,7 @@ public class Verwalter {
         }
         */
         
-        String timestamp = getNowDateTime();
+        String timestamp = Helper.getNowDateTime();
         int ownID = ich.getID();
         
         // Prüfen ob wir das Auto überhaupt gemietet haben
@@ -427,7 +447,7 @@ public class Verwalter {
             return "Auto existiert nicht in der Datenbank!";
         }
         
-        String timestamp = getNowDateTime();
+        String timestamp = Helper.getNowDateTime();
         dbConnector.executeStatement("UPDATE mietet SET RückgabeAm = '" + timestamp + "' WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
         if (dbConnector.getErrorMessage() != null) {
             return "SQL Fehler: " + dbConnector.getErrorMessage();
@@ -468,7 +488,9 @@ public class Verwalter {
         "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
         "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis";
     
-    private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID WHERE (mietet1.letzteRueckgabe < '"+getNowDateTime()+"' OR mietet1.letzteRueckgabe IS NULL)";
+    private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID "+
+        "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID "+
+        "WHERE (mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL) ";
     
     private String getGemieteteAutosSql = autoSelectSql + ", mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID "+
         "FROM auto, preisklassen, mietet WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID ";
@@ -506,22 +528,15 @@ public class Verwalter {
         return list;
     }
     
-    private String getStandortID(String pOrt, int pPostleitzahl, String pStraße, int pHausnummer)
-    {
-        dbConnector.executeStatement("SELECT ID FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPostleitzahl+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausnummer+"'");
-        QueryResult r = dbConnector.getCurrentQueryResult();
-        if (r.getRowCount() == 0) {
-            return "";
-        }
-        else {
-            return r.getData()[0][0];
-        }
-    }
-    
-    public int nutzerSuchen(String pBenutzername) {
-        if(!pBenutzername.isEmpty()){
+    public int getBenutzerID(String pBenutzername) {
+        if (!pBenutzername.isEmpty()){
             dbConnector.executeStatement("SELECT ID FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
-            QueryResult r = dbConnector.getCurrentQueryResult();   
+            QueryResult r = dbConnector.getCurrentQueryResult();
+            
+            if (r.getRowCount() == 0) {
+                return -1;
+            }
+            
             return Integer.parseInt(r.getData()[0][0]);
         } else {
             return -1;
@@ -536,15 +551,6 @@ public class Verwalter {
         }
         dbConnector.executeStatement("UPDATE benutzer SET passwort = '"+passwortHash+"'WHERE id= '"+id+"'");
         return("Passwort geändert");
-    }
-    
-    // source: https://stackoverflow.com/questions/8345023/need-to-get-current-timestamp-in-java
-    public String getNowDate() {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd").format(new Date());
-    }
-    
-    public String getNowDateTime() {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()); // HH -> 24h; hh -> 12h am/pm
     }
     
     public User getUser () {
