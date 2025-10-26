@@ -830,7 +830,14 @@ public class Controller {
             return;
         }
         
-        String benutzername = benutzer11.getText();
+        // Wichtig, weil wenn verifizierter Nutzer ein Auto selbst ausleihen will geht dies nur auf seinen Namen!!
+        String benutzername;
+        if(user.getIstVerifiziert() && !user.getIstMitarbeiter()){
+            benutzername = user.getBenutzername();
+        } else {
+            benutzername = benutzer11.getText();    
+        }
+        
         if (benutzername.equals("")) {
             kontoLöschen2.setText("Kein Benutzername angegeben!");
             return;
