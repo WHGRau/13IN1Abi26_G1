@@ -14,18 +14,6 @@ public class Standort
     private int hausNr;
     private String id;
     
-    /**
-     * Konstruktor für Objekte der Klasse Standort
-     */
-    public Standort(String pOrt, int pPlz, String pStraße, int pHausNr)
-    {
-        id = "";
-        ort = pOrt;
-        plz = pPlz;
-        straße = pStraße;
-        hausNr = pHausNr;
-    }
-    
     public Standort(String pId, String pOrt, int pPlz, String pStraße, int pHausNr)
     {
         id = pId;

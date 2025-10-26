@@ -96,4 +96,20 @@ public class User
     public void setAdresse(Standort pAdresse) {
         adresse = pAdresse;
     }
+    
+    public String getOrt() {
+        return adresse.getOrt();
+    }
+    
+    public int getPlz() {
+        return adresse.getPlz();
+    }
+    
+    public String getStraße() {
+        return adresse.getStraße();
+    }
+    
+    public int getHausnr() {
+        return adresse.getHausNr();
+    }
 }

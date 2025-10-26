@@ -69,11 +69,10 @@ public class Verwalter {
         String passwortHash = Helper.toSha256(passwort);
         
         dbConnector.executeStatement("SELECT benutzer.ID, benutzer.Benutzername, benutzer.Passwort, benutzer.Vorname, benutzer.Name, benutzer.Geburtsdatum, benutzer.istMitarbeiter, benutzer.istVerifiziert, "
-            +"standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer "
+            +"standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer, standort.ID "
             +"FROM benutzer "
             +"JOIN standort ON standort.ID = benutzer.AdresseID "
             +"WHERE Benutzername = '"+benutzername+"' AND Passwort = '"+passwortHash+"' ");
-            // Das WHERE muss nach dem FROM und dem JOIN, sonst ist MySQL böse
         QueryResult nutzer = dbConnector.getCurrentQueryResult();
         
         if (nutzer.getRowCount() == 0) {
@@ -90,7 +89,7 @@ public class Verwalter {
         
         int plzParsed = Helper.tryParseInt(row[9]);
         int hausNrParsed = Helper.tryParseInt(row[11]);
-        Standort adresse = new Standort(row[8], plzParsed, row[10], hausNrParsed);
+        Standort adresse = new Standort(row[12], row[8], plzParsed, row[10], hausNrParsed);
         
         boolean verifiziertBool;
         boolean mitarbeiterBool;
@@ -164,7 +163,9 @@ public class Verwalter {
         return("Konto erfolgreich gelöscht.");
     }
     
-    // Erstellt neuen Standort Datensatz falls nicht vorhanden
+    /**
+     * Erstellt neuen Standortdatensatz falls nicht vorhanden. PLZ oder Hausnummer unter 1 sind ungültig.
+     */ 
     public Standort getStandortFromDb(String pOrt, int pPlz, String pStraße, int pHausNr) {
         if (pPlz < 1 || pHausNr < 1) {
             // Ungültige ID/Zahleneingaben
@@ -228,6 +229,123 @@ public class Verwalter {
         } else {
             return ("Keine Berechtigung!");
         }
+    }
+    
+    /**
+     * Nutzer werden in dem Nutzer ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
+     */
+    public String kundenSuchen(){
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen Kundeninformationen sehen!");
+        
+        String query = "SELECT "+
+            "benutzer.ID, benutzer.Benutzername, benutzer.Vorname, benutzer.Name, benutzer.Geburtsdatum, benutzer.IstVerifiziert, benutzer.IstMitarbeiter "+
+            "standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer, standort.ID "+
+            "FROM benutzer, standort WHERE benutzer.AdresseID = standort.ID "+
+            "WHERE benutzer.IstMitarbeiter = 1";
+        
+        dbConnector.executeStatement(query);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            kunden = new ArrayList(); // leere Liste
+            return null;
+        }
+        
+        ArrayList list = parseUsers(r);
+        kunden = list;
+        return null;
+    }
+    
+    public String kundeVerifizieren(User user) {
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen Kunden verifizieren!");
+        
+        // Prüfen ob Nutzer existiert
+        String query = "SELECT * FROM benutzer WHERE benutzer.ID = "+ user.getID();
+        
+        dbConnector.executeStatement(query);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "Zu verifizierender Kunde existiert nicht!";
+        }
+        
+        // Verifizieren
+        query = "UPDATE benutzer SET IstVerifiziert = 1 WHERE benutzer.ID = "+ user.getID();
+        
+        dbConnector.executeStatement(query);
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
+        return null;
+    }
+    
+    public String kundeEntverifizieren(User user) {
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen Kunden entverifizieren!");
+        
+        // Prüfen ob Nutzer existiert
+        String query = "SELECT * FROM benutzer WHERE benutzer.ID = "+ user.getID();
+        
+        dbConnector.executeStatement(query);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "Zu entverifizierender Kunde existiert nicht!";
+        }
+        
+        // Verifizieren
+        query = "UPDATE benutzer SET IstVerifiziert = 0 WHERE benutzer.ID = "+ user.getID();
+        
+        dbConnector.executeStatement(query);
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
+        return null;
+    }
+    
+    public String kundeLöschen(User user) {
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen Kunden entverifizieren!");
+        
+        // Prüfen ob Nutzer existiert
+        String query = "SELECT benutzer.IstMitarbeiter FROM benutzer WHERE benutzer.ID = "+ user.getID();
+        
+        dbConnector.executeStatement(query);
+        QueryResult r = dbConnector.getCurrentQueryResult();
+        if (r.getRowCount() == 0) {
+            return "Zu entverifizierender Kunde existiert nicht!";
+        }
+        
+        if (r.getData()[0][0] == "1") {
+            return "Kann anderen Mitarbeiter nicht löschen!";
+        }
+        
+        // Löschen
+        int id = user.getID();
+        dbConnector.executeStatement("DELETE FROM benutzer WHERE ID ='" + id + "'");
+        dbConnector.executeStatement("DELETE FROM standort WHERE id = '" + user.getAdresse().getId() + "'");
+        dbConnector.executeStatement("DELETE FROM bewertungen WHERE benutzerID = '" + id + "'");
+        dbConnector.executeStatement("DELETE FROM wunschliste WHERE benutzerID = '" + id + "'");
+        dbConnector.executeStatement("DELETE FROM mietet WHERE UserID = '" + id + "'");
+        
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Sucht einen Kunden aus dem kunde-ArrayList und gibt diesen zurück, falls vorhanden.
+     */
+    public User getLocalKundeByID(int id) {
+        for (int i = 0; i < kunden.size(); i++) {
+            User user = kunden.get(i);
+            if (user.getID() == id) return user;
+        }
+        
+        return null;
     }
     
     /**
@@ -511,6 +629,27 @@ public class Verwalter {
             }
             
             list.add(auto);    
+        }
+        
+        return list;
+    }
+    
+    private ArrayList parseUsers(QueryResult result) {
+        ArrayList list = new ArrayList();
+        String[][] userArray = result.getData();
+        
+        for(int i = 0; i < userArray.length; i++){
+            String[] row = userArray[i];
+            
+            int uId = Helper.tryParseInt(row[0]);
+            boolean istVerifiziert = Helper.tryParseBool(row[5]);
+            boolean istMitarbeiter = Helper.tryParseBool(row[6]);
+            int plz = Helper.tryParseInt(row[8]);
+            int hausNr = Helper.tryParseInt(row[10]);
+            
+            Standort adresse = new Standort(row[11], row[7], plz, row[9], hausNr);
+            User user = new User(uId, row[1], row[3], row[2], row[4], istMitarbeiter, istVerifiziert, adresse);
+            list.add(user);    
         }
         
         return list;
