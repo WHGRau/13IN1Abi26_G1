@@ -100,7 +100,7 @@
             <TextField fx:id="kategorie2" layoutX="354.0" layoutY="87.0" prefHeight="25.0" prefWidth="159.0" promptText="Kategorie" />
             <Slider fx:id="ps1" layoutX="524.0" layoutY="80.0" max="1500.0" prefHeight="38.0" prefWidth="149.0" showTickLabels="true" showTickMarks="true" />
             <Text layoutX="531.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min. PS: " wrappingWidth="134.42333984375" />
-            <Button fx:id="suchen1" layoutX="690.0" layoutY="129.0" mnemonicParsing="false" onAction="#autoSuchen" prefHeight="25.0" prefWidth="382.0" text="Suchen" />
+            <Button fx:id="suchen1" layoutX="690.0" layoutY="130.0" mnemonicParsing="false" onAction="#autoSuchen" prefHeight="25.0" prefWidth="382.0" text="Suchen" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1c7eb" height="298.0" layoutX="687.0" layoutY="328.0" stroke="BLACK" strokeType="INSIDE" width="382.0" />
             <Label fx:id="markeAnzeige" alignment="CENTER" layoutX="706.0" layoutY="360.0" prefHeight="17.0" prefWidth="106.0" textAlignment="CENTER" />
             <Label fx:id="modellAnzeige" alignment="CENTER" layoutX="825.0" layoutY="360.0" prefHeight="17.0" prefWidth="106.0" />
@@ -110,7 +110,7 @@
             <Button fx:id="ausleihen1" layoutX="703.0" layoutY="585.0" mnemonicParsing="false" onAction="#autoMieten" prefHeight="25.0" prefWidth="354.0" text="Ausleihen" visible="false" />
             <Button fx:id="anmelden3" layoutX="950.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToAnmeldung" prefHeight="25.0" prefWidth="121.0" text="Anmelden" />
             <Button fx:id="kontoLöschen1" layoutX="820.0" layoutY="21.0" mnemonicParsing="false" onAction="#kontoLöschen" prefHeight="25.0" prefWidth="121.0" text="Konto löschen" visible="false" />
-            <Button fx:id="autoHinzuügen1" layoutX="25.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToHinzufügen" prefHeight="25.0" prefWidth="121.0" text="Auto hinzufügen" visible="false" />
+            <Button fx:id="autoHinzuügen1" layoutX="690.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchToHinzufügen" prefHeight="25.0" prefWidth="382.0" text="Auto hinzufügen" visible="false" />
             <TableView fx:id="autoListe1" layoutX="11.0" layoutY="129.0" prefHeight="508.0" prefWidth="661.0">
               <columns>
                 <TableColumn fx:id="markeListe1" editable="false" prefWidth="95.0" text="Marke" />
@@ -124,7 +124,7 @@
             <Button fx:id="autoAuswählen1" layoutX="690.0" layoutY="172.0" mnemonicParsing="false" onAction="#autoÜbertragen" prefHeight="25.0" prefWidth="382.0" text="Auto auswählen" />
             <Button fx:id="abmelden1" layoutX="950.0" layoutY="21.0" mnemonicParsing="false" onAction="#abmelden" prefHeight="25.0" prefWidth="121.0" text="Abmelden" visible="false" />
             <DatePicker fx:id="rückgabe1" layoutX="705.0" layoutY="550.0" prefHeight="25.0" prefWidth="354.0" promptText="Rückgabe" visible="false" />
-            <Button fx:id="miethistorie2" layoutX="155.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToMiethistorie" prefHeight="25.0" prefWidth="121.0" text="Mietübersicht" visible="false" />
+            <Button fx:id="miethistorie2" layoutX="20.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToMiethistorie" prefHeight="25.0" prefWidth="121.0" text="Mietübersicht" visible="false" />
             <TextField fx:id="benutzer11" layoutX="705.0" layoutY="514.0" prefHeight="25.0" prefWidth="354.0" promptText="Benutzername" visible="false" />
             <ImageView fx:id="bild1" fitHeight="85.0" fitWidth="105.0" layoutX="950.0" layoutY="400.0" visible="false">
                <image>
@@ -137,6 +137,7 @@
                </image>
             </ImageView>
             <Label fx:id="benutzerInfoSpan" alignment="CENTER_RIGHT" layoutX="692.0" layoutY="58.0" prefHeight="17.0" prefWidth="382.0" text="Nicht angemeldet" textAlignment="RIGHT" />
+            <Button fx:id="hsBtnNutzerverwaltung" layoutX="150.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToNutzerverwaltung" prefHeight="25.0" prefWidth="121.0" text="Nutzerübersicht" visible="false" />
       </children>
     </AnchorPane>
   </children>

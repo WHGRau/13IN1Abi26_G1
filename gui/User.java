@@ -77,12 +77,20 @@ public class User
         return istMitarbeiter;
     }
     
+    public String getIstMitarbeiterDE(){
+        return istMitarbeiter ? "Ja" : "Nein";
+    }
+    
     public void setIstMitarbeiter(boolean pMitarbeiter){
         istMitarbeiter = pMitarbeiter;
     }
     
     public boolean getIstVerifiziert(){
         return istVerifiziert;
+    }
+    
+    public String getIstVerifiziertDE(){
+        return istVerifiziert ? "Ja" : "Nein";
     }
     
     public void setistVerifiziert(boolean pIstVerifiziert){
@@ -95,5 +103,21 @@ public class User
     
     public void setAdresse(Standort pAdresse) {
         adresse = pAdresse;
+    }
+    
+    public String getOrt() {
+        return adresse.getOrt();
+    }
+    
+    public int getPlz() {
+        return adresse.getPlz();
+    }
+    
+    public String getStraße() {
+        return adresse.getStraße();
+    }
+    
+    public int getHausnr() {
+        return adresse.getHausNr();
     }
 }

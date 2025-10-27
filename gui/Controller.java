@@ -139,6 +139,9 @@ public class Controller {
     private Button miethistorie2;
     
     @FXML
+    private Button hsBtnNutzerverwaltung;
+    
+    @FXML
     private Button abmelden1;
     
     @FXML
@@ -297,7 +300,57 @@ public class Controller {
     
     @FXML
     private Label benutzerInfoSpan;
+    
+    // Für Nutzerverwaltung:
+    
+    @FXML
+    private TableView<User> nvTabelle;
+    
+    @FXML
+    private TableColumn<User, Integer> nvNutzerId100;
 
+    @FXML
+    private TableColumn<User, String> nvBenutzername100;
+
+    @FXML
+    private TableColumn<User, String> nvVorname100;
+
+    @FXML
+    private TableColumn<User, String> nvName100;
+
+    @FXML
+    private TableColumn<User, String> nvGBDatum100;
+    
+    @FXML
+    private TableColumn<User, Boolean> nvVerif100;
+    
+    @FXML
+    private TableColumn<User, Boolean> nvMitarb100;
+    
+    @FXML
+    private TableColumn<User, String> nvOrt100;
+    
+    @FXML
+    private TableColumn<User, Integer> nvPlz100;
+    
+    @FXML
+    private TableColumn<User, String> nvStraße100;
+    
+    @FXML
+    private TableColumn<User, Integer> nvHausnr100;
+
+    @FXML
+    private Button nvBtnSuchen;
+    
+    @FXML
+    private Button nvBtnVerifizieren;
+    
+    @FXML
+    private Button nvBtnLöschen;
+    
+    @FXML
+    private Label nvSpan;
+    
     
     // Die Verwalter Klasse ist in diesem Fall unser Model
     private Verwalter model ;
@@ -454,7 +507,7 @@ public class Controller {
         }
 
         // Ab hier ist die Anmeldung erfolgreich ausgelesen und validiert!
-        String rückgabe = model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, new Standort(ort, plzParsed, straße, hausNrParsed), 0, 0);
+        String rückgabe = model.registrieren(benutzername, passwort, name, vorname, geburtsdatum, new Standort("0", ort, plzParsed, straße, hausNrParsed), 0, 0);
         if (rückgabe.equals("Konto angelegt!")) {
             switchToHauptseite(event);
         } else {
@@ -646,12 +699,128 @@ public class Controller {
                 
                 if(model.getUser().getIstMitarbeiter()) {
                     controller.autoHinzuügen1.setVisible(true);
+                    controller.hsBtnNutzerverwaltung.setVisible(true);
                 }
                 
                 controller.setBenutzerInfoSpan(model.getUser());
             }
         });
-    } 
+    }
+    
+    @FXML 
+    void nvVerifizieren(ActionEvent event)throws IOException{
+        User user = nvTabelle.getSelectionModel().getSelectedItem();
+        if (user == null) {
+            nvSpan.setText("Kein Kunde zum Verifizieren ausgewählt!");
+            return;
+        }
+        
+        if (user.getIstVerifiziert()){
+            String message = model.kundeEntverifizieren(user);
+            if (message == null) message = "Kunde wurde entverifiziert!";
+            
+            nvSpan.setText(message);    
+        } else {
+            String message = model.kundeVerifizieren(user);
+            if (message == null) message = "Kunde wurde verifiziert!";
+            
+            nvSpan.setText(message);   
+        }
+    }
+    
+    @FXML 
+    void nvLöschen(ActionEvent event)throws IOException{
+        User user = nvTabelle.getSelectionModel().getSelectedItem();
+        if (user == null) {
+            nvSpan.setText("Kein Kunde zum Löschen ausgewählt!");
+            return;
+        }
+        
+        String message = model.kundeLöschen(user);
+        if (message == null) message = "Kunde wurde gelöscht!";
+        
+        nvSpan.setText(message);    
+    }
+    
+    @FXML 
+    void nvSuchen(ActionEvent event)throws IOException{
+        //nvTabelleInit();
+        
+        nvNutzerId100.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        nvBenutzername100.setCellValueFactory(new PropertyValueFactory<>("benutzername"));
+        nvName100.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nvVorname100.setCellValueFactory(new PropertyValueFactory<>("vorname"));
+        nvGBDatum100.setCellValueFactory(new PropertyValueFactory<>("geburtsdatum"));
+        nvMitarb100.setCellValueFactory(new PropertyValueFactory<>("istMitarbeiterDE"));
+        nvVerif100.setCellValueFactory(new PropertyValueFactory<>("istVerifiziertDE"));
+        nvOrt100.setCellValueFactory(new PropertyValueFactory<>("ort"));
+        nvPlz100.setCellValueFactory(new PropertyValueFactory<>("plz"));
+        nvStraße100.setCellValueFactory(new PropertyValueFactory<>("straße"));
+        nvHausnr100.setCellValueFactory(new PropertyValueFactory<>("hausnr"));
+        
+        String message = model.kundenSuchen();
+        if (message != null) {
+            nvSpan.setText(message);
+            return;
+        }
+        
+        ObservableList<User> daten = FXCollections.observableArrayList(model.getKunden());
+        nvTabelle.setItems(daten);
+    }
+    
+    void nvTabelleInit() {
+        nvNutzerId100.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        nvBenutzername100.setCellValueFactory(new PropertyValueFactory<>("benutzername"));
+        nvName100.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nvVorname100.setCellValueFactory(new PropertyValueFactory<>("vorname"));
+        nvGBDatum100.setCellValueFactory(new PropertyValueFactory<>("geburtsdatum"));
+        nvMitarb100.setCellValueFactory(new PropertyValueFactory<>("istMitarbeiter"));
+        nvVerif100.setCellValueFactory(new PropertyValueFactory<>("istVerifiziert"));
+        nvOrt100.setCellValueFactory(new PropertyValueFactory<>("ort"));
+        nvPlz100.setCellValueFactory(new PropertyValueFactory<>("plz"));
+        nvStraße100.setCellValueFactory(new PropertyValueFactory<>("straße"));
+        nvHausnr100.setCellValueFactory(new PropertyValueFactory<>("hausnr"));
+        
+        ObservableList<User> daten = FXCollections.observableArrayList(model.getKunden());
+        nvTabelle.setItems(daten);
+    }
+    
+    /**
+     * Ruft die Nutzerverwaltungs-Seite auf.
+     * Schlägt fehl wenn man nicht angemeldet oder kein Mitarbeiter ist.
+     */
+    
+    @FXML 
+    void switchToNutzerverwaltung(ActionEvent event)throws IOException{
+        if (model.getUser() == null || !model.getUser().getIstMitarbeiter()) return;
+        
+        // Verbesserter Code von ChatGPT
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/nutzerverwaltung.fxml"));
+        Parent root = loader.load();
+        
+        // Zugriff auf den Controller
+        Controller controller = loader.getController(); 
+                
+        // Code aus Vorlage
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+        
+        // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
+        // Fensters ausgeführt werden
+        Platform.runLater(() -> {
+            if(model.getUser().getIstMitarbeiter()) {
+                //nvTabelleInit();
+                controller.nvBtnSuchen.setVisible(true);
+                controller.nvBtnVerifizieren.setVisible(true);
+                controller.nvBtnLöschen.setVisible(true);
+            }
+            else {
+                controller.nvSpan.setText("Nur Mitarbeiter dürfen Kunden verwalten!");
+            }
+        });    
+    }
 
     /**
      * Ruft die Miethistorien-Seite auf.
@@ -677,11 +846,12 @@ public class Controller {
         // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
         // Fensters ausgeführt werden
         Platform.runLater(() -> {
+            controller.suchen10.setVisible(true);
+            
             if(model.getUser().getIstMitarbeiter()) {
-                controller.suchen10.setVisible(true);
                 controller.benutzerEingabe10.setVisible(true);
             } else {
-                controller.benutzer10.setText(model.getUser().getBenutzername());
+                //controller.benutzer10.setText(model.getUser().getBenutzername());
             }
         });    
     }
