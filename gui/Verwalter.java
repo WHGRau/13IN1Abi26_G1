@@ -148,6 +148,7 @@ public class Verwalter {
             return("Es wird noch etwas ausgeliehen!");
         }
         
+        // Standort
         dbConnector.executeStatement("SELECT AdresseID FROM benutzer WHERE benutzername ='" + benutzername + "'");
         x = dbConnector.getCurrentQueryResult();
         int adresseId = Integer.parseInt(x.getData() [0][0]);
@@ -156,6 +157,8 @@ public class Verwalter {
         }
         
         dbConnector.executeStatement("DELETE FROM benutzer WHERE benutzername ='" + benutzername + "'");
+        // FIXME: Standort nicht löschen, falls diese noch von einem anderen Nutzer (in Zukunft: anderer Entität mit Standort)
+        // über Fremdschlüssel genutzt wird.
         dbConnector.executeStatement("DELETE FROM standort WHERE id = '" + adresseId + "'");
         dbConnector.executeStatement("DELETE FROM bewertungen WHERE benutzerID = '" + id + "'");
         dbConnector.executeStatement("DELETE FROM wunschliste WHERE benutzerID = '" + id + "'");
@@ -386,27 +389,32 @@ public class Verwalter {
         
         dbConnector.executeStatement(query);
         auto = dbConnector.getCurrentQueryResult();
-        System.out.println("auto query: " + query);
         
         ArrayList list = parseAutos(auto, false);
         autos = list;
         return null;
     }
     
+    // Alle Attribute, die standartmäßig für Autotabellenanfragen gewollt sind
     private String autoSelectSql = "SELECT "+
         "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
-        "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis";
+        "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis ";
     
+    // Führt die obere SQL weiter, indem Preisklassen mitangefordert werden und dazu nur Autos zurückgegeben werden,
+    // die momentan nicht von irgendwem gemietet werden.
     private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID "+
         "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID "+
-        "WHERE (mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL) ";
+        "WHERE mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL ";
     
+    // Führt die oberste SQL weiter, indem hier nur Autos, die jemals gemietet wurden, 
+    // mit allen Mietinfos und Mieterinfos zurückgegeben werden.
     private String getGemieteteAutosSql = autoSelectSql + ", mietet.AusgeliehenAm, mietet.RückgabeAm, mietet.UserID, mietet.ID, "+
         "benutzer.Benutzername, benutzer.Name, benutzer.Vorname "+
-        "FROM auto, preisklassen, mietet, benutzer WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID AND mietet.UserID = benutzer.ID";
+        "FROM auto, preisklassen, mietet, benutzer WHERE auto.PreisklasseID = preisklassen.ID AND auto.ID = mietet.AutoID AND mietet.UserID = benutzer.ID ";
     
     /**
-     * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
+     * Selbst ausgeliehene Autos werden in dem Auto ArrayList vom Verwalter gespeichert.
+     * Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
      */
     public String getGemieteteAutos(boolean aktuell){
         if (ich == null) return ("Nicht angemeldet!");
@@ -417,7 +425,8 @@ public class Verwalter {
     }
     
     /**
-     * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg.
+     * Autos, die von einem bestimmten Nutzer geliehen wurden, werden in dem Auto ArrayList vom Verwalter gespeichert.
+     * Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg.
      */
     public String getGemieteteAutosVon(int userID, boolean aktuell){
         if (ich == null) return ("Nicht angemeldet!");
@@ -427,9 +436,29 @@ public class Verwalter {
         return null; 
     }
     
+    /**
+     * Alle gemietete Autos werden in dem Auto ArrayList vom Verwalter gespeichert.
+     * Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
+     */
+    public String getGemieteteAutosVonAllen(boolean aktuell){
+        if (ich == null) return ("Nicht angemeldet!");
+        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
+        
+        autos = this.getGemieteteAutosInternal(0, aktuell);
+        return null; 
+    }
+    
+    /**
+     * Falls userID = 0 ist, werden die gemieteten Autos von allen zurückgegeben.
+     */
     private ArrayList getGemieteteAutosInternal(int userID, boolean aktuell) {
         String timestamp = Helper.getNowDateTime();
-        String query = getGemieteteAutosSql + " AND mietet.UserID = " + userID;
+        String query = getGemieteteAutosSql;
+        
+        // Nach Nutzer suchen falls erfordert
+        if (userID != 0) {
+            query += " AND mietet.UserID = " + userID;
+        }
         
         // Nur früher gemietete Autos, sonst momentan Gemietete
         if (!aktuell) {
@@ -449,37 +478,11 @@ public class Verwalter {
         return list;
     }
     
-    /**
-     * Autos werden in dem Auto ArrayList vom Verwalter gespeichert, Rückgabe dieser Methode ist eine Fehlermeldung. null = Erfolg
-     */
-    public String getGemieteteAutosVonAllen(boolean aktuell){
-        if (ich == null) return ("Nicht angemeldet!");
-        if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen gemietete Autos von anderen sehen!");
-        
-        String timestamp = Helper.getNowDateTime();
-        String query = getGemieteteAutosSql;
-        
-        // Nur früher gemietete Autos, sonst momentan Gemietete
-        if (!aktuell) {
-            query += " AND mietet.RückgabeAm < '" + timestamp + "'";
-        }
-        else {
-            query += " AND mietet.RückgabeAm >= '" + timestamp + "'";
-        }
-        
-        dbConnector.executeStatement(query);
-        QueryResult r = dbConnector.getCurrentQueryResult();
-        if (r.getRowCount() == 0) {
-            autos = new ArrayList(); // leere Liste
-            return null;
-        }
-        
-        ArrayList list = parseAutos(r, true);
-        autos = list;
-        return null;
-    }
-    
     // TODO: null zurückgeben bei Erfolg
+    /**
+     * Vermietet ein Auto an einen Nutzer. Controller.autoMieten() stellt sicher, dass verifizierte Kunden nur sich selbst,
+     * und nicht anderen Benutzern Autos verleihen dürfen.
+     */
     public String autoVermieten(int autoID, int userID, String rückgabeAm) {
         if (ich == null) {
             return "Nicht angemeldet!";
@@ -499,6 +502,7 @@ public class Verwalter {
         if (r.getRowCount() == 0) {
             return "Kunde existiert nicht in der Datenbank!";
         }
+        // Stellt sicher, dass ein Mitarbeiter nicht sich selbst oder anderen Mitarbeitern Autos verleihen darf.
         else if (!r.getData()[0][1].equals("0")) {
             return "Nur Kunden darf man Autos vermieten!";
         }
@@ -534,6 +538,9 @@ public class Verwalter {
     }
     
     // TODO: null zurückgeben bei Erfolg, Exceptions durch zurückgegebene Fehlermeldungen ersetzen
+    /**
+     * Hiermit kann man ein selbst ausgeliehenes Auto frühzeitig wieder abgeben.
+     */
     public String autoRückgabe(int autoID) {
         if (ich == null) throw new IllegalCallerException("Nicht angemeldet!");
         if (ich.getIstMitarbeiter() == true) throw new IllegalCallerException("Mitarbeiter dürfen keine selbst ausgeliehenen Autos zurückgeben!");
@@ -555,7 +562,7 @@ public class Verwalter {
             return "Du mietest dieses Auto nicht mal, hau ab!";
         }
         
-        // Relation endlich aktualisieren
+        // Relation endlich aktualisieren (Rückgabedatum auf jetzt verkürzen)
         dbConnector.executeStatement("UPDATE mietet SET RückgabeAm = '" + timestamp + "' WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "' AND mietet.UserID = " + ownID);
         if (dbConnector.getErrorMessage() != null) {
             return "SQL Fehler: " + dbConnector.getErrorMessage();
@@ -571,6 +578,9 @@ public class Verwalter {
         return "Nun mietet keiner das Auto mehr";   
     }
     
+    /**
+     * Setzt alle Mietrelationen eines Autos, deren Rückgabedatum in der Zukunft liegt, auf jetzt.
+     */
     public String autoZwangsRücknahme(int autoID) {
         if (ich == null) return "Nicht angemeldet!";
         if (ich.getIstMitarbeiter() != true) return "Nur Mitarbeiter können Autos zurück ins Lager erzwingen!";
@@ -580,6 +590,7 @@ public class Verwalter {
             return "Auto existiert nicht in der Datenbank!";
         }
         
+        // Daten zurücksetzen
         String timestamp = Helper.getNowDateTime();
         dbConnector.executeStatement("UPDATE mietet SET RückgabeAm = '" + timestamp + "' WHERE mietet.AutoID = " + autoID + " AND mietet.RückgabeAm > '" + timestamp + "'");
         if (dbConnector.getErrorMessage() != null) {
@@ -602,6 +613,9 @@ public class Verwalter {
         return r.getRowCount() > 0;
     }    
     
+    /**
+     * Erstellt eine ArrayList aus Autos anhand der rohen (String[][]) SQL-Rückgabe.
+     */
     private ArrayList parseAutos(QueryResult result, boolean hatMietInfo) {
         ArrayList list = new ArrayList();
         String[][] autoArray = result.getData();
@@ -620,6 +634,8 @@ public class Verwalter {
             int aLeistung = Helper.tryParseInt(row[4]);
             Auto auto; 
             
+            // Falls auch die über SQL erhaltene Mietinfo + Mieterinfo der Autos lokal mitgespeichert werden müssen,
+            // werden auch diese ausgelesen und hinzugefügt
             if (hatMietInfo) {
                 int mieterId = Helper.tryParseInt(row[11]);
                 int mietId = Helper.tryParseInt(row[12]);
@@ -637,6 +653,9 @@ public class Verwalter {
         return list;
     }
     
+    /**
+     * Erstellt eine ArrayList aus Benutzern anhand der rohen (String[][]) SQL-Rückgabe.
+     */
     private ArrayList parseUsers(QueryResult result) {
         ArrayList list = new ArrayList();
         String[][] userArray = result.getData();
@@ -663,12 +682,14 @@ public class Verwalter {
             dbConnector.executeStatement("SELECT ID FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
             QueryResult r = dbConnector.getCurrentQueryResult();
             
+            // Nutzer existiert nicht
             if (r.getRowCount() == 0) {
                 return -1;
             }
             
             return Integer.parseInt(r.getData()[0][0]);
         } else {
+            // Parameter ungültig
             return -1;
         }
     }
@@ -683,6 +704,9 @@ public class Verwalter {
         return("Passwort geändert");
     }
     
+    /**
+     * Gibt den Nutzer, mit dem man angemeldet ist, zurück. Null = nicht angemeldet.
+     */
     public User getUser () {
         return ich;        
     }
