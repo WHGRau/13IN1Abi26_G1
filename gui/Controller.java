@@ -841,11 +841,12 @@ public class Controller {
         // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
         // Fensters ausgeführt werden
         Platform.runLater(() -> {
+            controller.suchen10.setVisible(true);
+            
             if(model.getUser().getIstMitarbeiter()) {
-                controller.suchen10.setVisible(true);
                 controller.benutzerEingabe10.setVisible(true);
             } else {
-                controller.benutzer10.setText(model.getUser().getBenutzername());
+                //controller.benutzer10.setText(model.getUser().getBenutzername());
             }
         });    
     }
