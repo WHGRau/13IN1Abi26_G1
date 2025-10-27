@@ -599,6 +599,7 @@ public class Controller {
     void kontoLöschen(ActionEvent event) throws IOException{
         kontoLöschen2.setText(model.kontoLoeschen());
         switchToHauptseite(event);
+        model.abmelden();
     }
     
     /**
