@@ -533,7 +533,7 @@ public class Controller {
      * in der Tabelle zurück.
      */
     @FXML
-    void mieteSuchen(ActionEvent event) {
+    void mieteSuchen(ActionEvent event) throws IOException {
         String benutzername = benutzerEingabe10.getText();
         ObservableList<Auto> daten;
         
@@ -563,7 +563,12 @@ public class Controller {
             int benutzerID = model.getUser().getID();
             model.getGemieteteAutos(tick1.isSelected());
         }
-
+        if(tick1.isSelected()){
+            autoZurückgeben1.setVisible(true);
+        } else {
+            autoZurückgeben1.setVisible(false);
+        }
+        
         id100.setCellValueFactory(new PropertyValueFactory<>("iD"));
         marke100.setCellValueFactory(new PropertyValueFactory<>("marke"));
         modell100.setCellValueFactory(new PropertyValueFactory<>("modell"));
