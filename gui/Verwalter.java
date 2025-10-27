@@ -343,31 +343,24 @@ public class Verwalter {
         QueryResult auto = null;
         autos.clear();
         int leistung = (int)pLeistung;
-        String query = getAutoSql;
         
-        if (!pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
-            query += "AND Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'";  
-        } else if (pMarke.isEmpty() && !pModell.isEmpty() && !pKategorie.isEmpty()){
-            query += "AND Modell = '"+pModell+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'";
-        } else if (pModell.isEmpty() && !pMarke.isEmpty() && !pKategorie.isEmpty()){
-            query += "AND Marke = '"+pMarke+"' AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'";
-        } else if (pKategorie.isEmpty() && !pModell.isEmpty() && !pMarke.isEmpty()){
-            query += "AND Marke = '"+pMarke+"' AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'";
-        } else if (pMarke.isEmpty() && pModell.isEmpty() && !pKategorie.isEmpty()) {
-            query += "AND Kategorie ='"+pKategorie+"' AND Leistung > '"+leistung+"'"; 
-        } else if (pMarke.isEmpty() && pKategorie.isEmpty() && !pModell.isEmpty()){
-            query += "AND Modell = '"+pModell+"' AND Leistung > '"+leistung+"'"; 
-        } else if ( pModell.isEmpty() && pKategorie.isEmpty() && !pMarke.isEmpty()){
-            query += "AND Marke = '"+pMarke+"' AND Leistung > '"+leistung+"'";  
-        } else {
-            query += "AND Leistung > '"+leistung+"'";    
+        // Auch nach Leistung filtern
+        String query = getAutoSql + " AND Leistung > '"+leistung+"'";
+        
+        if (!pMarke.isEmpty()) {
+            query += " AND Marke = '"+pMarke+"' ";
         }
-        
-        if (dbConnector.getErrorMessage() != null) {
-            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        if (!pModell.isEmpty()) {
+            query += " AND Modell = '"+pModell+"' ";
+        }
+        if (!pKategorie.isEmpty()) {
+            query += " AND Kategorie = '"+pKategorie+"' ";
         }
         
         dbConnector.executeStatement(query);
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
         auto = dbConnector.getCurrentQueryResult();
         
         ArrayList list = parseAutos(auto, false);
@@ -384,7 +377,7 @@ public class Verwalter {
     // die momentan nicht von irgendwem gemietet werden.
     private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID "+
         "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID "+
-        "WHERE mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL ";
+        "WHERE (mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL) ";
     
     // Führt die oberste SQL weiter, indem hier nur Autos, die jemals gemietet wurden, 
     // mit allen Mietinfos und Mieterinfos zurückgegeben werden.

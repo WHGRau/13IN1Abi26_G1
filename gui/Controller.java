@@ -996,6 +996,16 @@ public class Controller {
      */
     @FXML
     void autoÜbertragen(ActionEvent event)throws IOException {
+        // TODO: Auto automatisch durch Doppelklick auf Tabellenzeile auswählen
+        ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
+        
+        if (ausgewähltesAuto == null) {
+            kontoLöschen2.setText("Kein Auto ausgewählt!");
+            return;
+        }
+        
+        kontoLöschen2.setText("");
+        
         User user = model.getUser();
         if(user != null && (user.getIstMitarbeiter() || user.getIstVerifiziert())){
             ausleihen1.setVisible(true);
@@ -1004,8 +1014,6 @@ public class Controller {
         
         bild1.setVisible(true);
         bild2.setVisible(true);
-        // TODO: Auto automatisch durch Doppelklick auf Tabellenzeile auswählen
-        ausgewähltesAuto = autoListe1.getSelectionModel().getSelectedItem();
         
         if (ausgewähltesAuto != null) {
             String marke = ausgewähltesAuto.getMarke();

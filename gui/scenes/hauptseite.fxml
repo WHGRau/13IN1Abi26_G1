@@ -98,8 +98,8 @@
             <TextField fx:id="marke2" layoutX="10.0" layoutY="86.0" prefHeight="25.0" prefWidth="149.0" promptText="Marke" />
             <TextField fx:id="modell2" layoutX="171.0" layoutY="86.0" prefHeight="25.0" prefWidth="171.0" promptText="Modell" />
             <TextField fx:id="kategorie2" layoutX="354.0" layoutY="87.0" prefHeight="25.0" prefWidth="159.0" promptText="Kategorie" />
-            <Slider fx:id="ps1" layoutX="524.0" layoutY="80.0" max="1500.0" prefHeight="38.0" prefWidth="149.0" showTickLabels="true" showTickMarks="true" />
-            <Text layoutX="531.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min. PS: " wrappingWidth="134.42333984375" />
+            <Slider fx:id="ps1" layoutX="524.0" layoutY="80.0" max="450.0" prefHeight="38.0" prefWidth="149.0" showTickLabels="true" showTickMarks="true" />
+            <Text layoutX="569.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min. PS" wrappingWidth="58.42333984375" />
             <Button fx:id="suchen1" layoutX="690.0" layoutY="130.0" mnemonicParsing="false" onAction="#autoSuchen" prefHeight="25.0" prefWidth="382.0" text="Suchen" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#a1c7eb" height="298.0" layoutX="687.0" layoutY="328.0" stroke="BLACK" strokeType="INSIDE" width="382.0" />
             <Label fx:id="markeAnzeige" alignment="CENTER" layoutX="706.0" layoutY="360.0" prefHeight="17.0" prefWidth="106.0" textAlignment="CENTER" />
