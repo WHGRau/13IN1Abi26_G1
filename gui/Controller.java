@@ -646,7 +646,7 @@ public class Controller {
         int leistung = (int)ps1.getValue();
         String meldung = model.autoSuchen(marke, modell, kategorie, leistung);
         if (meldung != null) {
-            System.out.println(meldung);
+            kontoLöschen2.setText(meldung);
             return;
         }
         
