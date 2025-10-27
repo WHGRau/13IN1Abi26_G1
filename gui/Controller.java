@@ -597,9 +597,18 @@ public class Controller {
     
     @FXML
     void kontoLöschen(ActionEvent event) throws IOException{
-        kontoLöschen2.setText(model.kontoLoeschen());
-        switchToHauptseite(event);
-        model.abmelden();
+        String message = model.kontoLoeschen();
+        
+        // Kontolöschung erfolgreich: Abmelden, Hauptseite neuladen, erst dann Nachricht zeigen, 
+        // sonst Fehlermeldung zeigen
+        if (message == null) {
+            // Abmelden
+            model.abmelden();
+            switchToKontoGelöscht(event);
+        }
+        else {
+            kontoLöschen2.setText(message);
+        }
     }
     
     /**
@@ -705,6 +714,31 @@ public class Controller {
                 
                 controller.setBenutzerInfoSpan(model.getUser());
             }
+        });
+    }
+    
+    /**
+     * Ruft die Konto-Gelöscht-Seite auf.
+     */
+    @FXML
+    void switchToKontoGelöscht(ActionEvent event)throws IOException{
+        // Verbesserter Code von ChatGPT
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/kontoGelöscht.fxml"));
+        Parent root = loader.load();
+        
+        // Zugriff auf den Controller
+        Controller controller = loader.getController(); 
+                
+        // Code aus Vorlage
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show(); 
+        
+        // Sorgt dafür dass die Methoden erst nach dem vollständigem Laden des
+        // Fensters ausgeführt werden
+        Platform.runLater(() -> {
+            // Keine interaktiven Inhalte außer Zurück-Knopf auf dieser Seite
         });
     }
     

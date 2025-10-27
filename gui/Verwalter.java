@@ -40,10 +40,11 @@ public class Verwalter {
         Standort adresse = getStandortFromDb(pAdresse.getOrt(), pAdresse.getPlz(), pAdresse.getStraße(), pAdresse.getHausNr());
         if (adresse == null) return "Konnte Adresse des Nutzers nicht speichern";
         
-        // Nutzer erstellen
+        // Prüfen ob so ein Nutzer bereits existiert
         dbConnector.executeStatement("SELECT Benutzername FROM benutzer WHERE Benutzername = '"+pBenutzername+"'");
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
+            // Nutzer erstellen
             dbConnector.executeStatement("INSERT INTO benutzer(Benutzername, Passwort, Vorname, Name, Geburtsdatum, AdresseID, istMitarbeiter, istVerifiziert) "
                 +"VALUES('"+pBenutzername+"', '"+passwortHash+"', '"+pVorname+"', '"+pName+"', '"+pGeburtsdatum+"', '"+adresse.getId()+"', '"+pMitarbeiter+"', '"+pVerifiziert+"')");
             
@@ -68,17 +69,19 @@ public class Verwalter {
         String passwort = pPasswort;
         String passwortHash = Helper.toSha256(passwort);
         
+        // Suche Nutzer, bei dem Benutzername und Passworthash übereinstimmen. Falls so einer gefunden wird: Alle Informationen nötig
         dbConnector.executeStatement("SELECT benutzer.ID, benutzer.Benutzername, benutzer.Passwort, benutzer.Vorname, benutzer.Name, benutzer.Geburtsdatum, benutzer.istMitarbeiter, benutzer.istVerifiziert, "
             +"standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer, standort.ID "
             +"FROM benutzer "
             +"JOIN standort ON standort.ID = benutzer.AdresseID "
             +"WHERE Benutzername = '"+benutzername+"' AND Passwort = '"+passwortHash+"' ");
+            
         QueryResult nutzer = dbConnector.getCurrentQueryResult();
-        
         if (nutzer.getRowCount() == 0) {
             return("Passwort oder Benutzername falsch!");
         }
         
+        // Informationen auswerten und als User "ich" speichern
         String[] row = nutzer.getData()[0];
         int id = Integer.parseInt(row[0]);
         String name = row[4];
@@ -134,27 +137,18 @@ public class Verwalter {
             return("Nicht angemeldet!");
         }
         String benutzername = ich.getBenutzername();
-        
-        int id = getBenutzerID(benutzername);
-        if (id == -1) {
-            return("Konnte zu löschenden Nutzer nicht finden!");
-        }
+        int id = ich.getID();
         
         //Überprüfen ob der Nutzer noch etwas ausleiht
         String datum = Helper.getNowDateTime();
-        dbConnector.executeStatement("SELECT * FROM mietet WHERE UserId = '"+id+"' AND RückgabeAm = '"+datum+"'");
+        dbConnector.executeStatement("SELECT * FROM mietet WHERE UserId = '"+id+"' AND RückgabeAm > '"+datum+"'");
         QueryResult x = dbConnector.getCurrentQueryResult();
         if (x.getRowCount() != 0) {
             return("Es wird noch etwas ausgeliehen!");
         }
         
         // Standort
-        dbConnector.executeStatement("SELECT AdresseID FROM benutzer WHERE benutzername ='" + benutzername + "'");
-        x = dbConnector.getCurrentQueryResult();
-        int adresseId = Integer.parseInt(x.getData() [0][0]);
-        if (x.getRowCount() == 0) {
-            return("Konnte zu löschenden Standort nicht finden!");
-        }
+        String adresseId = ich.getAdresse().getId();
         
         dbConnector.executeStatement("DELETE FROM benutzer WHERE benutzername ='" + benutzername + "'");
         // FIXME: Standort nicht löschen, falls diese noch von einem anderen Nutzer (in Zukunft: anderer Entität mit Standort)
@@ -163,7 +157,8 @@ public class Verwalter {
         dbConnector.executeStatement("DELETE FROM bewertungen WHERE benutzerID = '" + id + "'");
         dbConnector.executeStatement("DELETE FROM wunschliste WHERE benutzerID = '" + id + "'");
         dbConnector.executeStatement("DELETE FROM mietet WHERE UserID = '" + id + "'");
-        return("Konto erfolgreich gelöscht.");
+        
+        return null;
     }
     
     /**
@@ -175,10 +170,12 @@ public class Verwalter {
             return null;
         }
         
+        // Standort mit passenden Werten suchen
         dbConnector.executeStatement("SELECT ID, Ort, Postleitzahl, Straße, Hausnummer FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPlz+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausNr+"'");
         QueryResult r = dbConnector.getCurrentQueryResult();
         
         if (r.getRowCount() == 0) {
+            // Falls Standort nicht existiert: neuen Standort erstellen
             dbConnector.executeStatement("INSERT INTO standort(Ort, Postleitzahl, Straße, Hausnummer) VALUES('"+pOrt+"', '"+pPlz+"', '"+pStraße+"', '"+pHausNr+"')");
             dbConnector.executeStatement("SELECT ID, Ort, Postleitzahl, Straße, Hausnummer FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPlz+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausNr+"'");
             r = dbConnector.getCurrentQueryResult();
@@ -189,7 +186,7 @@ public class Verwalter {
             }
         }
         
-        // Standort wurde zurückgegeben
+        // Standort als Standortobjekt zurückgeben
         String[] row = r.getData()[0];
         int plzParsed = Helper.tryParseInt(row[2]);
         int hausNrParsed = Helper.tryParseInt(row[4]);
@@ -197,32 +194,25 @@ public class Verwalter {
         return new Standort(row[0], row[1], plzParsed, row[3], hausNrParsed);
     }
     
-    private String getStandortID(String pOrt, int pPostleitzahl, String pStraße, int pHausnummer)
-    {
-        dbConnector.executeStatement("SELECT ID FROM standort WHERE Ort = '"+pOrt+"' AND Postleitzahl = '"+pPostleitzahl+"' AND Straße = '"+pStraße+"' AND Hausnummer = '"+pHausnummer+"'");
-        QueryResult r = dbConnector.getCurrentQueryResult();
-        if (r.getRowCount() == 0) {
-            return "";
-        }
-        else {
-            return r.getData()[0][0];
-        }
-    }
-    
     /**
      * Um ein Auto hinzufügen zu können muss man als Mitarbeiter 
      * angemeldet sein.
      */
     public String autoHinzufügen(String pMarke, String pModell, String pKategorie, int pLeistung, String pKennzeichen, int pPreisklasse) {
+        // Nur ausführen, falls man als Mitarbeiter angemeldet ist
         if(ich != null && ich.getIstMitarbeiter()){
             String marke = pMarke;
             String modell = pModell;
             String kategorie = pKategorie;
             int leistung = pLeistung;
-            String kennzeichen = pKennzeichen.toUpperCase(); 
+            String kennzeichen = pKennzeichen.toUpperCase(); // Kennzeichen in Großbuchstaben
             int preisklasse = pPreisklasse;
+            
+            // Ist das gegebene Kennzeichen bereits vergeben?
             dbConnector.executeStatement("SELECT kennzeichen FROM auto WHERE Kennzeichen = '"+kennzeichen+"'");
             QueryResult r = dbConnector.getCurrentQueryResult();
+            
+            // Falls noch kein Auto das gegebene Kennzeichen hat: Neues Auto erstellen, sonst abbrechen
             if (r.getRowCount() == 0) {
                 dbConnector.executeStatement("INSERT INTO auto(Marke, Modell, Kategorie, Leistung, Kennzeichen, PreisklasseID) VALUES('"+marke+"', '"+modell+"', '"+kategorie+"', '"+leistung+"', '"+kennzeichen+"', '"+preisklasse+"')");
                 return("Auto hinzugefügt!");
@@ -241,6 +231,7 @@ public class Verwalter {
         if (ich == null) return ("Nicht angemeldet!");
         if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen Kundeninformationen sehen!");
         
+        // Benutzer mit Adresse zurückgeben, die keine Mitarbeiter sind
         String query = "SELECT "+
             "benutzer.ID, benutzer.Benutzername, benutzer.Vorname, benutzer.Name, benutzer.Geburtsdatum, benutzer.IstVerifiziert, benutzer.IstMitarbeiter, "+
             "standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer, standort.ID "+
@@ -299,7 +290,7 @@ public class Verwalter {
             return "Zu entverifizierender Kunde existiert nicht!";
         }
         
-        // Verifizieren
+        // Entverifizieren
         query = "UPDATE benutzer SET IstVerifiziert = 0 WHERE benutzer.ID = "+ user.getID();
         
         dbConnector.executeStatement(query);
@@ -323,6 +314,7 @@ public class Verwalter {
             return "Zu entverifizierender Kunde existiert nicht!";
         }
         
+        // Andere Mitarbeiter dürfen nicht gelöscht werden
         if (r.getData()[0][0] == "1") {
             return "Kann anderen Mitarbeiter nicht löschen!";
         }
@@ -337,18 +329,6 @@ public class Verwalter {
         
         if (dbConnector.getErrorMessage() != null) {
             return "SQL Fehler: " + dbConnector.getErrorMessage();
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Sucht einen Kunden aus dem kunde-ArrayList und gibt diesen zurück, falls vorhanden.
-     */
-    public User getLocalKundeByID(int id) {
-        for (int i = 0; i < kunden.size(); i++) {
-            User user = kunden.get(i);
-            if (user.getID() == id) return user;
         }
         
         return null;
