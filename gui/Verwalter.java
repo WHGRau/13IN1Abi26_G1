@@ -344,9 +344,14 @@ public class Verwalter {
         autos.clear();
         int leistung = (int)pLeistung;
         
-        // Auch nach Leistung filtern
-        String query = getAutoSql + " AND Leistung > '"+leistung+"'";
+        // Preisklassen mit einschließen, nach Leistung filtern und bei jedem Methodenaufruf auch Helper.getNowDateTime() aufrufen,
+        // um Timestamp stets zu aktualisieren. Nur die Autos werden zurückgegeben, die entweder nie ausgeliehen, oder das letzte Mal
+        // vor jetzt zurückgegeben wurden.
+        String query = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID "+
+            "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID "+
+            "WHERE (mietet1.letzteRueckgabe <= '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL) AND Leistung > '"+leistung+"'";
         
+        // Weitere Filter anhängen falls gewünscht (jeweilige Eingabe nicht leer
         if (!pMarke.isEmpty()) {
             query += " AND Marke = '"+pMarke+"' ";
         }
@@ -357,12 +362,14 @@ public class Verwalter {
             query += " AND Kategorie = '"+pKategorie+"' ";
         }
         
+        // Ausführen
         dbConnector.executeStatement(query);
         if (dbConnector.getErrorMessage() != null) {
             return "SQL Fehler: " + dbConnector.getErrorMessage();
         }
         auto = dbConnector.getCurrentQueryResult();
         
+        // Speichern
         ArrayList list = parseAutos(auto, false);
         autos = list;
         return null;
@@ -373,11 +380,9 @@ public class Verwalter {
         "auto.ID, auto.Marke, auto.Modell, auto.Kategorie, auto.Leistung, auto.Kennzeichen, "+
         "preisklassen.ID, preisklassen.Preis, preisklassen.ZusatzversicherungsPreis ";
     
-    // Führt die obere SQL weiter, indem Preisklassen mitangefordert werden und dazu nur Autos zurückgegeben werden,
-    // die momentan nicht von irgendwem gemietet werden.
+    // Führt die obere SQL weiter, indem Preisklassen mitangefordert werden.
     private String getAutoSql = autoSelectSql + " FROM auto JOIN preisklassen ON auto.PreisklasseID = preisklassen.ID "+
-        "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID "+
-        "WHERE (mietet1.letzteRueckgabe < '" + Helper.getNowDateTime() + "' OR mietet1.letzteRueckgabe IS NULL) ";
+        "LEFT JOIN (SELECT AutoID, MAX(rückgabeAm) AS letzteRueckgabe FROM mietet GROUP BY AutoID) mietet1 ON auto.ID = mietet1.AutoID ";
     
     // Führt die oberste SQL weiter, indem hier nur Autos, die jemals gemietet wurden, 
     // mit allen Mietinfos und Mieterinfos zurückgegeben werden.
@@ -605,7 +610,7 @@ public class Verwalter {
             // Auto
             int aId = Helper.tryParseInt(row[0]);
             int aLeistung = Helper.tryParseInt(row[4]);
-            Auto auto; 
+            Auto auto;
             
             // Falls auch die über SQL erhaltene Mietinfo + Mieterinfo der Autos lokal mitgespeichert werden müssen,
             // werden auch diese ausgelesen und hinzugefügt
