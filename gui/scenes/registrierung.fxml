@@ -102,7 +102,7 @@
             <TextField fx:id="straße1" layoutX="139.0" layoutY="245.0" prefHeight="25.0" prefWidth="259.0" promptText="Straße " />
             <TextField fx:id="hausnummer1" layoutX="412.0" layoutY="245.0" prefHeight="25.0" prefWidth="105.0" promptText="Hausnr. " />
             <DatePicker fx:id="geburtsdatum1" layoutX="228.0" layoutY="289.0" promptText="Geburtsdatum" />
-            <Button fx:id="registrieren2" layoutX="249.0" layoutY="333.0" mnemonicParsing="false" onAction="#registrieren" prefHeight="25.0" prefWidth="165.0" text="Registrieren">
+            <Button fx:id="registrieren2" layoutX="249.0" layoutY="333.0" mnemonicParsing="false" onAction="#registrieren" prefHeight="25.0" prefWidth="155.0" text="Registrieren">
                <font>
                   <Font name="Noto Sans Regular" size="12.0" />
                </font>

@@ -97,7 +97,7 @@
             <TextField fx:id="leistung1" layoutX="138.0" layoutY="145.0" promptText="Leistung" />
             <TextField fx:id="kennzeichen1" layoutX="328.0" layoutY="145.0" promptText="Kennzeichen" />
             <TextField fx:id="preisklasse1" layoutX="138.0" layoutY="181.0" prefHeight="25.0" prefWidth="97.0" promptText="Preisklasse" />
-            <TextField fx:id="kategorie1" layoutX="251.0" layoutY="181.0" prefHeight="25.0" prefWidth="244.0" promptText="Kategorie" />
+            <TextField fx:id="kategorie1" layoutX="251.0" layoutY="181.0" prefHeight="25.0" prefWidth="226.0" promptText="Kategorie" />
             <Button fx:id="autoHinzufügen1" layoutX="207.0" layoutY="237.0" mnemonicParsing="false" onAction="#autoHinzufügen" prefHeight="25.0" prefWidth="210.0" text="Auto hinzufügen">
                <font>
                   <Font name="Noto Sans Regular" size="12.0" />
