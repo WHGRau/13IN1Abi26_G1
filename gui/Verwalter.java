@@ -239,12 +239,15 @@ public class Verwalter {
         if (ich.getIstMitarbeiter() != true) return ("Nur Mitarbeiter dürfen Kundeninformationen sehen!");
         
         String query = "SELECT "+
-            "benutzer.ID, benutzer.Benutzername, benutzer.Vorname, benutzer.Name, benutzer.Geburtsdatum, benutzer.IstVerifiziert, benutzer.IstMitarbeiter "+
+            "benutzer.ID, benutzer.Benutzername, benutzer.Vorname, benutzer.Name, benutzer.Geburtsdatum, benutzer.IstVerifiziert, benutzer.IstMitarbeiter, "+
             "standort.Ort, standort.Postleitzahl, standort.Straße, standort.Hausnummer, standort.ID "+
-            "FROM benutzer, standort WHERE benutzer.AdresseID = standort.ID "+
-            "WHERE benutzer.IstMitarbeiter = 1";
+            "FROM benutzer, standort WHERE benutzer.AdresseID = standort.ID AND benutzer.IstMitarbeiter != 1";
         
         dbConnector.executeStatement(query);
+        if (dbConnector.getErrorMessage() != null) {
+            return "SQL Fehler: " + dbConnector.getErrorMessage();
+        }
+        
         QueryResult r = dbConnector.getCurrentQueryResult();
         if (r.getRowCount() == 0) {
             kunden = new ArrayList(); // leere Liste

@@ -307,37 +307,37 @@ public class Controller {
     private TableView<User> nvTabelle;
     
     @FXML
-    private TableColumn<Auto, Integer> nvNutzerId100;
+    private TableColumn<User, Integer> nvNutzerId100;
 
     @FXML
-    private TableColumn<Auto, String> nvBenutzername100;
+    private TableColumn<User, String> nvBenutzername100;
 
     @FXML
-    private TableColumn<Auto, String> nvVorname100;
+    private TableColumn<User, String> nvVorname100;
 
     @FXML
-    private TableColumn<Auto, String> nvName100;
+    private TableColumn<User, String> nvName100;
 
     @FXML
-    private TableColumn<Auto, String> nvGBDatum100;
+    private TableColumn<User, String> nvGBDatum100;
     
     @FXML
-    private TableColumn<Auto, Boolean> nvVerif100;
+    private TableColumn<User, Boolean> nvVerif100;
     
     @FXML
-    private TableColumn<Auto, Boolean> nvMitarb100;
+    private TableColumn<User, Boolean> nvMitarb100;
     
     @FXML
-    private TableColumn<Auto, String> nvOrt100;
+    private TableColumn<User, String> nvOrt100;
     
     @FXML
-    private TableColumn<Auto, Integer> nvPlz100;
+    private TableColumn<User, Integer> nvPlz100;
     
     @FXML
-    private TableColumn<Auto, String> nvStraße100;
+    private TableColumn<User, String> nvStraße100;
     
     @FXML
-    private TableColumn<Auto, Integer> nvHausnr100;
+    private TableColumn<User, Integer> nvHausnr100;
 
     @FXML
     private Button nvBtnSuchen;
@@ -702,6 +702,84 @@ public class Controller {
         });
     }
     
+    @FXML 
+    void nvVerifizieren(ActionEvent event)throws IOException{
+        User user = nvTabelle.getSelectionModel().getSelectedItem();
+        if (user == null) {
+            nvSpan.setText("Kein Kunde zum Verifizieren ausgewählt!");
+            return;
+        }
+        
+        if (user.getIstVerifiziert()){
+            String message = model.kundeEntverifizieren(user);
+            if (message == null) message = "Kunde wurde entverifiziert!";
+            
+            nvSpan.setText(message);    
+        } else {
+            String message = model.kundeVerifizieren(user);
+            if (message == null) message = "Kunde wurde verifiziert!";
+            
+            nvSpan.setText(message);   
+        }
+    }
+    
+    @FXML 
+    void nvLöschen(ActionEvent event)throws IOException{
+        User user = nvTabelle.getSelectionModel().getSelectedItem();
+        if (user == null) {
+            nvSpan.setText("Kein Kunde zum Löschen ausgewählt!");
+            return;
+        }
+        
+        String message = model.kundeLöschen(user);
+        if (message == null) message = "Kunde wurde gelöscht!";
+        
+        nvSpan.setText(message);    
+    }
+    
+    @FXML 
+    void nvSuchen(ActionEvent event)throws IOException{
+        //nvTabelleInit();
+        
+        nvNutzerId100.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        nvBenutzername100.setCellValueFactory(new PropertyValueFactory<>("benutzername"));
+        nvName100.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nvVorname100.setCellValueFactory(new PropertyValueFactory<>("vorname"));
+        nvGBDatum100.setCellValueFactory(new PropertyValueFactory<>("geburtsdatum"));
+        nvMitarb100.setCellValueFactory(new PropertyValueFactory<>("istMitarbeiterDE"));
+        nvVerif100.setCellValueFactory(new PropertyValueFactory<>("istVerifiziertDE"));
+        nvOrt100.setCellValueFactory(new PropertyValueFactory<>("ort"));
+        nvPlz100.setCellValueFactory(new PropertyValueFactory<>("plz"));
+        nvStraße100.setCellValueFactory(new PropertyValueFactory<>("straße"));
+        nvHausnr100.setCellValueFactory(new PropertyValueFactory<>("hausnr"));
+        
+        String message = model.kundenSuchen();
+        if (message != null) {
+            nvSpan.setText(message);
+            return;
+        }
+        
+        ObservableList<User> daten = FXCollections.observableArrayList(model.getKunden());
+        nvTabelle.setItems(daten);
+    }
+    
+    void nvTabelleInit() {
+        nvNutzerId100.setCellValueFactory(new PropertyValueFactory<>("iD"));
+        nvBenutzername100.setCellValueFactory(new PropertyValueFactory<>("benutzername"));
+        nvName100.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nvVorname100.setCellValueFactory(new PropertyValueFactory<>("vorname"));
+        nvGBDatum100.setCellValueFactory(new PropertyValueFactory<>("geburtsdatum"));
+        nvMitarb100.setCellValueFactory(new PropertyValueFactory<>("istMitarbeiter"));
+        nvVerif100.setCellValueFactory(new PropertyValueFactory<>("istVerifiziert"));
+        nvOrt100.setCellValueFactory(new PropertyValueFactory<>("ort"));
+        nvPlz100.setCellValueFactory(new PropertyValueFactory<>("plz"));
+        nvStraße100.setCellValueFactory(new PropertyValueFactory<>("straße"));
+        nvHausnr100.setCellValueFactory(new PropertyValueFactory<>("hausnr"));
+        
+        ObservableList<User> daten = FXCollections.observableArrayList(model.getKunden());
+        nvTabelle.setItems(daten);
+    }
+    
     /**
      * Ruft die Nutzerverwaltungs-Seite auf.
      * Schlägt fehl wenn man nicht angemeldet oder kein Mitarbeiter ist.
@@ -728,60 +806,15 @@ public class Controller {
         // Fensters ausgeführt werden
         Platform.runLater(() -> {
             if(model.getUser().getIstMitarbeiter()) {
-                nvTabelleInit();
+                //nvTabelleInit();
                 controller.nvBtnSuchen.setVisible(true);
                 controller.nvBtnVerifizieren.setVisible(true);
                 controller.nvBtnLöschen.setVisible(true);
             }
+            else {
+                controller.nvSpan.setText("Nur Mitarbeiter dürfen Kunden verwalten!");
+            }
         });    
-    }
-    
-    @FXML 
-    void nvVerifizieren(ActionEvent event)throws IOException{
-        User user = nvTabelle.getSelectionModel().getSelectedItem();
-        if (user.getIstVerifiziert()){
-            String message = model.kundeEntverifizieren(user);
-            if (message == null) message = "Kunde wurde entverifiziert!";
-            
-            nvSpan.setText(message);    
-        } else {
-            String message = model.kundeVerifizieren(user);
-            if (message == null) message = "Kunde wurde verifiziert!";
-            
-            nvSpan.setText(message);   
-        }
-    }
-    
-    @FXML 
-    void nvLöschen(ActionEvent event)throws IOException{
-        User user = nvTabelle.getSelectionModel().getSelectedItem();
-        
-        String message = model.kundeEntverifizieren(user);
-        if (message == null) message = "Kunde wurde gelöscht!";
-        
-        nvSpan.setText(message);    
-    }
-    
-    @FXML 
-    void nvSuchen(ActionEvent event)throws IOException{
-        nvTabelleInit();
-    }
-    
-    void nvTabelleInit() {
-        nvNutzerId100.setCellValueFactory(new PropertyValueFactory<>("iD"));
-        nvBenutzername100.setCellValueFactory(new PropertyValueFactory<>("benutzername"));
-        nvName100.setCellValueFactory(new PropertyValueFactory<>("name"));
-        nvVorname100.setCellValueFactory(new PropertyValueFactory<>("vorname"));
-        nvGBDatum100.setCellValueFactory(new PropertyValueFactory<>("geburtsdatum"));
-        nvMitarb100.setCellValueFactory(new PropertyValueFactory<>("istMitarbeiter"));
-        nvVerif100.setCellValueFactory(new PropertyValueFactory<>("istVerifiziert"));
-        nvOrt100.setCellValueFactory(new PropertyValueFactory<>("ort"));
-        nvPlz100.setCellValueFactory(new PropertyValueFactory<>("plz"));
-        nvStraße100.setCellValueFactory(new PropertyValueFactory<>("straße"));
-        nvHausnr100.setCellValueFactory(new PropertyValueFactory<>("hausnr"));
-        
-        ObservableList<User> daten = FXCollections.observableArrayList(model.getKunden());
-        nvTabelle.setItems(daten);
     }
 
     /**

@@ -77,12 +77,20 @@ public class User
         return istMitarbeiter;
     }
     
+    public String getIstMitarbeiterDE(){
+        return istMitarbeiter ? "Ja" : "Nein";
+    }
+    
     public void setIstMitarbeiter(boolean pMitarbeiter){
         istMitarbeiter = pMitarbeiter;
     }
     
     public boolean getIstVerifiziert(){
         return istVerifiziert;
+    }
+    
+    public String getIstVerifiziertDE(){
+        return istVerifiziert ? "Ja" : "Nein";
     }
     
     public void setistVerifiziert(boolean pIstVerifiziert){
